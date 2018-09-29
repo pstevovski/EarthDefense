@@ -66,7 +66,7 @@ function startGame(){
             }, 5000);
         }, 1000);
 
-        game = setInterval(draw, 1000/60);
+        game = setInterval(draw, 50);
     }, 2500);
 }
 let isSpaceDown = false;
@@ -83,14 +83,11 @@ function shipCommands(e){
     } else if (key == 40) {
         d = "DOWN"
     }
-    //  else if (key == 32) { BUGGED
-    //     isSpaceDown = true;
-    // }
-    // console.log(isSpaceDown);
+     else if (key == 32) {
+        shoot();
+    }
 }
-
 function draw(){
-    console.log(isSpaceDown)
     canvas.style.display = "block";
     ctx.drawImage(bg, 0,0);
 
@@ -107,23 +104,13 @@ function draw(){
             })
         }
 
-         // If spaceshipt and meteor colide
-        if(shipX == meteors[i].x || shipY == meteors[i].y) {
-            clearInterval(game);
+         // If spaceship and meteor colide
+        if(shipX + ship.width >= meteors[i].x && shipX <= meteors[i].x + meteor.width && shipY + ship.height >= meteors[i].y && shipY <= meteors[i].y + meteor.height) {
+            // clearInterval(game);
+            console.log("dead")
         }
     }
     // // Ammo (rockets) hit the meteor. BUGGED - CRASHES CHROME
-    //     for(let i = 0; i < ammo.length; i++){
-    //         if(isSpaceDown == true) {
-    //             ammo.push({
-    //                 x: shipX + ship.width,
-    //                 y: shipY + (ship.height / 2)
-    //             })
-    //         }
-    //         ctx.fillRect(ammo[i].x, ammo[i].y, 50, 5);
-    //         ammo[i].x++;
-    //     }
-    // isSpaceDown = false;
 
     // Move the ship
     if(d == "LEFT") {
@@ -148,7 +135,10 @@ function draw(){
     // Draw the ship
     ctx.drawImage(ship, shipX, shipY);
 }
-console.log(isSpaceDown);
+console.log(ship.width, ship.height);
+console.log(meteor.width, meteor.height);
+console.log(shipX, shipY);
+console.log(meteors[0].x, meteors[0].y)
 
 // Event listeners
 document.addEventListener("keydown", shipCommands);
