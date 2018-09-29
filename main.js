@@ -2,8 +2,7 @@
 let d;
 let game;
 const menu = document.querySelector(".menu");
-let spaceshipX;
-let spaceshipY;
+
 
 // Canvas
 const canvas = document.querySelector("#canvas");
@@ -17,11 +16,12 @@ let maxHeight = 500;
 const bg = new Image();
 const ship = new Image();
 const meteor = new Image();
+const missile = new Image();
 
 ship.src = "images/spaceship.png";
 bg.src = "images/gameBg.png";
 meteor.src = "images/meteor.png";
-// console.log(ship.height, ship.width);
+missile.src = "images/torpedo.png";
 
 // Spaceship starting coordinates
 let shipX = 50;
@@ -66,7 +66,7 @@ function startGame(){
             }, 5000);
         }, 1000);
 
-        game = setInterval(draw, 50);
+        game = setInterval(draw, 1000/60);
     }, 2500);
 }
 let isSpaceDown = false;
@@ -83,10 +83,46 @@ function shipCommands(e){
     } else if (key == 40) {
         d = "DOWN"
     }
-     else if (key == 32) {
-        shoot();
+}
+function shoot(e){
+    let key = e.keyCode;
+    if(key == 32) {
+        isSpaceDown = true;
+        ammo.push({
+            x: shipX + ship.width,
+            y: shipY + (ship.height / 2)
+        })
+        // console.log("SHOOTING")
+    } else {
+        isSpaceDown = false;
+        // console.log("NOT SHOOTING")
+    }
+    
+}
+
+setInterval(updateRocketPosition, 2);
+function updateRocketPosition(){
+    for(let i = 0; i < ammo.length;i++) {
+        ctx.drawImage(missile, ammo[i].x, ammo[i].y);
+        ammo[i].x += 10;
+
+        // If the ammo goes past the canvas boundary
+        if(ammo[i].x > cWidth) {
+            ammo.splice(0,1);
+        }
     }
 }
+document.addEventListener("keyup", shoot);
+// if rockets position = meteor position, destroy it BUGGED
+function meteorDestroyed(){
+    for(let i = j = 0; i < meteors.length && j < ammo.length; i++, j++) {
+        // ALMOST
+        if(ammo[j].x >= meteors[i].x && ammo[j].x <= meteors[i].x + meteor.width && ammo[j].y >= meteors[i].y && ammo[j].y <= meteors[i].y + meteor.height) {
+            alert("boom")
+        }
+    }
+}
+
 function draw(){
     canvas.style.display = "block";
     ctx.drawImage(bg, 0,0);
@@ -103,14 +139,12 @@ function draw(){
                 y: Math.floor(Math.random() * (maxHeight - minHeight) + minHeight)
             })
         }
-
-         // If spaceship and meteor colide
+        // If spaceship and meteor colide
         if(shipX + ship.width >= meteors[i].x && shipX <= meteors[i].x + meteor.width && shipY + ship.height >= meteors[i].y && shipY <= meteors[i].y + meteor.height) {
             // clearInterval(game);
             console.log("dead")
         }
     }
-    // // Ammo (rockets) hit the meteor. BUGGED - CRASHES CHROME
 
     // Move the ship
     if(d == "LEFT") {
@@ -131,14 +165,10 @@ function draw(){
         d = "";
     }
 
-    // console.log({shipX, shipY});
     // Draw the ship
     ctx.drawImage(ship, shipX, shipY);
+    meteorDestroyed();
 }
-console.log(ship.width, ship.height);
-console.log(meteor.width, meteor.height);
-console.log(shipX, shipY);
-console.log(meteors[0].x, meteors[0].y)
 
 // Event listeners
 document.addEventListener("keydown", shipCommands);
