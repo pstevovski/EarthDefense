@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>Earth Defence</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="animations.css">
 </head>
 <body>
-    <!-- Main menu container -->
+    <!-- MAIN MENU CONTAINER -->
     <div class="main-menu">
         <!-- Title -->
         <div class="title">
@@ -34,7 +35,7 @@
 
         <!-- Github link -->
         <div class="github">
-            <a href="https://github.com/pecko95/EarthDefence"><img src="images/github.png" alt="GitHub" width="30px" height="30px" title="GitHub link"></a>
+            <a href="https://github.com/pecko95/EarthDefence" target="_blank"><img src="images/github.png" alt="GitHub" width="30px" height="30px" title="GitHub link"></a>
         </div>
 
         <!-- Rocket -->
@@ -46,7 +47,37 @@
         </div>
     </div>
 
+    <!-- GAME FINISHED / GAME OVER MENU -->
+    <div class="game--over">
+        <img src="images/gravestone.svg" alt="Gravestone" width="70px"  height="70px">
+        <p>Thank you for your service.</p>
+        <div class="scores">
+            <p>Score: <span id="finalScore"></span></p>
+            <p>Highscore: <span id="highscore"></span></p>
+        </div>
+        <a id="exitGame">EXIT</a>
+    </div>
 
-    <!-- <canvas id="canvas"></canvas> -->
+    <!-- GAME WINDOW -->
+    <div class="menu">
+        <p>MENU</p>
+        <p>SCORE: <span id="score">1000</span></p>
+    </div>
+    <!-- GAME WINDOW - INFO BOX -->
+    <div class="infobox">
+        <div class="spacecorps">
+            <img src="images/space corps.svg" alt="Space corps" width="100px" height="100px">
+        </div>
+        <div class="game--info">
+            <h3>SPACECORPS:</h3>
+            <p>Earth is facing imminent threat! Thousands of meteors are coming out way. You must take this space ship and try to save our home, our Earth. Be aware that the ship is a "black" project and is not fully tested. Take down as much meteors as you can to save our ass.</p>
+        </div>
+    </div>
+
+    <!-- CANVAS -->
+    <canvas id="canvas" width="1300px" height="500px"></canvas>
+
+    <!-- Script link -->
+    <script src="main.js"></script>
 </body>
 </html>
