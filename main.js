@@ -1,8 +1,11 @@
 // Globals
 let d;
 let game;
+let score = 0;
+let shipHP = 100;
+let isSpaceDown = false;
 const menu = document.querySelector(".menu");
-
+const displayScore = document.querySelector("#score");
 
 // Canvas
 const canvas = document.querySelector("#canvas");
@@ -28,11 +31,13 @@ let shipX = 50;
 let shipY = 250;
 
 // Spaceship ammo
-let ammo =[]
-ammo[0]= {
-    x: shipX + ship.width,
-    y: shipY + (ship.height / 2)
-}
+// let ammo =[]
+// ammo[0]= {
+//     x: shipX + ship.width,
+//     y: shipY + (ship.height / 2)
+// }
+let ammoX = shipX + ship.width;
+let ammoY = shipY + (ship.height / 2);
 // Meteors
 let meteors = [];
 meteors[0] = {
@@ -69,11 +74,9 @@ function startGame(){
         game = setInterval(draw, 1000/60);
     }, 2500);
 }
-let isSpaceDown = false;
-// Move the spaceshipt
+// Move the spaceship
 function shipCommands(e){
     let key = e.keyCode;
-    // console.log(key)
     if(key == 37) {
         d = "LEFT"
     } else if (key == 38) {
@@ -88,40 +91,60 @@ function shoot(e){
     let key = e.keyCode;
     if(key == 32) {
         isSpaceDown = true;
-        ammo.push({
-            x: shipX + ship.width,
-            y: shipY + (ship.height / 2)
-        })
-        // console.log("SHOOTING")
+        // ammo.push({
+        //     x: shipX + ship.width,
+        //     y: shipY + (ship.height / 2)
+        // })
+        ammoX = shipX + ship.width;
+        ammoY = shipY + (ship.height / 2);
     } else {
         isSpaceDown = false;
-        // console.log("NOT SHOOTING")
     }
-    
 }
 
 setInterval(updateRocketPosition, 2);
 function updateRocketPosition(){
-    for(let i = 0; i < ammo.length;i++) {
-        ctx.drawImage(missile, ammo[i].x, ammo[i].y);
-        ammo[i].x += 10;
+    // for(let i = 0; i < ammo.length;i++) {
+        ctx.drawImage(missile, ammoX, ammoY);
+        ammoX += 5;
 
+        for(let i = 0; i < meteors.length; i++) {
+            if(ammoX >= meteors[i].x && ammoX <= meteors[i].x + meteor.width && ammoY >= meteors[i].y && ammoY <= meteors[i].y + meteor.height){
+                let item = meteors[i];
+                let index = meteors.indexOf(item);
+                if(index > -1) {
+                    meteors.splice(index, 1);
+                }
+                score += 100;
+                displayScore.textContent = score;
+            }
+        }
+        
         // If the ammo goes past the canvas boundary
-        if(ammo[i].x > cWidth) {
-            ammo.splice(0,1);
-        }
-    }
+        // if(ammo[i].x > cWidth) {
+        //     ammo.splice(0,1);
+        // }
+    // }
 }
-document.addEventListener("keyup", shoot);
-// if rockets position = meteor position, destroy it BUGGED
-function meteorDestroyed(){
-    for(let i = j = 0; i < meteors.length && j < ammo.length; i++, j++) {
-        // ALMOST
-        if(ammo[j].x >= meteors[i].x && ammo[j].x <= meteors[i].x + meteor.width && ammo[j].y >= meteors[i].y && ammo[j].y <= meteors[i].y + meteor.height) {
-            alert("boom")
-        }
-    }
-}
+
+// if rockets position = meteor position, destroy it BUGGED BUGGED BUGGED
+// function meteorDestroyed(){
+//     for(let i = j = 0; i < meteors.length && j < ammo.length; i++, j++) {
+//         // ALMOST
+//         if(ammo[j].x + missile.width >= meteors[i].x && 
+//             ammo[j].x <= meteors[i].x + meteor.width &&
+//             ammo[j].y >= meteors[i].y && 
+//             ammo[j].y <= meteors[i].y + meteor.height) {
+//             // alert("boom")
+//             score += 100;
+//             meteors.splice(meteors[i], 1);
+//             console.log("explosion")
+//             console.log(ammo[j].x + missile.width, meteors[i].y + meteor.height, meteors[i].y - meteor.height, meteors[i].x, meteors[i].y);
+//             // debugger;
+//         }
+//     }
+//     displayScore.textContent = score;
+// }
 
 function draw(){
     canvas.style.display = "block";
@@ -142,8 +165,32 @@ function draw(){
         // If spaceship and meteor colide
         if(shipX + ship.width >= meteors[i].x && shipX <= meteors[i].x + meteor.width && shipY + ship.height >= meteors[i].y && shipY <= meteors[i].y + meteor.height) {
             // clearInterval(game);
-            console.log("dead")
+            let item = meteors[i];
+            let index = meteors.indexOf(item);
+            if(index > -1) {
+                meteors.splice(index, 1);
+            }
+            // Deduct HP on hit.
+            shipHP = shipHP - 20;
+            
+            // If spaceship HP reaches 0, end game.
+            if(shipHP == 0) {
+                clearInterval(game);
+            }
+            document.querySelector("#hp").textContent = shipHP;
         }
+
+        // If meteor goes past the canvas width, remove.
+        if(meteors[i].x < 0) {
+            meteors.splice(meteors[i], 1);
+        }
+    }
+    // Create a new meteor if all meteors on screen are destroyed.
+    if(meteors.length == 0) {
+        meteors.push({
+            x: cWidth,
+            y: Math.floor(Math.random() * (maxHeight - minHeight) + minHeight)
+        })
     }
 
     // Move the ship
@@ -167,11 +214,12 @@ function draw(){
 
     // Draw the ship
     ctx.drawImage(ship, shipX, shipY);
-    meteorDestroyed();
 }
 
 // Event listeners
 document.addEventListener("keydown", shipCommands);
 document.querySelector("#startGame").addEventListener("click", startGame);
+document.addEventListener("keyup", shoot);
+
 
 
