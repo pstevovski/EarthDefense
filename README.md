@@ -13,8 +13,8 @@ Defend the Earth from the upcoming meteors! (WIP).
 * [x] End game if ship HP reaches 0.
 
 -------------------
-* []  More bullets to be up at the same time.
-* []  Explosion image does not appears for every meteor hit. Sometimes it does, sometimes doesnt.
-* []  Explosion image when ship hits meteor.
-* []  Different game over menu image (RIP if dead, something else if "EARTH DEFENDED")
-* []  Add a randomly spawned booster (points, hp etc.)
+* [ ]  More bullets to be up at the same time.
+* [ ]  Explosion image does not appears for every meteor hit. Sometimes it does, sometimes doesnt.
+* [ ]  Explosion image when ship hits meteor.
+* [ ]  Different game over menu image (RIP if dead, something else if "EARTH DEFENDED")
+* [ ]  Add a randomly spawned booster (points, hp etc.)
