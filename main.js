@@ -38,11 +38,6 @@ let shipX = 50;
 let shipY = 250;
 
 // Spaceship ammo
-// let ammo =[]
-// ammo[0]= {
-//     x: shipX + ship.width,
-//     y: shipY + (ship.height / 2)
-// }
 let ammoX = shipX + ship.width;
 let ammoY = shipY + (ship.height / 2);
 
@@ -50,14 +45,14 @@ let ammoY = shipY + (ship.height / 2);
 let meteors = [];
 meteors[0] = {
     x: cWidth,
-    y: Math.floor(Math.random() * (maxHeight - minHeight) + minHeight) 
+    y: Math.floor(Math.random() * ( (maxHeight-meteor.height) - minHeight) + minHeight)
 }
 
 // Health renew
 let healthRenew = [];
 healthRenew[0] = {
     x: cWidth,
-    y: Math.floor(Math.random() * (maxHeight - minHeight) + minHeight)
+    y: Math.floor(Math.random() * ( (maxHeight - firstAid.height) - minHeight) + minHeight)
 }
 let initialHealthPushed = false;
 // Start game
@@ -148,7 +143,7 @@ function draw(){
         if(meteors[i].x == 1200) {
             meteors.push({
                 x: cWidth,
-                y: Math.floor(Math.random() * (maxHeight - minHeight) + minHeight)
+                y: Math.floor(Math.random() * ( (maxHeight-meteor.height) - minHeight) + minHeight) 
             })
         }
         // If spaceship and meteor colide
@@ -188,7 +183,7 @@ function draw(){
     if(meteors.length == 0) {
         meteors.push({
             x: cWidth,
-            y: Math.floor(Math.random() * (maxHeight - minHeight) + minHeight)
+            y: Math.floor(Math.random() * ( (maxHeight-meteor.height) - minHeight) + minHeight) 
         })
     }
 
@@ -272,7 +267,7 @@ function healthRenewFunction() {
         setTimeout(() => {
             healthRenew.push({
                 x: cWidth,
-                y: Math.floor(Math.random() * (maxHeight - minHeight) + minHeight)
+                y: Math.floor(Math.random() * ( (maxHeight - firstAid.height) - minHeight) + minHeight)
             })
         
             healthRenewFunction();
@@ -284,6 +279,12 @@ function healthRenewFunction() {
     }
 }
 healthRenewFunction();
+
+// Exit game
+document.querySelector("#exitGame").addEventListener("click", ()=>{
+    location.reload();
+})
+
 // Event listeners
 document.addEventListener("keydown", shipCommands);
 document.querySelector("#startGame").addEventListener("click", startGame);
