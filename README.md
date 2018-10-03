@@ -11,10 +11,11 @@ Defend the Earth from the upcoming meteors! (WIP).
 * [x] Score
 * [x] ship hits meteor - destroy meteor and deduct 20 HP(ONCE!) from the spaceship
 * [x] End game if ship HP reaches 0.
+* [x]  Add a randomly spawned HP restoration and restore ship's HP if it collects it.
+* [x]  Explosion image when ship hits meteor.
 
 -------------------
 * [ ]  More bullets to be up at the same time.
 * [ ]  Explosion image does not appears for every meteor hit. Sometimes it does, sometimes doesnt.
-* [ ]  Explosion image when ship hits meteor.
 * [ ]  Different game over menu image (RIP if dead, something else if "EARTH DEFENDED")
-* [ ]  Add a randomly spawned booster (points, hp etc.)
+* [ ]  Add a randomly spawned comet / larger meteor which upon destruction gives you 500 points.
