@@ -150,6 +150,7 @@ function draw(){
         }
         // If spaceship and meteor colide
         if(shipX + ship.width >= meteors[i].x && shipX <= meteors[i].x + meteor.width && shipY + ship.height >= meteors[i].y && shipY <= meteors[i].y + meteor.height) {
+            ctx.drawImage(explosion, meteors[i].x, meteors[i].y);
             // clearInterval(game);
             let item = meteors[i];
             let index = meteors.indexOf(item);
