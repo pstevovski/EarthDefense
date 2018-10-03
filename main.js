@@ -21,12 +21,14 @@ const ship = new Image();
 const meteor = new Image();
 const missile = new Image();
 const explosion = new Image();
+const firstAid = new Image();
 
 ship.src = "images/spaceship.png";
 bg.src = "images/gameBg.png";
 meteor.src = "images/meteor.png";
 missile.src = "images/torpedo.png";
 explosion.src = "images/explosion.png";
+firstAid.src = "images/firstAid.png";
 
 // Spaceship starting coordinates
 let shipX = 50;
@@ -40,6 +42,7 @@ let shipY = 250;
 // }
 let ammoX = shipX + ship.width;
 let ammoY = shipY + (ship.height / 2);
+
 // Meteors
 let meteors = [];
 meteors[0] = {
@@ -47,10 +50,13 @@ meteors[0] = {
     y: Math.floor(Math.random() * (maxHeight - minHeight) + minHeight) 
 }
 
-// Explosion
-
-
-
+// Health renew
+let healthRenew = [];
+healthRenew[0] = {
+    x: cWidth,
+    y: Math.floor(Math.random() * (maxHeight - minHeight) + minHeight)
+}
+let initialHealthPushed = false;
 // Start game
 function startGame(){
     const mainMenu = document.querySelector(".main-menu");
@@ -162,7 +168,7 @@ function draw(){
         }
 
         // If meteor goes past the canvas width, remove.
-        if(meteors[i].x < 0) {
+        if(meteors[i].x + meteor.width < 0) {
             meteors.splice(meteors[i], 1);
         }
     }
@@ -173,6 +179,35 @@ function draw(){
             y: Math.floor(Math.random() * (maxHeight - minHeight) + minHeight)
         })
     }
+
+    // Display health renew with a timeout (every 15 seconds)
+    for(let i = 0; i < healthRenew.length; i++){
+        ctx.drawImage(firstAid, healthRenew[i].x, healthRenew[i].y);
+
+        // If the ship touches the health, restore the ship's HP.
+        if(shipX + ship.width >= healthRenew[i].x && shipX <= healthRenew[i].x + firstAid.width && shipY + ship.height >= healthRenew[i].y && shipY <= healthRenew[i].y + firstAid.height) {
+            // Remove the HP restore.
+            let hpItem = healthRenew[i];
+            let hpIndex = healthRenew.indexOf(hpItem);
+            if(hpIndex > -1) {
+                healthRenew.splice(hpIndex, 1)
+            }
+
+            // Restore 20HP to the ship
+            shipHP = shipHP + 20;
+            document.querySelector("#hp").textContent = shipHP;
+        }
+        // If HP restore goes past the canvas width, remove it.
+        if(healthRenew[i].x + firstAid.width < 0 ) {
+            healthRenew.splice(healthRenew[i], 1);
+        }
+    }
+    setTimeout(() => {
+        for(let i = 0; i < healthRenew.length; i++) {
+            healthRenew[i].x--;
+        }
+        initialHealthPushed = true;
+    }, 5 * 1000);
 
     // Move the ship
     if(d == "LEFT") {
@@ -202,6 +237,24 @@ function endgame(){
     gameOver.style.display = "block";
 }
 
+// Health renew callback function to push into the array - WONT SHOW
+function healthRenewFunction() {
+    if(initialHealthPushed == true) {
+        setTimeout(() => {
+            healthRenew.push({
+                x: cWidth,
+                y: Math.floor(Math.random() * (maxHeight - minHeight) + minHeight)
+            })
+        
+            healthRenewFunction();
+        }, 30 * 1000);
+    } else {
+        setTimeout(() => {
+            healthRenewFunction();
+        }, 30 * 1000);
+    }
+}
+healthRenewFunction();
 // Event listeners
 document.addEventListener("keydown", shipCommands);
 document.querySelector("#startGame").addEventListener("click", startGame);
