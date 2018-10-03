@@ -3,7 +3,10 @@ let d;
 let game;
 let score = 0;
 let shipHP = 100;
+let earthHP = 100;
 let isSpaceDown = false;
+let displayShipHP = document.querySelector(".ship-hpFill");
+let displayEarthHP = document.querySelector(".earth-hpFill");
 const menu = document.querySelector(".menu");
 const displayScore = document.querySelector("#score");
 
@@ -158,19 +161,27 @@ function draw(){
                 meteors.splice(index, 1);
             }
             // Deduct HP on hit.
-            shipHP = shipHP - 20;
+            decreaseShipHP();
 
             // If spaceship HP reaches 0, end game.
             if(shipHP == 0) {
                 clearInterval(game);
                 endgame();
             }
-            document.querySelector("#hp").textContent = shipHP;
         }
 
         // If meteor goes past the canvas width, remove.
         if(meteors[i].x + meteor.width < 0) {
             meteors.splice(meteors[i], 1);
+
+            // Decrease earth's HP.
+            decreaseEarthHP();
+            
+            // End game if earth is destroyed.
+            if(earthHP == 0) {
+                clearInterval(game);
+                endgame();
+            }
         }
     }
     // Create a new meteor if all meteors on screen are destroyed.
@@ -194,9 +205,8 @@ function draw(){
                 healthRenew.splice(hpIndex, 1)
             }
 
-            // Restore 20HP to the ship
-            shipHP = shipHP + 20;
-            document.querySelector("#hp").textContent = shipHP;
+            // Restore ship's HP.
+            restoreShipHP();
         }
         // If HP restore goes past the canvas width, remove it.
         if(healthRenew[i].x + firstAid.width < 0 ) {
@@ -233,6 +243,24 @@ function draw(){
     ctx.drawImage(ship, shipX, shipY);
 }
 
+
+function decreaseShipHP()   {
+    shipHP = shipHP - 20;
+    displayShipHP.style.width = `${shipHP}%`;
+}
+
+function restoreShipHP() {   
+    if(shipHP == 100) {
+        shipHP = shipHP;
+    } else {
+        shipHP = shipHP + 20;
+        displayShipHP.style.width = `${shipHP}%`;
+    }
+}
+function decreaseEarthHP() {
+    earthHP = earthHP  - 20;
+    displayEarthHP.style.width = `${earthHP}%`;
+}
 function endgame(){
     const gameOver = document.querySelector(".game--over");
     gameOver.style.display = "block";
