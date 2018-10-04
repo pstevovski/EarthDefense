@@ -36,6 +36,7 @@ firstAid.src = "images/firstAid.png";
 // Spaceship starting coordinates
 let shipX = 50;
 let shipY = 250;
+let hitBoundary = false;
 
 // Spaceship ammo
 let ammoX = shipX + ship.width;
@@ -100,10 +101,6 @@ function shoot(e){
     let key = e.keyCode;
     if(key == 32) {
         isSpaceDown = true;
-        // ammo.push({
-        //     x: shipX + ship.width,
-        //     y: shipY + (ship.height / 2)
-        // })
         ammoX = shipX + ship.width;
         ammoY = shipY + (ship.height / 2);
     } else {
@@ -118,14 +115,11 @@ function updateRocketPosition(){
 
         for(let i = 0; i < meteors.length; i++) {
             if(ammoX >= meteors[i].x && ammoX <= meteors[i].x + meteor.width && ammoY >= meteors[i].y && ammoY <= meteors[i].y + meteor.height){
-                ctx.drawImage(explosion, meteors[i].x, meteors[i].y);
-                let item = meteors[i];
-                let index = meteors.indexOf(item);
-                if(index > -1) {
-                    meteors.splice(index, 1);
-                }
-                score += 100;
-                displayScore.textContent = score;
+                // Draw explosion of the meteor.
+                ctx.drawImage(explosion, meteors[i].x - meteor.width, meteors[i].y - meteor.height);
+
+                // Delete meteor from screen
+                destroyMeteor();
             }
         }
 }
@@ -148,13 +142,12 @@ function draw(){
         }
         // If spaceship and meteor colide
         if(shipX + ship.width >= meteors[i].x && shipX <= meteors[i].x + meteor.width && shipY + ship.height >= meteors[i].y && shipY <= meteors[i].y + meteor.height) {
-            ctx.drawImage(explosion, meteors[i].x, meteors[i].y);
-            // clearInterval(game);
-            let item = meteors[i];
-            let index = meteors.indexOf(item);
-            if(index > -1) {
-                meteors.splice(index, 1);
-            }
+            // Draw explosion at those coords.
+            ctx.drawImage(explosion, meteors[i].x - meteor.width, meteors[i].y - meteor.height);
+
+            // Delete the meteor from screen.
+            destroyMeteor();
+
             // Deduct HP on hit.
             decreaseShipHP();
 
@@ -230,14 +223,40 @@ function draw(){
     }
 
     // If spaceship hits the boundry, remove the direction
-    if(shipX == 0 || shipX >= 1300 - ship.width || shipY == 0 || shipY >= 500 - ship.height) {
-        d = "";
+    if(shipX <= 0) {
+        shipX += 5;
+    } else if (shipX >= 1300 - ship.width) {
+        shipX -= 5;
+    } else if (shipY <= 0) {
+        shipY += 5;
+    } else if (shipY >= 500 - ship.height) {
+        shipY -= 5;
     }
-
     // Draw the ship
     ctx.drawImage(ship, shipX, shipY);
 }
 
+function destroyMeteor(){
+    for(let i = 0; i < meteors.length; i++) {
+        // Ammo hits meteor
+        let ammoDestroysMeteor = ammoX >= meteors[i].x && ammoX <= meteors[i].x + meteor.width && ammoY >= meteors[i].y && ammoY <= meteors[i].y + meteor.height;
+
+        // Ship hits meteor
+        let shipDestroysMeteor = shipX + ship.width >= meteors[i].x && shipX <= meteors[i].x + meteor.width && shipY + ship.height >= meteors[i].y && shipY <= meteors[i].y + meteor.height;
+
+        // Either the ammo destorys the meteor, or the ship.
+        if(ammoDestroysMeteor || shipDestroysMeteor) {
+            let item = meteors[i];
+            let index = meteors.indexOf(item);
+            if(index > -1) {
+                meteors.splice(index, 1);
+            }
+            // Update score
+            score += 100;
+            displayScore.textContent = score;
+        }
+    }
+}
 
 function decreaseShipHP()   {
     shipHP = shipHP - 20;
