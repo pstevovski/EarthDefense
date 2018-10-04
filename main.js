@@ -114,6 +114,9 @@ function shipCommands(e){
         d = "DOWN"
     }
 }
+function testShipCommands() {
+    d = " ";
+}
 function shoot(e){
     let key = e.keyCode;
     if(key == 32) {
@@ -432,6 +435,7 @@ document.querySelector("#exitGame").addEventListener("click", ()=>{
 
 // Event listeners
 document.addEventListener("keydown", shipCommands);
+document.addEventListener("keyup", testShipCommands);
 document.querySelector("#startGame").addEventListener("click", startGame);
 document.addEventListener("keyup", shoot);
 
