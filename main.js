@@ -25,6 +25,7 @@ const meteor = new Image();
 const missile = new Image();
 const explosion = new Image();
 const firstAid = new Image();
+const comet = new Image();
 
 ship.src = "images/spaceship.png";
 bg.src = "images/gameBg.png";
@@ -32,6 +33,7 @@ meteor.src = "images/meteor.png";
 missile.src = "images/torpedo.png";
 explosion.src = "images/explosion.png";
 firstAid.src = "images/firstAid.png";
+comet.src = "images/comet.png";
 
 // Spaceship starting coordinates
 let shipX = 50;
@@ -56,6 +58,15 @@ healthRenew[0] = {
     y: Math.floor(Math.random() * ( (maxHeight - firstAid.height) - minHeight) + minHeight)
 }
 let initialHealthPushed = false;
+
+// Comets for bonus points
+let comets = [];
+comets[0] = {
+    x: cWidth,
+    y: Math.floor(Math.random() * ( (maxHeight - comet.height) - minHeight) + minHeight)
+}
+let initialCometPushed = false;
+
 // Start game
 function startGame(){
     const mainMenu = document.querySelector(".main-menu");
@@ -118,8 +129,18 @@ function updateRocketPosition(){
                 // Draw explosion of the meteor.
                 ctx.drawImage(explosion, meteors[i].x - meteor.width, meteors[i].y - meteor.height);
 
-                // Delete meteor from screen
+                // Delete meteor from screen and add points.
                 destroyMeteor();
+            }
+        }
+        // Ammo collides with the commet
+        for(let i = 0; i < comets.length; i++) {
+            if(ammoX >= comets[i].x && ammoX <= comets[i].x + comet.width && ammoY >= comets[i].y && ammoY <= comets[i].y + comet.height) {
+                // Draw explosion at the spot
+                ctx.drawImage(explosion, comets[i].x - comet.width, comets[i].y - comet.height);
+
+                // Delete comet from screen and add points.
+                destroyComet();
             }
         }
 }
@@ -180,7 +201,7 @@ function draw(){
         })
     }
 
-    // Display health renew with a timeout (every 15 seconds)
+    // Display health renew with a timeout
     for(let i = 0; i < healthRenew.length; i++){
         ctx.drawImage(firstAid, healthRenew[i].x, healthRenew[i].y);
 
@@ -201,13 +222,57 @@ function draw(){
             healthRenew.splice(healthRenew[i], 1);
         }
     }
+    // Start moving the HP renew after a set timeout.
     setTimeout(() => {
         for(let i = 0; i < healthRenew.length; i++) {
             healthRenew[i].x--;
         }
         initialHealthPushed = true;
-    }, 5 * 1000);
+    }, 30 * 1000);
 
+    // Display the comet
+    for(let i = 0; i < comets.length;i++){
+        ctx.drawImage(comet, comets[i].x, comets[i].y);
+
+        // If spaceship and comet colide
+        if(shipX + ship.width >= comets[i].x && shipX <= comets[i].x + comet.width && shipY + ship.height >= comets[i].y && shipY <= comets[i].y + comet.height) {
+            // Draw explosion at those coords.
+            ctx.drawImage(explosion, comets[i].x - comet.width, comets[i].y - comet.height);
+
+            // Delete the meteor from screen.
+            destroyComet();
+
+            // Deduct HP on hit.
+            decreaseShipHPComet();
+
+            // If spaceship HP reaches 0, end game.
+            if(shipHP == 0) {
+                clearInterval(game);
+                endgame();
+            }
+        }
+
+        // If comet goes past the canvas width, remove.
+        if(comets[i].x + comet.width < 0) {
+            comets.splice(comets[i], 1);
+
+            // Decrease earth's HP.
+            decreaseEarthHPComet();
+            
+            // End game if earth is destroyed.
+            if(earthHP == 0) {
+                clearInterval(game);
+                endgame();
+            }
+        }
+    }
+    // Start moving the comet after a set timeout
+    setTimeout(() => {
+        for(let i = 0; i < comets.length;i++){
+            comets[i].x--;
+        }
+        initialCometPushed = true;
+    }, 60 * 1000);
     // Move the ship
     if(d == "LEFT") {
         shipX -= 5;
@@ -257,7 +322,27 @@ function destroyMeteor(){
         }
     }
 }
+function destroyComet() {
+    for(let i = 0; i < comets.length; i++) {
+        // Ammo hits meteor
+        let ammoDestroysComet = ammoX >= comets[i].x && ammoX <= comets[i].x + comet.width && ammoY >= comets[i].y && ammoY <= comets[i].y + comet.height;
 
+        // Ship hits meteor
+        let shipDestroysComet = shipX + ship.width >= comets[i].x && shipX <= comets[i].x + comet.width && shipY + ship.height >= comets[i].y && shipY <= comets[i].y + comet.height;
+
+        // Either the ammo destorys the meteor, or the ship.
+        if(ammoDestroysComet || shipDestroysComet) {
+            let item = comets[i];
+            let index = comets.indexOf(item);
+            if(index > -1) {
+                comets.splice(index, 1);
+            }
+            // Update score
+            score += 500;
+            displayScore.textContent = score;
+        }
+    }
+}
 function decreaseShipHP()   {
     shipHP = shipHP - 20;
     displayShipHP.style.width = `${shipHP}%`;
@@ -275,12 +360,22 @@ function decreaseEarthHP() {
     earthHP = earthHP  - 20;
     displayEarthHP.style.width = `${earthHP}%`;
 }
+
+function decreaseShipHPComet(){
+    shipHP = shipHP - 40;
+    displayShipHP.style.width = `${shipHP}%`;
+}
+function decreaseEarthHPComet(){
+    earthHP = earthHP - 40;
+    displayEarthHP.style.width = `${earthHP}%`;
+}
+
 function endgame(){
     const gameOver = document.querySelector(".game--over");
     gameOver.style.display = "block";
 }
 
-// Health renew callback function to push into the array - WONT SHOW
+// Health renew callback function to push into the array
 function healthRenewFunction() {
     if(initialHealthPushed == true) {
         setTimeout(() => {
@@ -298,6 +393,25 @@ function healthRenewFunction() {
     }
 }
 healthRenewFunction();
+
+// Comet for bonus points (500 points) spawn each minute
+function spawnComet(){
+    if(initialCometPushed == true) {
+        setTimeout(() => {
+            comets.push({
+                x: cWidth,
+                y: Math.floor(Math.random() * ( (maxHeight - comet.height) - minHeight) + minHeight)
+            })
+            spawnComet();
+        }, 60 * 1000);
+    } else {
+        setTimeout(() => {
+            spawnComet();
+        }, 60 * 1000);
+    }
+}
+spawnComet();
+
 
 // Exit game
 document.querySelector("#exitGame").addEventListener("click", ()=>{
