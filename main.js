@@ -26,6 +26,8 @@ const missile = new Image();
 const explosion = new Image();
 const firstAid = new Image();
 const comet = new Image();
+const missileSound = new Audio();
+const explosionSound = new Audio();
 
 ship.src = "images/spaceship.png";
 bg.src = "images/gameBg.png";
@@ -34,6 +36,10 @@ missile.src = "images/torpedo.png";
 explosion.src = "images/explosion.png";
 firstAid.src = "images/firstAid.png";
 comet.src = "images/comet.png";
+missileSound.src = "rocket.wav";
+missileSound.volume = 0.1;
+explosionSound.src = "explosion.wav";
+explosionSound.volume = 0.1;
 
 // Spaceship starting coordinates
 let shipX = 50;
@@ -114,6 +120,8 @@ function shoot(e){
         isSpaceDown = true;
         ammoX = shipX + ship.width;
         ammoY = shipY + (ship.height / 2);
+        missileSound.play();
+        missileSound.currentTime = 0;
     } else {
         isSpaceDown = false;
     }
@@ -320,6 +328,8 @@ function destroyMeteor(){
             score += 100;
             displayScore.textContent = score;
         }
+        explosionSound.play();
+        explosionSound.currentTime = 0;
     }
 }
 function destroyComet() {
@@ -341,6 +351,8 @@ function destroyComet() {
             score += 500;
             displayScore.textContent = score;
         }
+        explosionSound.play();
+        explosionSound.currentTime = 0;
     }
 }
 function decreaseShipHP()   {
