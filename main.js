@@ -4,11 +4,14 @@ let game;
 let score = 0;
 let shipHP = 100;
 let earthHP = 100;
+let meteorsSpeed = 1;
 let isSpaceDown = false;
 let displayShipHP = document.querySelector(".ship-hpFill");
 let displayEarthHP = document.querySelector(".earth-hpFill");
 const menu = document.querySelector(".menu");
 const displayScore = document.querySelector("#score");
+const displayImage = document.querySelector("#displayImage");
+const message = document.querySelector("#message");
 
 // Canvas
 const canvas = document.querySelector("#canvas");
@@ -164,7 +167,7 @@ function draw(){
         // Draw a meteor
         ctx.drawImage(meteor, meteors[i].x, meteors[i].y);
 
-        meteors[i].x--;
+        meteors[i].x -= meteorsSpeed;
 
         if(meteors[i].x == 1200) {
             meteors.push({
@@ -204,6 +207,14 @@ function draw(){
             }
         }
     }
+    // Increase difficulty when user reaches a certain score point.
+    if(score == 3000) {
+        meteorsSpeed = 2;
+    }
+    if (score == 6000) {
+        meteorsSpeed = 4;
+    }
+
     // Create a new meteor if all meteors on screen are destroyed.
     if(meteors.length == 0) {
         meteors.push({
@@ -387,7 +398,16 @@ function decreaseEarthHPComet(){
 
 function endgame(){
     const gameOver = document.querySelector(".game--over");
+    
     gameOver.style.display = "block";
+    // If earth was destroyed, show a different image.
+    if(earthHP == 0) {
+        displayImage.src = "images/destroyed-planet.svg";
+        message.textContent = "You have failed every citizen of the Earth. The earth was destroyed thanks to you n00b."
+    } else {
+        displayImage.src = "images/gravestone.svg";
+        message.textContent = "Thank you for your service. At least you tried.";
+    }
 }
 
 // Health renew callback function to push into the array
