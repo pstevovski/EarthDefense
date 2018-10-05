@@ -50,8 +50,13 @@ let shipY = 250;
 let hitBoundary = false;
 
 // Spaceship ammo
-let ammoX = shipX + ship.width;
-let ammoY = shipY + (ship.height / 2);
+// let ammoX = shipX + ship.width;
+// let ammoY = shipY + (ship.height / 2);
+let ammo = [];
+ammo[0] = {
+    x:shipX + ship.width,
+    y: shipY + (ship.height / 2)
+}
 
 // Meteors
 let meteors = [];
@@ -124,8 +129,12 @@ function shoot(e){
     let key = e.keyCode;
     if(key == 32) {
         isSpaceDown = true;
-        ammoX = shipX + ship.width;
-        ammoY = shipY + (ship.height / 2);
+        // ammoX = shipX + ship.width;
+        // ammoY = shipY + (ship.height / 2);
+        ammo.push({
+            x: shipX + ship.width,
+            y: shipY + (ship.height / 2)
+        })
         missileSound.play();
         missileSound.currentTime = 0;
     } else {
@@ -135,11 +144,12 @@ function shoot(e){
 
 setInterval(updateRocketPosition, 2);
 function updateRocketPosition(){
-        ctx.drawImage(missile, ammoX, ammoY);
-        ammoX += 5;
+        for(let j = 0; j < ammo.length; j++) {
+        ctx.drawImage(missile, ammo[j].x, ammo[j].y);
+        ammo[j].x += 5;
 
         for(let i = 0; i < meteors.length; i++) {
-            if(ammoX >= meteors[i].x && ammoX <= meteors[i].x + meteor.width && ammoY >= meteors[i].y && ammoY <= meteors[i].y + meteor.height){
+            if(ammo[j].x >= meteors[i].x && ammo[j].x <= meteors[i].x + meteor.width && ammo[j].y >= meteors[i].y && ammo[j].y <= meteors[i].y + meteor.height){
                 // Draw explosion of the meteor.
                 ctx.drawImage(explosion, meteors[i].x - meteor.width, meteors[i].y - meteor.height);
 
@@ -149,7 +159,7 @@ function updateRocketPosition(){
         }
         // Ammo collides with the commet
         for(let i = 0; i < comets.length; i++) {
-            if(ammoX >= comets[i].x && ammoX <= comets[i].x + comet.width && ammoY >= comets[i].y && ammoY <= comets[i].y + comet.height) {
+            if(ammo[j].x >= comets[i].x && ammo[j].x <= comets[i].x + comet.width && ammo[j].y >= comets[i].y && ammo[j].y <= comets[i].y + comet.height) {
                 // Draw explosion at the spot
                 ctx.drawImage(explosion, comets[i].x - comet.width, comets[i].y - comet.height);
 
@@ -157,6 +167,7 @@ function updateRocketPosition(){
                 destroyComet();
             }
         }
+    }
 }
 
 function draw(){
@@ -324,49 +335,71 @@ function draw(){
 }
 
 function destroyMeteor(){
-    for(let i = 0; i < meteors.length; i++) {
-        // Ammo hits meteor
-        let ammoDestroysMeteor = ammoX >= meteors[i].x && ammoX <= meteors[i].x + meteor.width && ammoY >= meteors[i].y && ammoY <= meteors[i].y + meteor.height;
+    for(let j = 0; j < ammo.length; j++){
+        for(let i = 0; i < meteors.length; i++) {
+            // Ammo hits meteor
+            let ammoDestroysMeteor = ammo[j].x >= meteors[i].x && ammo[j].x <= meteors[i].x + meteor.width && ammo[j].y >= meteors[i].y && ammo[j].y <= meteors[i].y + meteor.height;
 
-        // Ship hits meteor
-        let shipDestroysMeteor = shipX + ship.width >= meteors[i].x && shipX <= meteors[i].x + meteor.width && shipY + ship.height >= meteors[i].y && shipY <= meteors[i].y + meteor.height;
+            // Ship hits meteor
+            let shipDestroysMeteor = shipX + ship.width >= meteors[i].x && shipX <= meteors[i].x + meteor.width && shipY + ship.height >= meteors[i].y && shipY <= meteors[i].y + meteor.height;
 
-        // Either the ammo destorys the meteor, or the ship.
-        if(ammoDestroysMeteor || shipDestroysMeteor) {
-            let item = meteors[i];
-            let index = meteors.indexOf(item);
-            if(index > -1) {
-                meteors.splice(index, 1);
+            // Destory missile if ammo destoys meteor
+            if(ammoDestroysMeteor) {
+                let missile = ammo[j];
+                let missileIndex = ammo.indexOf(missile);
+                if(missileIndex > -1) {
+                    ammo.splice(missileIndex, 1);
+                }
             }
-            // Update score
-            score += 100;
-            displayScore.textContent = score;
+
+            // Either the ammo destorys the meteor, or the ship.
+            if(ammoDestroysMeteor || shipDestroysMeteor) {
+                let item = meteors[i];
+                let index = meteors.indexOf(item);
+                if(index > -1) {
+                    meteors.splice(index, 1);
+                }
+                // Update score
+                score += 100;
+                displayScore.textContent = score;
+            }
+            explosionSound.play();
+            explosionSound.currentTime = 0;
         }
-        explosionSound.play();
-        explosionSound.currentTime = 0;
     }
 }
 function destroyComet() {
-    for(let i = 0; i < comets.length; i++) {
-        // Ammo hits meteor
-        let ammoDestroysComet = ammoX >= comets[i].x && ammoX <= comets[i].x + comet.width && ammoY >= comets[i].y && ammoY <= comets[i].y + comet.height;
+    for(let j = 0; j < ammo.length; j++) {
+        for(let i = 0; i < comets.length; i++) {
+            // Ammo hits meteor
+            let ammoDestroysComet =  ammo[j].x >= comets[i].x && ammo[j].x <= comets[i].x + comet.width && ammo[j].y >= comets[i].y && ammo[j].y <= comets[i].y + comet.height;
 
-        // Ship hits meteor
-        let shipDestroysComet = shipX + ship.width >= comets[i].x && shipX <= comets[i].x + comet.width && shipY + ship.height >= comets[i].y && shipY <= comets[i].y + comet.height;
+            // Ship hits meteor
+            let shipDestroysComet = shipX + ship.width >= comets[i].x && shipX <= comets[i].x + comet.width && shipY + ship.height >= comets[i].y && shipY <= comets[i].y + comet.height;
 
-        // Either the ammo destorys the meteor, or the ship.
-        if(ammoDestroysComet || shipDestroysComet) {
-            let item = comets[i];
-            let index = comets.indexOf(item);
-            if(index > -1) {
-                comets.splice(index, 1);
+            // Destory missile if ammo destoys meteor
+            if(ammoDestroysComet) {
+                let missile = ammo[j];
+                let missileIndex = ammo.indexOf(missile);
+                if(missileIndex > -1) {
+                    ammo.splice(missileIndex, 1);
+                }
             }
-            // Update score
-            score += 500;
-            displayScore.textContent = score;
+
+            // Either the ammo destorys the meteor, or the ship.
+            if(ammoDestroysComet || shipDestroysComet) {
+                let item = comets[i];
+                let index = comets.indexOf(item);
+                if(index > -1) {
+                    comets.splice(index, 1);
+                }
+                // Update score
+                score += 500;
+                displayScore.textContent = score;
+            }
+            explosionSound.play();
+            explosionSound.currentTime = 0;
         }
-        explosionSound.play();
-        explosionSound.currentTime = 0;
     }
 }
 function decreaseShipHP()   {
