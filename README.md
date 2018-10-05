@@ -23,12 +23,14 @@ Defend the Earth from the upcoming meteors! (WIP).
 * [x] If the comet hits the meteor or the ship, decrease the HP by 40.
 * [x] Sounds for shooting and meteor destruction.
 * [x] Corrected ship movement. Now the ship moves as long as you hold the key, when you release the direction key it stops.
+* [x]  Game end because player died
+* [x]  Game ends because earth is destroyed.
+* [x]  Different game over menu (RIP if dead, noob if Earth is destroyed, good job if completed)
+* [x]  When user reaches 3000 points & 6000 points, speed up the speed at which the meteors are incoming.
 -------------------
-* [ ]  More bullets to be up at the same time.
+* [ ]  More missiles to be up at the same time.
+* [ ]  Destroy missile (remove from screen) when it hits meteor / comet.
 * [ ]  Explosion image does not appears for every meteor hit. Sometimes it does, sometimes doesnt.
-* [ ]  Different game over menu image (RIP if dead, something else if "EARTH DEFENDED")
-* [ ]  Game end because player died
-* [ ]  Game ends because earth is destroyed.
 * [ ]  Pause menu (continue - quit game)
 * [ ]  Display score and highscore on game end.
 * [ ]  Canvas revamp (full window width and height?) ?
