@@ -27,9 +27,9 @@ Defend the Earth from the upcoming meteors! (WIP).
 * [x]  Game ends because earth is destroyed.
 * [x]  Different game over menu (RIP if dead, noob if Earth is destroyed, good job if completed)
 * [x]  When user reaches 3000 points & 6000 points, speed up the speed at which the meteors are incoming.
+* [x]  More missiles to be up at the same time.
+* [x]  Destroy missile (remove from screen) when it hits meteor / comet.
 -------------------
-* [ ]  More missiles to be up at the same time.
-* [ ]  Destroy missile (remove from screen) when it hits meteor / comet.
 * [ ]  Explosion image does not appears for every meteor hit. Sometimes it does, sometimes doesnt.
 * [ ]  Pause menu (continue - quit game)
 * [ ]  Display score and highscore on game end.
