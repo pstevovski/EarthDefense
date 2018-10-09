@@ -49,18 +49,18 @@
 
     <!-- GAME FINISHED / GAME OVER MENU -->
     <div class="game--over">
-        <img src="images/gravestone.svg" alt="Gravestone" width="70px"  height="70px">
-        <p>Thank you for your service.</p>
+        <img id="displayImage" src="images/gravestone.svg" alt="Gravestone" width="70px"  height="70px">
+        <p id="message">Thank you for your service.</p>
         <div class="scores">
             <p>Score: <span id="finalScore"></span></p>
             <p>Highscore: <span id="highscore"></span></p>
         </div>
-        <a id="exitGame">EXIT</a>
+        <a class="exitGame">EXIT</a>
     </div>
 
     <!-- GAME WINDOW -->
     <div class="menu">
-        <p>MENU</p>
+        <p id="openMenu">MENU</p>
         <p class="score">SCORE: <span id="score">0</span></p>
         <div class="bars">
             <!-- SHIP HP BAR -->
@@ -75,6 +75,14 @@
             </div>
         </div>
     </div>
+
+    <!-- PAUSE MENU -->
+    <div class="pause--menu">
+        <h3>GAME PAUSED...</h3>
+        <p id="continueGame">CONTINUE</p>
+        <p class="exitGame">QUIT</p>
+    </div>
+
     <!-- GAME WINDOW - INFO BOX -->
     <div class="infobox">
         <div class="spacecorps">
