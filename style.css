@@ -171,7 +171,7 @@ canvas{
     background-color: #2f3640;
     color: #f5f5f5;
     font-family: "Titillium Web Regular";
-    width: 200px;
+    width: 300px;
     height: auto;
     padding: 20px;
     border: 2px solid #f5f5f5;
@@ -218,4 +218,26 @@ canvas{
     background-color: #00a8ff;
     transition: 0.5s ease;
     border-radius: 15px;
+}
+/* PAUSE MENU */
+.pause--menu{
+    display: none;
+    width: 190px;
+    height: 130px;
+    padding: 10px;
+    color: #f5f5f5;
+    text-align: center;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #dddddd30;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9;
+}
+.pause--menu p{
+    margin: 10px 0;
+    cursor: pointer;
 }
