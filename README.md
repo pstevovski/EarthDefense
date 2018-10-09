@@ -29,8 +29,11 @@ Defend the Earth from the upcoming meteors! (WIP).
 * [x]  When user reaches 3000 points & 6000 points, speed up the speed at which the meteors are incoming.
 * [x]  More missiles to be up at the same time.
 * [x]  Destroy missile (remove from screen) when it hits meteor / comet.
+* [x]  Use a flag variable to hold the meteors and ship from moving untill message disappears.
+* [x]  Pause / Continue game
+* [x]  Display score and highscore on game end.
 -------------------
 * [ ]  Explosion image does not appears for every meteor hit. Sometimes it does, sometimes doesnt.
-* [ ]  Pause menu (continue - quit game)
-* [ ]  Display score and highscore on game end.
 * [ ]  Canvas revamp (full window width and height?) ?
+* [ ]  Adjust meteor speed after 6000 points. Currently way too fast.
+* [ ]  Fix issue with rocket firing at the start of the game.
