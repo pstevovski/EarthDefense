@@ -6,12 +6,14 @@ let shipHP = 100;
 let earthHP = 100;
 let meteorsSpeed = 1;
 let isSpaceDown = false;
+let gameStarted = false;
 let displayShipHP = document.querySelector(".ship-hpFill");
 let displayEarthHP = document.querySelector(".earth-hpFill");
 const menu = document.querySelector(".menu");
 const displayScore = document.querySelector("#score");
 const displayImage = document.querySelector("#displayImage");
 const message = document.querySelector("#message");
+const pauseMenu = document.querySelector(".pause--menu");
 
 // Canvas
 const canvas = document.querySelector("#canvas");
@@ -50,8 +52,6 @@ let shipY = 250;
 let hitBoundary = false;
 
 // Spaceship ammo
-// let ammoX = shipX + ship.width;
-// let ammoY = shipY + (ship.height / 2);
 let ammo = [];
 ammo[0] = {
     x:shipX + ship.width,
@@ -85,6 +85,7 @@ let initialCometPushed = false;
 function startGame(){
     const mainMenu = document.querySelector(".main-menu");
     mainMenu.classList.add("mainMenuFade")
+
     setTimeout(() => {
         mainMenu.style.display = "none";
         
@@ -103,6 +104,9 @@ function startGame(){
             // After 5 seconds make the infobox fade away. (remove the active class).
             setTimeout(() => {
                 infobox.classList.remove('infoBoxActive')
+
+                // Activate meteors and ship movement.
+                gameStarted = true;
             }, 5000);
         }, 1000);
 
@@ -112,59 +116,69 @@ function startGame(){
 // Move the spaceship
 function shipCommands(e){
     let key = e.keyCode;
-    if(key == 37) {
-        d = "LEFT"
-    } else if (key == 38) {
-        d = "UP"
-    } else if (key == 39) {
-        d = "RIGHT"
-    } else if (key == 40) {
-        d = "DOWN"
+
+    // If game has started, enable ship movement.
+    if(gameStarted) { 
+        if(key == 37) {
+            d = "LEFT"
+        } else if (key == 38) {
+            d = "UP"
+        } else if (key == 39) {
+            d = "RIGHT"
+        } else if (key == 40) {
+            d = "DOWN"
+        }
     }
 }
-function testShipCommands() {
-    d = " ";
-}
+
+// function clearShipCommands() {
+//     d = " ";
+// }
+
 function shoot(e){
     let key = e.keyCode;
-    if(key == 32) {
-        isSpaceDown = true;
-        // ammoX = shipX + ship.width;
-        // ammoY = shipY + (ship.height / 2);
-        ammo.push({
-            x: shipX + ship.width,
-            y: shipY + (ship.height / 2)
-        })
-        missileSound.play();
-        missileSound.currentTime = 0;
-    } else {
-        isSpaceDown = false;
+    if(gameStarted) { 
+        if(key == 32) {
+            isSpaceDown = true;
+            // ammoX = shipX + ship.width;
+            // ammoY = shipY + (ship.height / 2);
+            ammo.push({
+                x: shipX + ship.width,
+                y: shipY + (ship.height / 2)
+            })
+            missileSound.play();
+            missileSound.currentTime = 0;
+        } else {
+            isSpaceDown = false;
+        }
     }
 }
 
 setInterval(updateRocketPosition, 2);
 function updateRocketPosition(){
-        for(let j = 0; j < ammo.length; j++) {
-        ctx.drawImage(missile, ammo[j].x, ammo[j].y);
-        ammo[j].x += 5;
+    if(gameStarted) {
+            for(let j = 0; j < ammo.length; j++) {
+            ctx.drawImage(missile, ammo[j].x, ammo[j].y);
+            ammo[j].x += 5;
 
-        for(let i = 0; i < meteors.length; i++) {
-            if(ammo[j].x >= meteors[i].x && ammo[j].x <= meteors[i].x + meteor.width && ammo[j].y >= meteors[i].y && ammo[j].y <= meteors[i].y + meteor.height){
-                // Draw explosion of the meteor.
-                ctx.drawImage(explosion, meteors[i].x - meteor.width, meteors[i].y - meteor.height);
+            for(let i = 0; i < meteors.length; i++) {
+                if(ammo[j].x >= meteors[i].x && ammo[j].x <= meteors[i].x + meteor.width && ammo[j].y >= meteors[i].y && ammo[j].y <= meteors[i].y + meteor.height){
+                    // Draw explosion of the meteor.
+                    ctx.drawImage(explosion, meteors[i].x - meteor.width, meteors[i].y - meteor.height);
 
-                // Delete meteor from screen and add points.
-                destroyMeteor();
+                    // Delete meteor from screen and add points.
+                    destroyMeteor();
+                }
             }
-        }
-        // Ammo collides with the commet
-        for(let i = 0; i < comets.length; i++) {
-            if(ammo[j].x >= comets[i].x && ammo[j].x <= comets[i].x + comet.width && ammo[j].y >= comets[i].y && ammo[j].y <= comets[i].y + comet.height) {
-                // Draw explosion at the spot
-                ctx.drawImage(explosion, comets[i].x - comet.width, comets[i].y - comet.height);
+            // Ammo collides with the commet
+            for(let i = 0; i < comets.length; i++) {
+                if(ammo[j].x >= comets[i].x && ammo[j].x <= comets[i].x + comet.width && ammo[j].y >= comets[i].y && ammo[j].y <= comets[i].y + comet.height) {
+                    // Draw explosion at the spot
+                    ctx.drawImage(explosion, comets[i].x - comet.width, comets[i].y - comet.height);
 
-                // Delete comet from screen and add points.
-                destroyComet();
+                    // Delete comet from screen and add points.
+                    destroyComet();
+                }
             }
         }
     }
@@ -173,51 +187,55 @@ function updateRocketPosition(){
 function draw(){
     canvas.style.display = "block";
     ctx.drawImage(bg, 0,0);
+    
+    // Check if the game started
+    if(gameStarted) {
+        for(let i = 0; i < meteors.length;i++){
+            // Draw a meteor
+            ctx.drawImage(meteor, meteors[i].x, meteors[i].y);
 
-    for(let i = 0; i < meteors.length;i++){
-        // Draw a meteor
-        ctx.drawImage(meteor, meteors[i].x, meteors[i].y);
+            meteors[i].x -= meteorsSpeed;
 
-        meteors[i].x -= meteorsSpeed;
-
-        if(meteors[i].x == 1200) {
-            meteors.push({
-                x: cWidth,
-                y: Math.floor(Math.random() * ( (maxHeight-meteor.height) - minHeight) + minHeight) 
-            })
-        }
-        // If spaceship and meteor colide
-        if(shipX + ship.width >= meteors[i].x && shipX <= meteors[i].x + meteor.width && shipY + ship.height >= meteors[i].y && shipY <= meteors[i].y + meteor.height) {
-            // Draw explosion at those coords.
-            ctx.drawImage(explosion, meteors[i].x - meteor.width, meteors[i].y - meteor.height);
-
-            // Delete the meteor from screen.
-            destroyMeteor();
-
-            // Deduct HP on hit.
-            decreaseShipHP();
-
-            // If spaceship HP reaches 0, end game.
-            if(shipHP == 0) {
-                clearInterval(game);
-                endgame();
+            if(meteors[i].x == 1200) {
+                meteors.push({
+                    x: cWidth,
+                    y: Math.floor(Math.random() * ( (maxHeight-meteor.height) - minHeight) + minHeight) 
+                })
             }
-        }
+            // If spaceship and meteor colide
+            if(shipX + ship.width >= meteors[i].x && shipX <= meteors[i].x + meteor.width && shipY + ship.height >= meteors[i].y && shipY <= meteors[i].y + meteor.height) {
+                // Draw explosion at those coords.
+                ctx.drawImage(explosion, meteors[i].x - meteor.width, meteors[i].y - meteor.height);
 
-        // If meteor goes past the canvas width, remove.
-        if(meteors[i].x + meteor.width < 0) {
-            meteors.splice(meteors[i], 1);
+                // Delete the meteor from screen.
+                destroyMeteor();
 
-            // Decrease earth's HP.
-            decreaseEarthHP();
-            
-            // End game if earth is destroyed.
-            if(earthHP == 0) {
-                clearInterval(game);
-                endgame();
+                // Deduct HP on hit.
+                decreaseShipHP();
+
+                // If spaceship HP reaches 0, end game.
+                if(shipHP == 0) {
+                    clearInterval(game);
+                    endgame();
+                }
+            }
+
+            // If meteor goes past the canvas width, remove.
+            if(meteors[i].x + meteor.width < 0) {
+                meteors.splice(meteors[i], 1);
+
+                // Decrease earth's HP.
+                decreaseEarthHP();
+                
+                // End game if earth is destroyed.
+                if(earthHP == 0) {
+                    clearInterval(game);
+                    endgame();
+                }
             }
         }
     }
+
     // Increase difficulty when user reaches a certain score point.
     if(score == 3000) {
         meteorsSpeed = 2;
@@ -430,6 +448,9 @@ function decreaseEarthHPComet(){
 }
 
 function endgame(){
+    // Stop movements
+    gameStarted = false;
+
     const gameOver = document.querySelector(".game--over");
     
     gameOver.style.display = "block";
@@ -440,6 +461,15 @@ function endgame(){
     } else {
         displayImage.src = "images/gravestone.svg";
         message.textContent = "Thank you for your service. At least you tried.";
+    }
+
+    // Score and Highscore
+    document.querySelector("#finalScore").textContent = score;
+    let highscore = localStorage.getItem("highscore");
+    document.querySelector("#highscore").textContent = highscore;
+    if(score > highscore) {
+        localStorage.setItem("highscore", score);
+        document.querySelector("#highscore").textContent = localStorage.getItem("highscore");
     }
 }
 
@@ -481,16 +511,41 @@ function spawnComet(){
 spawnComet();
 
 
+// Display pause menu
+function displayPauseMenu(){
+    // Display the menu
+    pauseMenu.style.display = "flex";
+
+    // Clear the interval for the game
+    clearInterval(game);
+
+    // Stop meteors and ship from moving
+    gameStarted = false;
+}
+
+// Continue game
+function continueGame(){
+    // Hide the menu
+    pauseMenu.style.display = "none";
+
+    // Run the interval
+    game = setInterval(draw, 1000 / 60);
+
+    // Enable meteors and ship movement
+    gameStarted = true;
+}
+
 // Exit game
-document.querySelector("#exitGame").addEventListener("click", ()=>{
+document.querySelectorAll(".exitGame").forEach(exit => exit.addEventListener("click", ()=>{
     location.reload();
-})
+}))
 
 // Event listeners
 document.addEventListener("keydown", shipCommands);
-document.addEventListener("keyup", testShipCommands);
+// document.addEventListener("keyup", clearShipCommands);
 document.querySelector("#startGame").addEventListener("click", startGame);
 document.addEventListener("keyup", shoot);
-
+document.querySelector("#openMenu").addEventListener("click", displayPauseMenu);
+document.querySelector("#continueGame").addEventListener("click", continueGame);
 
 
