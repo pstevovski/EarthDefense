@@ -94,7 +94,7 @@ function startGame(){
         menu.style.display = "flex";
         setTimeout(() => {
             menu.classList.add("menuActive");
-        }, 500);
+        }, 5000);
 
         // Show the info box
         const infobox = document.querySelector(".infobox");
@@ -110,6 +110,16 @@ function startGame(){
                 gameStarted = true;
             }, 5000);
         }, 1000);
+
+        const controlsInfo = document.querySelector(".controlsInfo");
+        setTimeout(() => {
+            controlsInfo.style.display = "block";
+
+            // Hide the controls info
+            setTimeout(() => {
+                controlsInfo.classList.add("controlsInfoActive");
+            }, 2000);
+        }, 8000);
 
         game = setInterval(draw, 1000/60);
     }, 2500);
@@ -141,8 +151,6 @@ function shoot(e){
     if(gameStarted) { 
         if(key == 32) {
             isSpaceDown = true;
-            // ammoX = shipX + ship.width;
-            // ammoY = shipY + (ship.height / 2);
             ammo.push({
                 x: shipX + ship.width,
                 y: shipY + (ship.height / 2)
