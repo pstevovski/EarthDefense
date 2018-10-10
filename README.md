@@ -32,8 +32,9 @@ Defend the Earth from the upcoming meteors! (WIP).
 * [x]  Use a flag variable to hold the meteors and ship from moving untill message disappears.
 * [x]  Pause / Continue game
 * [x]  Display score and highscore on game end.
+* [x]  Adjust meteor speed after 6000 points.
 -------------------
 * [ ]  Explosion image does not appears for every meteor hit. Sometimes it does, sometimes doesnt.
 * [ ]  Canvas revamp (full window width and height?) ?
-* [ ]  Adjust meteor speed after 6000 points. Currently way too fast.
 * [ ]  Fix issue with rocket firing at the start of the game.
+* [ ]  Graphical Update to the assets (ship, background, rocket).
