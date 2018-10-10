@@ -4,6 +4,7 @@ let game;
 let score = 0;
 let shipHP = 100;
 let earthHP = 100;
+let meteorSpawnDistance = 1200;
 let meteorsSpeed = 1;
 let isSpaceDown = false;
 let gameStarted = false;
@@ -196,7 +197,7 @@ function draw(){
 
             meteors[i].x -= meteorsSpeed;
 
-            if(meteors[i].x == 1200) {
+            if(meteors[i].x == meteorSpawnDistance) {
                 meteors.push({
                     x: cWidth,
                     y: Math.floor(Math.random() * ( (maxHeight-meteor.height) - minHeight) + minHeight) 
@@ -242,6 +243,7 @@ function draw(){
     }
     if (score == 6000) {
         meteorsSpeed = 4;
+        meteorSpawnDistance = 1000;
     }
 
     // Create a new meteor if all meteors on screen are destroyed.
