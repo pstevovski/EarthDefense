@@ -34,6 +34,8 @@ Defend the Earth from the upcoming meteors! (WIP).
 * [x]  Display score and highscore on game end.
 * [x]  Graphical Update to the assets (ship, background, rocket).
 * [x]  Added notification for controls.
+* [x]  Add notification when reaching a ceratin score (3000-6000-10 000) "Another disturbance in the Asteroid belt has launched the meteors even faster."
+* [x]  Add gun over-heating if user spams shoot too much
 -------------------
 * [ ]  Comet spawns early bug.
 * [ ]  Explosion image does not appears for every meteor hit. Sometimes it does, sometimes doesnt.
@@ -41,6 +43,4 @@ Defend the Earth from the upcoming meteors! (WIP).
 * [ ]  Fix issue with rocket firing at the start of the game.
 * [ ]  Adjust meteor speed after 6000 points.
 * [ ]  Add media queries for 1080p, 1440p and 4k.
-* [ ]  Add gun over-heating if user spams shoot too much
 * [ ]  After 10.000(?) points accumulated, stop meteors from spawning and spawn a giant alien space ship which will be sort of a boss fight.
-* [ ]  Add notification when reaching a ceratin score (3000-6000-10 000) "Another disturbance in the Asteroid belt has launched the meteors even faster."
