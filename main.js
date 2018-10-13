@@ -4,10 +4,12 @@ let game;
 let score = 0;
 let shipHP = 100;
 let earthHP = 100;
+let overheat = 0;
 let meteorSpawnDistance = 1200;
 let meteorsSpeed = 1;
 let isSpaceDown = false;
 let gameStarted = false;
+let isOverheated = false;
 let displayShipHP = document.querySelector(".ship-hpFill");
 let displayEarthHP = document.querySelector(".earth-hpFill");
 const menu = document.querySelector(".menu");
@@ -15,6 +17,8 @@ const displayScore = document.querySelector("#score");
 const displayImage = document.querySelector("#displayImage");
 const message = document.querySelector("#message");
 const pauseMenu = document.querySelector(".pause--menu");
+let notificationText = document.querySelector(".notification");
+
 
 // Canvas
 const canvas = document.querySelector("#canvas");
@@ -148,7 +152,7 @@ function shipCommands(e){
 
 function shoot(e){
     let key = e.keyCode;
-    if(gameStarted) { 
+    if(gameStarted && isOverheated == false) { 
         if(key == 32) {
             isSpaceDown = true;
             ammo.push({
@@ -157,10 +161,33 @@ function shoot(e){
             })
             missileSound.play();
             missileSound.currentTime = 0;
+            overheated();
         } else {
             isSpaceDown = false;
         }
     }
+}
+
+const overheatFill = document.querySelector(".gunOverheat-fill");
+function overheated(){
+    overheat = overheat + 5;
+    overheatFill.style.width = `${overheat}%`;
+    // If overheat meter reaches max(100), stop the ship from shooting, when it starts cooling off enable shooting.
+    if(overheat == 100) {
+        isOverheated = true;
+        coolOut();
+    } else if (overheat < 100 && overheat > 0) {
+        isOverheated = false;
+    }
+}
+
+// When gun overheats, wait 2 seconds, the cool it out and enable shooting.
+function coolOut(){
+    setTimeout(() => {
+        overheat = 0;
+        isOverheated = false;
+        overheatFill.style.width = `${overheat}%`;
+    }, 1000);
 }
 
 setInterval(updateRocketPosition, 2);
@@ -248,10 +275,12 @@ function draw(){
     // Increase difficulty when user reaches a certain score point.
     if(score == 3000) {
         meteorsSpeed = 2;
+        displayNotification();
     }
     if (score == 6000) {
         meteorsSpeed = 4;
         meteorSpawnDistance = 1000;
+        displayNotification();
     }
 
     // Create a new meteor if all meteors on screen are destroyed.
@@ -396,6 +425,24 @@ function destroyMeteor(){
         }
     }
 }
+
+// Display notification
+function displayNotification(){
+    notificationText.classList.add("activeNotification");
+    if(score == 3000) {
+        notificationText.innerHTML = `<i class="material-icons">warning</i> <p>Another Disturbance!</p>`
+    } else if (score == 6000) {
+        notificationText.innerHTML= `<i class="material-icons">warning</i> <p>Another Disturbance!</p>`
+    } else if (score == 10000) {
+        notificationText.innerHTML = `<i class="material-icons">warning</i> <p>Watch out for the alien spaceship!!</p>`
+    }
+
+    // Remove the class after 4 seconds
+    setTimeout(() => {
+        notificationText.classList.remove('activeNotification');
+    }, 4000);
+}
+
 function destroyComet() {
     for(let j = 0; j < ammo.length; j++) {
         for(let i = 0; i < comets.length; i++) {
@@ -435,12 +482,14 @@ function decreaseShipHP()   {
     displayShipHP.style.width = `${shipHP}%`;
 }
 
-function restoreShipHP() {   
+function restoreShipHP() {
     if(shipHP == 100) {
         shipHP = shipHP;
     } else {
         shipHP = shipHP + 20;
         displayShipHP.style.width = `${shipHP}%`;
+        notificationText.innerHTML = `<i class="material-icons">local_hospital</i><p>Health renewed!</p>`;
+        displayNotification();
     }
 }
 function decreaseEarthHP() {
