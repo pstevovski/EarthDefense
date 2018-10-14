@@ -36,11 +36,23 @@ Defend the Earth from the upcoming meteors! (WIP).
 * [x]  Added notification for controls.
 * [x]  Add notification when reaching a ceratin score (3000-6000-10 000) "Another disturbance in the Asteroid belt has launched the meteors even faster."
 * [x]  Add gun over-heating if user spams shoot too much
+* [x]  Display alien spaceship at 10k points
+* [x]  Alien ship movement
+* [x]  Rocekt/explosion detection on alien space ship decreasing HP by 10.
+* [x]  Alien spaceship shooting rockets every 1s
+* [x]  Alien rockets hitting Player spaceship, decreasing HP by 10.
+* [x]  Display alien ship HP (200 HP) when alien spawns. 
+* [x]  Add 1500 to the score when defeating the alien
 -------------------
-* [ ]  Comet spawns early bug.
-* [ ]  Explosion image does not appears for every meteor hit. Sometimes it does, sometimes doesnt.
 * [ ]  Canvas revamp (full window width and height?) ?
-* [ ]  Fix issue with rocket firing at the start of the game.
 * [ ]  Adjust meteor speed after 6000 points.
 * [ ]  Add media queries for 1080p, 1440p and 4k.
-* [ ]  After 10.000(?) points accumulated, stop meteors from spawning and spawn a giant alien space ship which will be sort of a boss fight.
+* [ ]  Weapon upgrades?
+* [ ]  Add different game ending menu if the user beats the game.
+* [ ]  Clean code
+* [ ]  Refactoring
+-------------------
+###### Bugs:
+* [ ]  Comet spawns early bug.
+* [ ]  Explosion image does not appears for every meteor hit. Sometimes it does, sometimes doesnt.
+* [ ]  Fix issue with rocket firing at the start of the game.
