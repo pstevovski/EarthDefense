@@ -3,6 +3,7 @@ let d;
 let game;
 let score = 0;
 let shipHP = 100;
+let alienHP = 200;
 let earthHP = 100;
 let overheat = 0;
 let meteorSpawnDistance = 1200;
@@ -10,14 +11,16 @@ let meteorsSpeed = 1;
 let isSpaceDown = false;
 let gameStarted = false;
 let isOverheated = false;
+let bossSpawned = false;
 let displayShipHP = document.querySelector(".ship-hpFill");
 let displayEarthHP = document.querySelector(".earth-hpFill");
+let notificationText = document.querySelector(".notification");
+let displayAlienHP = document.querySelector(".alien-hpFill");
 const menu = document.querySelector(".menu");
 const displayScore = document.querySelector("#score");
 const displayImage = document.querySelector("#displayImage");
 const message = document.querySelector("#message");
 const pauseMenu = document.querySelector(".pause--menu");
-let notificationText = document.querySelector(".notification");
 
 
 // Canvas
@@ -36,6 +39,7 @@ const missile = new Image();
 const explosion = new Image();
 const firstAid = new Image();
 const comet = new Image();
+const alien = new Image();
 const missileSound = new Audio();
 const explosionSound = new Audio();
 
@@ -46,6 +50,7 @@ missile.src = "images/torpedo.png";
 explosion.src = "images/explosion.png";
 firstAid.src = "images/firstAid.png";
 comet.src = "images/comet.png";
+alien.src = "images/ufo.png";
 missileSound.src = "rocket.wav";
 missileSound.volume = 0.1;
 explosionSound.src = "explosion.wav";
@@ -55,6 +60,10 @@ explosionSound.volume = 0.1;
 let shipX = 50;
 let shipY = 250;
 let hitBoundary = false;
+
+// Alien spaceship coordinates
+let alienX = cWidth - 200;
+let alienY = 250;
 
 // Spaceship ammo
 let ammo = [];
@@ -216,6 +225,10 @@ function updateRocketPosition(){
                     destroyComet();
                 }
             }
+            // If rockets hit alien spaceship
+            if(ammo[j].x >= alienX && ammo[j].x <= alienX + alien.width && ammo[j].y >= alienY && ammo[j].y <= alienY + alien.height && bossSpawned == true) {
+                alienShipHit();
+            }
         }
     }
 }
@@ -225,7 +238,7 @@ function draw(){
     ctx.drawImage(bg, 0,0);
     
     // Check if the game started
-    if(gameStarted) {
+    if(gameStarted && bossSpawned == false) {
         for(let i = 0; i < meteors.length;i++){
             // Draw a meteor
             ctx.drawImage(meteor, meteors[i].x, meteors[i].y);
@@ -270,6 +283,13 @@ function draw(){
                 }
             }
         }
+        // Create a new meteor if all meteors on screen are destroyed.
+        if(meteors.length == 0) {
+            meteors.push({
+                x: cWidth,
+                y: Math.floor(Math.random() * ( (maxHeight-meteor.height) - minHeight) + minHeight) 
+            })
+        }
     }
 
     // Increase difficulty when user reaches a certain score point.
@@ -283,12 +303,17 @@ function draw(){
         displayNotification();
     }
 
-    // Create a new meteor if all meteors on screen are destroyed.
-    if(meteors.length == 0) {
-        meteors.push({
-            x: cWidth,
-            y: Math.floor(Math.random() * ( (maxHeight-meteor.height) - minHeight) + minHeight) 
-        })
+    // Spawn the boss
+    if(score >= 300) {
+        bossSpawned = true;
+        // Destroy all meteors
+        meteors.splice(0);
+        // Draw the boss
+        ctx.drawImage(alien, alienX, alienY);
+        alienMovement();
+        // Display alien HP bar
+        displayAlienHP.style.width = `${alienHP}%`;
+        document.querySelector(".alien-hp").classList.add("alien-hpActive");
     }
 
     // Display health renew with a timeout
@@ -390,6 +415,102 @@ function draw(){
     // Draw the ship
     ctx.drawImage(ship, shipX, shipY);
 }
+
+// Alien spaceship movement
+let alienGoingDown = true;
+function alienMovement(){
+    if(alienY == 500 - alien.height) {
+        alienGoingDown = false;
+    } else if (alienY == 0) {
+        alienGoingDown = true;
+    }
+
+    if(alienGoingDown == false) {
+        alienY -= 2;
+    } else if(alienGoingDown == true) {
+        alienY += 2;
+    }
+}
+
+// Triggers on hit
+function alienShipHit(){
+    // Draw explosion
+    ctx.drawImage(explosion, alienX, alienY);
+
+    // Destroy the rocket
+    for(let i = 0; i < ammo.length; i++) {
+        let rockets = ammo[i];
+        let rocketsIndex = ammo.indexOf(rockets);
+        if(rocketsIndex > -1) {
+            ammo.splice(rocketsIndex, 1);
+        }
+    }
+    // Decrease alien ship HP
+    alienHP = alienHP - 20;
+    displayAlienHP.style.width = `${alienHP}%`;
+    if(alienHP == 0) {
+        score += 1500;
+        clearInterval(game);
+        endgame();
+    }
+    explosionSound.play();
+    explosionSound.currentTime = 0;
+}
+
+// Alien ship shooting
+let alienAmmo = [];
+alienAmmo[0] = {
+    x: alienX + alien.width,
+    y: alienY + (alien.height / 2)
+}
+function alienShooting(){
+    // Execute code ONLY if game is started AND the boss is spawned
+    if(gameStarted && bossSpawned) {
+          alienAmmo.push({
+            x: alienX + alien.width,
+            y: alienY + (alien.height / 2)
+          })
+    }
+}
+
+// Update alien rocekt position
+setInterval(updateAlienRocket, 2);
+function updateAlienRocket() {
+    if(gameStarted && bossSpawned){
+        for(let i = 0; i < alienAmmo.length;i++) {
+            ctx.drawImage(missile, alienAmmo[i].x, alienAmmo[i].y);
+            alienAmmo[i].x -= 5;
+
+            if(alienAmmo[i].x >= shipX && alienAmmo[i].x <= shipX + ship.width && alienAmmo[i].y >= shipY && alienAmmo[i].y <= shipY + ship.height && bossSpawned == true ) {
+                // Draw explosion at the spot
+                ctx.drawImage(explosion, shipX, shipY);
+
+                // Run function when player's ship is hit.
+                playerHit();
+            }
+        }
+    }
+}
+
+function playerHit(){
+    // Decrease ship HP
+    decreaseShipHP();
+    // Destroy the alien ammo upon hit
+    for(let i = 0; i < alienAmmo.length; i++) {
+        let alienRockets = alienAmmo[i];
+        let alienIndex = alienAmmo.indexOf(alienRockets);
+        if(alienIndex > -1) {
+            alienAmmo.splice(alienIndex, 1);
+        } 
+    }
+    if(shipHP == 0) {
+        clearInterval(game);
+        clearInterval(alienShootingVariable);
+        endgame();
+    }
+}
+
+const alienShootingVariable = setInterval(alienShooting, 1500)
 
 function destroyMeteor(){
     for(let j = 0; j < ammo.length; j++){
