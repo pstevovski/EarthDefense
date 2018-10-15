@@ -40,6 +40,7 @@ const explosion = new Image();
 const firstAid = new Image();
 const comet = new Image();
 const alien = new Image();
+const alienMissile = new Image();
 const missileSound = new Audio();
 const explosionSound = new Audio();
 
@@ -51,6 +52,7 @@ explosion.src = "images/explosion.png";
 firstAid.src = "images/firstAid.png";
 comet.src = "images/comet.png";
 alien.src = "images/ufo.png";
+alienMissile.src = "images/alienAmmo.png";
 missileSound.src = "rocket.wav";
 missileSound.volume = 0.1;
 explosionSound.src = "explosion.wav";
@@ -67,10 +69,6 @@ let alienY = 250;
 
 // Spaceship ammo
 let ammo = [];
-ammo[0] = {
-    x:shipX + ship.width,
-    y: shipY + (ship.height / 2)
-}
 
 // Meteors
 let meteors = [];
@@ -164,6 +162,11 @@ function shoot(e){
     if(gameStarted && isOverheated == false) { 
         if(key == 32) {
             isSpaceDown = true;
+            // Display the rocket WHEN the user shoots.
+            ammo[0] = {
+                x:shipX + ship.width,
+                y: shipY + (ship.height / 2)
+            }
             ammo.push({
                 x: shipX + ship.width,
                 y: shipY + (ship.height / 2)
@@ -199,7 +202,6 @@ function coolOut(){
     }, 1000);
 }
 
-setInterval(updateRocketPosition, 2);
 function updateRocketPosition(){
     if(gameStarted) {
             for(let j = 0; j < ammo.length; j++) {
@@ -460,26 +462,25 @@ function alienShipHit(){
 // Alien ship shooting
 let alienAmmo = [];
 alienAmmo[0] = {
-    x: alienX + alien.width,
+    x: alienX - alien.width,
     y: alienY + (alien.height / 2)
 }
 function alienShooting(){
     // Execute code ONLY if game is started AND the boss is spawned
     if(gameStarted && bossSpawned) {
           alienAmmo.push({
-            x: alienX + alien.width,
+            x: alienX - alien.width,
             y: alienY + (alien.height / 2)
           })
     }
 }
 
 // Update alien rocekt position
-setInterval(updateAlienRocket, 2);
 function updateAlienRocket() {
     if(gameStarted && bossSpawned){
         for(let i = 0; i < alienAmmo.length;i++) {
-            ctx.drawImage(missile, alienAmmo[i].x, alienAmmo[i].y);
-            alienAmmo[i].x -= 5;
+            ctx.drawImage(alienMissile, alienAmmo[i].x, alienAmmo[i].y);
+            alienAmmo[i].x -= 10;
 
             if(alienAmmo[i].x >= shipX && alienAmmo[i].x <= shipX + ship.width && alienAmmo[i].y >= shipY && alienAmmo[i].y <= shipY + ship.height && bossSpawned == true ) {
                 // Draw explosion at the spot
@@ -491,6 +492,13 @@ function updateAlienRocket() {
         }
     }
 }
+
+// Update the position of the player's rockets and alien rockets when they are spawned
+function updatePositions(){
+    updateRocketPosition();
+    updateAlienRocket();
+}
+setInterval(updatePositions, 2);
 
 function playerHit(){
     // Decrease ship HP
@@ -510,7 +518,7 @@ function playerHit(){
     }
 }
 
-const alienShootingVariable = setInterval(alienShooting, 1500)
+const alienShootingVariable = setInterval(alienShooting, 400)
 
 function destroyMeteor(){
     for(let j = 0; j < ammo.length; j++){
@@ -598,6 +606,7 @@ function destroyComet() {
         }
     }
 }
+
 function decreaseShipHP()   {
     shipHP = shipHP - 20;
     displayShipHP.style.width = `${shipHP}%`;
@@ -634,13 +643,19 @@ function endgame(){
     const gameOver = document.querySelector(".game--over");
     
     gameOver.style.display = "block";
-    // If earth was destroyed, show a different image.
+    // Different image if player was killed or earth destroyed.
     if(earthHP == 0) {
         displayImage.src = "images/destroyed-planet.svg";
         message.textContent = "You have failed every citizen of the Earth. The earth was destroyed thanks to you n00b."
     } else {
         displayImage.src = "images/gravestone.svg";
         message.textContent = "Thank you for your service. At least you tried.";
+    }
+
+    // If alien "boss" is defeated show different image
+    if(alienHP == 0) {
+        displayImage.src = "images/alien.svg";
+        message.textContent = "Congratulations ! You have saved the earth from the allien."
     }
 
     // Score and Highscore
