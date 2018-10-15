@@ -219,6 +219,14 @@ canvas{
     transition: 0.5s ease;
     border-radius: 15px;
 }
+.alien-hp {
+    transform: translateY(100px);
+    transition: 0.5s ease;
+    overflow: hidden;
+}
+.alien-hpActive{
+    transform: translateY(0px);
+}
 .earth-hpFill{
     width: 100%;
     height: 100%;
@@ -231,6 +239,14 @@ canvas{
     height: 100%;
     border-radius: 15px;
     background-color: rgb(168, 33, 33);
+    transition: 0.5s ease;
+}
+.alien-hpFill{
+    overflow: hidden;
+    width: 0%;
+    height: 100%;
+    border-radius: 15px;
+    background-color: greenyellow;
     transition: 0.5s ease;
 }
 /* PAUSE MENU */
@@ -286,6 +302,9 @@ canvas{
     width: 1300px;
     height: 50px;
     overflow: hidden;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 .notification{
     display: flex;
