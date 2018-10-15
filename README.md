@@ -43,16 +43,21 @@ Defend the Earth from the upcoming meteors! (WIP).
 * [x]  Alien rockets hitting Player spaceship, decreasing HP by 10.
 * [x]  Display alien ship HP (200 HP) when alien spawns. 
 * [x]  Add 1500 to the score when defeating the alien
+* [x]  Add different game ending menu if the user beats the game.
+* [x]  Fix issue with rocket firing at the start of the game.
+* [x]  Comet spawns early bug.
+* [x]  At certain points, meteors are swapped with Alien space ships that fire rockets.
+* [x]  When alien spaceships ammo hit the players ship, decrease HP.
 -------------------
-* [ ]  Canvas revamp (full window width and height?) ?
-* [ ]  Adjust meteor speed after 6000 points.
-* [ ]  Add media queries for 1080p, 1440p and 4k.
-* [ ]  Weapon upgrades?
-* [ ]  Add different game ending menu if the user beats the game.
+* [ ]  At 10.000 points, swap meteors with tiny alien spaceships that will(?) fire rockets each 2 seconds AND add a timer - 1 min 30sec - which the user will have to survive before spawning the boss.
+* [ ]  Add a timer (1 minute 30 seconds) at point where user starts dealing with alien ships
+* [ ]  When timer runs out, spawn boss.
+* [ ]  Adjust meteor speed after 6000 points.(?)
 * [ ]  Clean code
 * [ ]  Refactoring
+* [ ]  Add media queries for 1080p, 1440p and 4k.
+* [ ]  Canvas revamp (full window width and height?) ?
 -------------------
 ###### Bugs:
-* [ ]  Comet spawns early bug.
 * [ ]  Explosion image does not appears for every meteor hit. Sometimes it does, sometimes doesnt.
-* [ ]  Fix issue with rocket firing at the start of the game.
+* [ ]  Player dies instantly when he hits the METEORS. When Alien spaceships are there instead of the meteors it works normal.
