@@ -87,10 +87,6 @@ let initialHealthPushed = false;
 
 // Comets for bonus points
 let comets = [];
-comets[0] = {
-    x: cWidth,
-    y: Math.floor(Math.random() * ( (maxHeight - comet.height) - minHeight) + minHeight)
-}
 let initialCometPushed = false;
 
 // Start game
@@ -306,8 +302,9 @@ function draw(){
     }
 
     // Spawn the boss
-    if(score >= 300) {
+    if(score == 10000) {
         bossSpawned = true;
+        displayNotification();
         // Destroy all meteors
         meteors.splice(0);
         // Draw the boss
@@ -385,6 +382,10 @@ function draw(){
     }
     // Start moving the comet after a set timeout
     setTimeout(() => {
+        comets[0] = {
+            x: cWidth,
+            y: Math.floor(Math.random() * ( (maxHeight - comet.height) - minHeight) + minHeight)
+        }
         for(let i = 0; i < comets.length;i++){
             comets[i].x--;
         }
@@ -461,17 +462,17 @@ function alienShipHit(){
 
 // Alien ship shooting
 let alienAmmo = [];
-alienAmmo[0] = {
-    x: alienX - alien.width,
-    y: alienY + (alien.height / 2)
-}
 function alienShooting(){
     // Execute code ONLY if game is started AND the boss is spawned
     if(gameStarted && bossSpawned) {
-          alienAmmo.push({
+        alienAmmo[0] = {
             x: alienX - alien.width,
             y: alienY + (alien.height / 2)
-          })
+        }
+        alienAmmo.push({
+            x: alienX - alien.width,
+            y: alienY + (alien.height / 2)
+        })
     }
 }
 
