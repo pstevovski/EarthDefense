@@ -48,10 +48,10 @@ Defend the Earth from the upcoming meteors! (WIP).
 * [x]  Comet spawns early bug.
 * [x]  At certain points, meteors are swapped with Alien space ships that fire rockets.
 * [x]  When alien spaceships ammo hit the players ship, decrease HP.
+* [x]  Add a timer (1 minute 30 seconds) at point where user starts dealing with alien ships
+* [x]  When timer runs out, spawn boss.
 -------------------
 * [ ]  At 10.000 points, swap meteors with tiny alien spaceships that will(?) fire rockets each 2 seconds AND add a timer - 1 min 30sec - which the user will have to survive before spawning the boss.
-* [ ]  Add a timer (1 minute 30 seconds) at point where user starts dealing with alien ships
-* [ ]  When timer runs out, spawn boss.
 * [ ]  Adjust meteor speed after 6000 points.(?)
 * [ ]  Clean code
 * [ ]  Refactoring
@@ -61,3 +61,6 @@ Defend the Earth from the upcoming meteors! (WIP).
 ###### Bugs:
 * [ ]  Explosion image does not appears for every meteor hit. Sometimes it does, sometimes doesnt.
 * [ ]  Player dies instantly when he hits the METEORS. When Alien spaceships are there instead of the meteors it works normal.
+* [ ]  Rockets arent  being destroyed on enemy target hit
+* [ ]  Meteors / alien spaceships dont increase speed at set points
+* [ ]  Comets(?) spawn at border 
