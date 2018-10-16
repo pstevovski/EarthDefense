@@ -13,6 +13,7 @@ let gameStarted = false;
 let isOverheated = false;
 let bossSpawned = false;
 let enemiesSpawned = false;
+let displayTimer = false;
 let displayShipHP = document.querySelector(".ship-hpFill");
 let displayEarthHP = document.querySelector(".earth-hpFill");
 let notificationText = document.querySelector(".notification");
@@ -292,40 +293,6 @@ function draw(){
         }
     }
 
-    // Increase difficulty when user reaches a certain score point.
-    if(score == 3000) {
-        meteorsSpeed = 2;
-        displayNotification();
-    }
-    if (score == 6000) {
-        meteorsSpeed = 4;
-        meteorSpawnDistance = 1000;
-        displayNotification();
-    }
-
-    // Spawn enemey alien space ships
-    if(score >= 300) {
-        // Change the image for the enemies to the aliens one.
-        enemy.src = "images/enemySpaceship.png";
-
-        // Enemies shoot every 2 seconds
-        enemiesSpawned = true;
-    }
-
-    // Spawn the boss after the alien soliders are spawned and 1:30 min has passed
-    // if(score == 10000) {
-    //     bossSpawned = true;
-    //     displayNotification();
-    //     // Destroy all enemies
-    //     enemies.splice(0);
-    //     // Draw the boss
-    //     ctx.drawImage(alien, alienX, alienY);
-    //     alienMovement();
-    //     // Display alien HP bar
-    //     displayAlienHP.style.width = `${alienHP}%`;
-    //     document.querySelector(".alien-hp").classList.add("alien-hpActive");
-    // }
-
     // Display health renew with a timeout
     for(let i = 0; i < healthRenew.length; i++){
         ctx.drawImage(firstAid, healthRenew[i].x, healthRenew[i].y);
@@ -435,23 +402,58 @@ function draw(){
     }
     // Draw the ship
     ctx.drawImage(ship, shipX, shipY);
+
+    // If boss is spawned
+    if(bossSpawned) {
+        // Draw the boss
+        ctx.drawImage(alien, alienX, alienY);
+        alienMovement();
+    }
+}
+
+// Timer
+let countdown;
+const timerDisplay = document.querySelector("#timerDisplay");
+const time = 10;
+function timer(seconds) {
+    clearInterval(countdown);
+
+    const now = Date.now();
+    const then = now + seconds * 1000;
+    displayTimeLeft(seconds);
+
+    countdown = setInterval(() =>{
+        const secondsLeft = Math.round((then - Date.now()) / 1000);
+        if(secondsLeft < 0) {
+            clearInterval(countdown);
+            // If the timer ran out, spawn the boss.
+            spawnBoss();
+            return;
+        }
+        displayTimeLeft(secondsLeft);
+    }, 1000)
+}
+
+function displayTimeLeft(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const remainder = seconds % 60;
+    timerDisplay.textContent = `${minutes}:${remainder < 10 ? 0 : ""}${remainder}`;
 }
 
 // Enemies 
 function enemiesShoot(){
     if(enemiesSpawned) {
-    let minShip = 0;
-    let maxShip = enemies.length;
-    minShip = Math.ceil(minShip);
-    maxShip = Math.floor(maxShip);
-    let randomShip = Math.floor(Math.random() * (maxShip - minShip + 1)) + minShip;
-    // Randomize
-    alienAmmo.push({
-        x: enemies[randomShip].x - enemy.width,
-        y: enemies[randomShip].y + (enemy.height / 2)
-    })
-    }
-    console.log(alienAmmo.length);
+        let minShip = 0;
+        let maxShip = enemies.length;
+        minShip = Math.ceil(minShip);
+        maxShip = Math.floor(maxShip);
+        let randomShip = Math.floor(Math.random() * (maxShip - minShip + 1)) + minShip;
+        // Randomize
+        alienAmmo.push({
+            x: enemies[randomShip].x - enemy.width,
+            y: enemies[randomShip].y + (enemy.height / 2)
+        })
+        }
 }
 
 const testing = setInterval(enemiesShoot, 2000);
@@ -460,7 +462,7 @@ function updateEnemyRocketPosition() {
     if(gameStarted && enemiesSpawned){
         for(let i = 0; i < alienAmmo.length;i++) {
             ctx.drawImage(alienMissile, alienAmmo[i].x, alienAmmo[i].y);
-            alienAmmo[i].x -= 2;
+            alienAmmo[i].x -= 5;
 
             if(alienAmmo[i].x >= shipX && alienAmmo[i].x <= shipX + ship.width && alienAmmo[i].y >= shipY && alienAmmo[i].y <= shipY + ship.height && enemiesSpawned == true ) {
                 // Draw explosion at the spot
@@ -613,8 +615,44 @@ function destroyMeteor(){
             explosionSound.currentTime = 0;
         }
     }
+    updateScore();
 }
 
+function updateScore() {
+    // Increase difficulty when user reaches a certain score point.
+    if(score == 3000) {
+        meteorsSpeed = 2;
+        displayNotification();
+    }
+    if (score == 6000) {
+        meteorsSpeed = 4;
+        meteorSpawnDistance = 1000;
+        displayNotification();
+    }
+
+    // Spawn enemey alien space ships
+    if(score == 12000) {
+        // Change the image for the enemies to the aliens one.
+        enemy.src = "images/enemySpaceship.png";
+
+        // Enemies shoot every 2 seconds
+        enemiesSpawned = true;
+
+        // Display timer
+        displayTimer = true;
+        
+        timer(time);
+    }
+}
+function spawnBoss() {
+    bossSpawned = true;
+    displayNotification();
+    // Destroy all enemies
+    enemies.splice(0);
+    // Display alien HP bar
+    displayAlienHP.style.width = `${alienHP}%`;
+    document.querySelector(".alien-hp").classList.add("alien-hpActive");
+}
 // Display notification
 function displayNotification(){
     notificationText.classList.add("activeNotification");
@@ -665,6 +703,7 @@ function destroyComet() {
             explosionSound.currentTime = 0;
         }
     }
+    updateScore();
 }
 
 function decreaseShipHP()   {
