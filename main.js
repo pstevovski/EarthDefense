@@ -453,13 +453,6 @@ function draw(){
         shipY -= 5;
     }
 
-    // // If alien ammo goes past canvas boundaries
-    // for(let i = 0; i < alienAmmo.length;i++){
-    //     if(alienAmmo[i].x <= 0) {
-
-    //     }
-    // }
-
     // Draw the ship
     ctx.drawImage(ship, shipX, shipY);
 
@@ -516,7 +509,7 @@ function enemiesShoot(){
         }
 }
 
-const testing = setInterval(enemiesShoot, 400);
+const testing = setInterval(enemiesShoot, 600);
 
 // Alien spaceship movement
 let alienGoingDown = true;
@@ -593,7 +586,7 @@ function playerHit(){
     }
 }
 
-const alienShootingVariable = setInterval(alienShooting, 400)
+const alienShootingVariable = setInterval(alienShooting, 600)
 
 function destroyEnemy(){
     for(let j = 0; j < ammo.length; j++){
