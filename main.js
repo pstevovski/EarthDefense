@@ -200,7 +200,16 @@ function overheated(){
     }
 }
 
-// When gun overheats, wait 1 second, the cool it out and enable shooting.
+// Gradually cool out the gun BEFORE it reaches overheating point
+function graduallyCoolOut(){
+    if(overheat <= 95 && overheat > 5) {
+        overheat = overheat - 5;
+        overheatFill.style.width = `${overheat}%`;
+    }
+}
+setInterval(graduallyCoolOut, 800)
+
+// When gun overheats, wait 1 second, then cool it out and enable shooting.
 function coolOut(){
     setTimeout(() => {
         overheat = 0;
@@ -472,7 +481,7 @@ function draw(){
 // Timer
 let countdown;
 const timerDisplay = document.querySelector("#timerDisplay");
-const time = 10;
+const time = 90;
 function timer(seconds) {
     clearInterval(countdown);
 
