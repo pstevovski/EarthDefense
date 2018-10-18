@@ -57,9 +57,9 @@ firstAid.src = "images/firstAid.png";
 comet.src = "images/comet.png";
 alien.src = "images/ufo.png";
 alienMissile.src = "images/alienAmmo.png";
-missileSound.src = "rocket.wav";
+missileSound.src = "Audio/weapon_player.wav";
 missileSound.volume = 0.1;
-explosionSound.src = "explosion.wav";
+explosionSound.src = "Audio/explosion_asteroid.wav";
 explosionSound.volume = 0.1;
 
 // Spaceship starting coordinates
@@ -71,7 +71,7 @@ let hitBoundary = false;
 let alienX = cWidth - 200;
 let alienY = 250;
 
-// Spaceship ammo
+// Player ammo
 let ammo = [];
 
 // Enemies
@@ -92,6 +92,9 @@ let initialHealthPushed = false;
 // Comets for bonus points
 let comets = [];
 let initialCometPushed = false;
+
+// Aliens (enemies) / Boss ammo
+let alienAmmo = [];
 
 // Start game
 function startGame(){
@@ -154,10 +157,12 @@ function shipCommands(e){
     }
 }
 
+// Clear spaceship's commands when key is released
 // function clearShipCommands() {
 //     d = " ";
 // }
 
+// Player shoots
 function shoot(e){
     let key = e.keyCode;
     if(gameStarted && isOverheated == false) { 
@@ -495,6 +500,7 @@ function displayTimeLeft(seconds) {
 
 // Enemies 
 function enemiesShoot(){
+    // If the enemies are spawned
     if(enemiesSpawned) {
         let minShip = 0;
         let maxShip = enemies.length;
@@ -509,11 +515,25 @@ function enemiesShoot(){
         }
 }
 
-const testing = setInterval(enemiesShoot, 600);
+const enemiesShootingInterval = setInterval(enemiesShoot, 600);
+
+// Alien boss spawn
+function spawnBoss() {
+    bossSpawned = true;
+    displayNotification();
+
+    // Destroy all enemies
+    enemies.splice(0);
+
+    // Display alien HP bar
+    displayAlienHP.style.width = `${alienHP}%`;
+    document.querySelector(".alien-hp").classList.add("alien-hpActive");
+}
 
 // Alien spaceship movement
 let alienGoingDown = true;
 function alienMovement(){
+    // If boss spaceship reaches bottom of canvas, change direction(go up), otherwise go down
     if(alienY == 500 - alien.height) {
         alienGoingDown = false;
     } else if (alienY == 0) {
@@ -527,7 +547,7 @@ function alienMovement(){
     }
 }
 
-// Triggers on hit
+// When boss spaceship is hit
 function alienShipHit(){
     // Draw explosion
     ctx.drawImage(explosion, alienX, alienY);
@@ -540,6 +560,7 @@ function alienShipHit(){
             ammo.splice(rocketsIndex, 1);
         }
     }
+
     // Decrease alien ship HP
     alienHP = alienHP - 20;
     displayAlienHP.style.width = `${alienHP}%`;
@@ -552,10 +573,9 @@ function alienShipHit(){
     explosionSound.currentTime = 0;
 }
 
-// Alien ship shooting
-let alienAmmo = [];
+// Aliens (enemies) shooting
 function alienShooting(){
-    // Execute code ONLY if game is started AND the boss is spawned
+    // Execute code ONLY if game is started AND the BOSS is spawned
     if(gameStarted && bossSpawned) {
         alienAmmo[0] = {
             x: alienX - alien.width,
@@ -568,6 +588,7 @@ function alienShooting(){
     }
 }
 
+// When player's ship is hit by aliens / boss missiles.
 function playerHit(){
     // Destroy the alien ammo upon hit
     for(let i = 0; i < alienAmmo.length; i++) {
@@ -577,17 +598,79 @@ function playerHit(){
             alienAmmo.splice(alienIndex, 1);
         } 
     }
+
     // Decrease ship HP
     decreaseShipHP();
     if(shipHP == 0) {
         clearInterval(game);
-        clearInterval(alienShootingVariable);
+        clearInterval(alienShootingInterval);
         endgame();
     }
 }
 
-const alienShootingVariable = setInterval(alienShooting, 600)
+const alienShootingInterval = setInterval(alienShooting, 600)
 
+// Update the score and deal with difficulty
+function updateScore() {
+    // Update score
+    score += 100;
+    displayScore.textContent = score;
+
+    // Add 500 points when comet is destroyed
+    if(cometDestroyed) {
+        score += 500;
+        displayScore.textContent = score;
+    }
+    // Reset comet boolean
+    setTimeout(() => {
+        cometDestroyed = false;
+    }, 500);
+    
+    // Increase difficulty when user reaches a certain score point.
+    if(score == 3000) {
+        meteorsSpeed = 2;
+        displayNotification();
+    }
+    if (score == 6000) {
+        meteorsSpeed = 4;
+        meteorSpawnDistance = 1000;
+        displayNotification();
+    }
+
+    // Spawn enemey alien space ships
+    if(score == 12000) {
+        // Change the image for the enemies to the aliens one.
+        enemy.src = "images/enemySpaceship.png";
+
+        // Enemies shoot every 2 seconds
+        enemiesSpawned = true;
+
+        // Display timer
+        displayTimer = true;
+        
+        // Start the timer countdown untill boss spawns
+        timer(time);
+    }
+}
+
+// Display notifications
+function displayNotification(){
+    notificationText.classList.add("activeNotification");
+    if(score == 3000) {
+        notificationText.innerHTML = `<i class="material-icons">warning</i> <p>Another Disturbance!</p>`
+    } else if (score == 6000) {
+        notificationText.innerHTML= `<i class="material-icons">warning</i> <p>Another Disturbance!</p>`
+    } else if (score == 10000) {
+        notificationText.innerHTML = `<i class="material-icons">warning</i> <p>Watch out for the alien spaceship!!</p>`
+    }
+
+    // Remove the class after 4 seconds
+    setTimeout(() => {
+        notificationText.classList.remove('activeNotification');
+    }, 4000);
+}
+
+// Destroy meteor / alien ship on impact.
 function destroyEnemy(){
     for(let j = 0; j < ammo.length; j++){
         for(let i = 0; i < enemies.length; i++) {
@@ -621,72 +704,7 @@ function destroyEnemy(){
     updateScore();
 }
 
-function updateScore() {
-    // Update score
-    score += 100;
-    displayScore.textContent = score;
-
-    // Add 500 points when comet is destroyed
-    if(cometDestroyed) {
-        score += 500;
-        displayScore.textContent = score;
-    }
-    // Reset comet boolean
-    setTimeout(() => {
-        cometDestroyed = false;
-    }, 500);
-    
-    // Increase difficulty when user reaches a certain score point.
-    if(score == 3000) {
-        meteorsSpeed = 2;
-        displayNotification();
-    }
-    if (score == 6000) {
-        meteorsSpeed = 4;
-        meteorSpawnDistance = 1000;
-        displayNotification();
-    }
-
-    // Spawn enemey alien space ships
-    if(score == 1000) {
-        // Change the image for the enemies to the aliens one.
-        enemy.src = "images/enemySpaceship.png";
-
-        // Enemies shoot every 2 seconds
-        enemiesSpawned = true;
-
-        // Display timer
-        displayTimer = true;
-        
-        timer(time);
-    }
-}
-function spawnBoss() {
-    bossSpawned = true;
-    displayNotification();
-    // Destroy all enemies
-    enemies.splice(0);
-    // Display alien HP bar
-    displayAlienHP.style.width = `${alienHP}%`;
-    document.querySelector(".alien-hp").classList.add("alien-hpActive");
-}
-// Display notification
-function displayNotification(){
-    notificationText.classList.add("activeNotification");
-    if(score == 3000) {
-        notificationText.innerHTML = `<i class="material-icons">warning</i> <p>Another Disturbance!</p>`
-    } else if (score == 6000) {
-        notificationText.innerHTML= `<i class="material-icons">warning</i> <p>Another Disturbance!</p>`
-    } else if (score == 10000) {
-        notificationText.innerHTML = `<i class="material-icons">warning</i> <p>Watch out for the alien spaceship!!</p>`
-    }
-
-    // Remove the class after 4 seconds
-    setTimeout(() => {
-        notificationText.classList.remove('activeNotification');
-    }, 4000);
-}
-
+// Destroy comets upon impact for bonus points.
 function destroyComet() {
     for(let j = 0; j < ammo.length; j++) {
         for(let i = 0; i < comets.length; i++) {
@@ -721,6 +739,8 @@ function destroyComet() {
     updateScore();
 }
 
+
+// SHIP AND EARTH HEALTH:
 function decreaseShipHP()   {
     shipHP = shipHP - 20;
     displayShipHP.style.width = `${shipHP}%`;
@@ -750,13 +770,19 @@ function decreaseEarthHPComet(){
     displayEarthHP.style.width = `${earthHP}%`;
 }
 
+// When the game has ended / been completed.
 function endgame(){
+    // Disable intervals
+    clearInterval(enemiesShootingInterval);
+    clearInterval(alienShootingInterval);
+
     // Stop movements
     gameStarted = false;
 
+    // Game Over / Game finished menu
     const gameOver = document.querySelector(".game--over");
-    
     gameOver.style.display = "block";
+
     // Different image if player was killed or earth destroyed.
     if(earthHP == 0) {
         displayImage.src = "images/destroyed-planet.svg";
@@ -782,7 +808,7 @@ function endgame(){
     }
 }
 
-// Health renew callback function to push into the array
+// Callback function to spawn health renew every 30 seconds.
 function healthRenewFunction() {
     if(initialHealthPushed == true) {
         setTimeout(() => {
@@ -801,7 +827,7 @@ function healthRenewFunction() {
 }
 healthRenewFunction();
 
-// Comet for bonus points (500 points) spawn each minute
+// Callback function to spawn comets for bonus points each minute.
 function spawnComet(){
     if(initialCometPushed == true) {
         setTimeout(() => {
@@ -824,7 +850,7 @@ function spawnComet(){
 spawnComet();
 
 
-// Display pause menu
+// Pause game
 function displayPauseMenu(){
     // Display the menu
     pauseMenu.style.display = "flex";
