@@ -50,17 +50,18 @@ Defend the Earth from the upcoming meteors! (WIP).
 * [x]  When alien spaceships ammo hit the players ship, decrease HP.
 * [x]  Add a timer (1 minute 30 seconds) at point where user starts dealing with alien ships
 * [x]  When timer runs out, spawn boss.
+* [x]  Meteors / alien spaceships dont increase speed at set points. FIXED
+* [x]  Comets spawn at border. FIXED
+* [x]  At 10.000 points, swap meteors with tiny alien spaceships that will fire rockets each 2 seconds AND add a timer - 1 min 30sec - which the user will have to survive before spawning the boss.
 -------------------
-* [ ]  At 10.000 points, swap meteors with tiny alien spaceships that will(?) fire rockets each 2 seconds AND add a timer - 1 min 30sec - which the user will have to survive before spawning the boss.
 * [ ]  Adjust meteor speed after 6000 points.(?)
 * [ ]  Clean code
 * [ ]  Refactoring
 * [ ]  Add media queries for 1080p, 1440p and 4k.
 * [ ]  Canvas revamp (full window width and height?) ?
+* [ ]  Update assets with the ones from unity SpaceShooter
 -------------------
 ###### Bugs:
 * [ ]  Explosion image does not appears for every meteor hit. Sometimes it does, sometimes doesnt.
-* [ ]  Player dies instantly when he hits the METEORS. When Alien spaceships are there instead of the meteors it works normal.
-* [ ]  Rockets arent  being destroyed on enemy target hit
-* [ ]  Meteors / alien spaceships dont increase speed at set points
-* [ ]  Comets(?) spawn at border 
+* [ ]  Player dies instantly when he hits the METEORS * ONLY ON START *. When Alien spaceships are there instead of the meteors it works normal.
+* [ ]  Rockets arent being destroyed on enemy target hit, unless the rocket hits 2 enemies in a row, or if you shoot 2 rockets total before the first hits the enemy.
