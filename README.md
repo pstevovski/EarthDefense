@@ -54,12 +54,21 @@ Defend the Earth from the upcoming meteors! (WIP).
 * [x]  Comets spawn at border. FIXED
 * [x]  At 10.000 points, swap meteors with tiny alien spaceships that will fire rockets each 2 seconds AND add a timer - 1 min 30sec - which the user will have to survive before spawning the boss.
 -------------------
+### OVERHAUL:
+* [x] Game plays on timer, starting with 30 seconds
+* [x] Remove boss fight
+* [x] Remove comets
+* [x] Fight against spaceships. REMOVE meteors
+* [x] Remove Earth HP
+* [] Add randomly spawned time booster that will add more time to play
+* [] Change: background, spaceship model, sounds.
+------------------------------------------------
 * [ ]  Adjust meteor speed after 6000 points.(?)
 * [ ]  Clean code
 * [ ]  Refactoring
 * [ ]  Add media queries for 1080p, 1440p and 4k.
 * [ ]  Canvas revamp (full window width and height?) ?
-* [ ]  Update assets with the ones from unity SpaceShooter
+* [ ]  Update assets
 -------------------
 ###### Bugs:
 * [ ]  Explosion image does not appears for every meteor hit. Sometimes it does, sometimes doesnt.
