@@ -4,6 +4,7 @@ let game;
 let score = 0;
 let shipHP = 100;
 let overheat = 0;
+let boost = 100;
 let meteorSpawnDistance = 1200;
 let meteorsSpeed = 1;
 const displayShipHP = document.querySelector(".ship-hpFill");
@@ -13,6 +14,7 @@ const displayScore = document.querySelector("#score");
 const displayImage = document.querySelector("#displayImage");
 const message = document.querySelector("#message");
 const pauseMenu = document.querySelector(".pause--menu");
+const displaySpeedBooster = document.querySelector(".speedBooster-fill");
 
 // Flag variables
 let isSpaceDown = false;
@@ -62,10 +64,6 @@ let shipY = 250;
 let hitBoundary = false;
 let playerSpeed = 5;
 
-// Alien spaceship coordinates
-let alienX = cWidth - 200;
-let alienY = 250;
-
 // Player ammo
 let ammo = [];
 
@@ -84,7 +82,7 @@ healthRenew[0] = {
 }
 let initialHealthPushed = false;
 
-// Aliens (enemies) / Boss ammo
+// Aliens (enemies)
 let alienAmmo = [];
 
 // Timer variables
@@ -162,7 +160,20 @@ function shipCommands(e){
 
         // Player spaceship speed boost
         if(key == 16 && d == "LEFT" || key == 16 && d == "RIGHT") {
-            playerSpeed = 15;
+            if(boost >= 5 && boost <= 100) {
+                speedBooster = true;
+                playerSpeed = 15;
+                // Empty out the speed booster
+                boost = boost - 5;
+                displaySpeedBooster.style.width = `${boost}%`;
+            }
+            // Disable speed boost if it reaches 0
+            if(boost <= 0) {
+                speedBooster = false;
+                playerSpeed = 5;
+                fillBooster();
+            }
+            console.log(boost);
         }
     }
 }
@@ -170,6 +181,7 @@ function shipCommands(e){
 // Clear spaceship's commands when key is released
 function clearShipCommands() {
     playerSpeed = 5;
+    speedBooster = false;
 }
 
 // Player shoots
@@ -226,6 +238,23 @@ function coolOut(){
         isOverheated = false;
         overheatFill.style.width = `${overheat}%`;
     }, 1000);
+}
+
+// Gradually fill booster
+function graduallyFillBooster() {
+    if(boost >= 5 && boost <= 95) {
+        boost = boost + 5;
+        displaySpeedBooster.style.width = `${boost}%`;
+    }
+}
+setInterval(graduallyFillBooster, 800);
+// If speed booster is empty (0), fill it up instantly after 3 seconds
+function fillBooster() {
+    setTimeout(() => {
+        boost = 100;
+        speedBooster = true;
+        displaySpeedBooster.style.width = `${boost}%`;
+    }, 3000);
 }
 
 // The game
