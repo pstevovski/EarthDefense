@@ -43,6 +43,7 @@ const alienMissile = new Image();
 const missileSound = new Audio();
 const alienMissileSound = new Audio();
 const explosionSound = new Audio();
+const timerImage = new Image();
 
 ship.src = "images/spaceship.png";
 bg.src = "images/bg2.jpg";
@@ -57,6 +58,7 @@ explosionSound.src = "Audio/explosion_asteroid.wav";
 explosionSound.volume = 0.1;
 alienMissileSound.src = "Audio/weapon_enemy.wav";
 alienMissileSound.volume = 0.1;
+timerImage.src = "images/timer.png";
 
 // Spaceship starting coordinates
 let shipX = 50;
@@ -81,6 +83,14 @@ healthRenew[0] = {
     y: Math.floor(Math.random() * ( (maxHeight - firstAid.height) - minHeight) + minHeight)
 }
 let initialHealthPushed = false;
+
+// Timer(s) array
+let timeRenew = [];
+timeRenew[0] = {
+    x: cWidth,
+    y: Math.floor(Math.random() * ( (maxHeight - timerImage.height) - minHeight) + minHeight)
+}
+let initialTimeRenewPushed = false;
 
 // Aliens (enemies)
 let alienAmmo = [];
@@ -294,6 +304,10 @@ function draw(){
                     endgame();
                 }
             }
+            // Remove the alien space ship from the enemies array.
+            if(enemies[i].x + enemy.width < 0) {
+                enemies.splice(enemies[i], 1);
+            }
         }
         // Create a new enemy if all enemies on screen are destroyed.
         if(enemies.length == 0) {
@@ -344,7 +358,6 @@ function draw(){
             if(hpIndex > -1) {
                 healthRenew.splice(hpIndex, 1)
             }
-
             // Restore ship's HP.
             restoreShipHP();
         }
@@ -360,6 +373,29 @@ function draw(){
         }
         initialHealthPushed = true;
     }, 30 * 1000);
+
+    // Display time renew 
+    for(let i = 0; i < timeRenew.length; i++){
+        ctx.drawImage(timerImage, timeRenew[i].x, timeRenew[i].y)
+        // If the ship touches the sand timer, add more time
+        if(shipX + ship.width >= timeRenew[i].x && shipX <= timeRenew[i].x + timerImage.width && shipY + ship.height >= timeRenew[i].y && shipY <= timeRenew[i].y + timerImage.height) {
+            // Remove the timer from the array
+            let timerItem = timeRenew[i];
+            let timerIndex = timeRenew.indexOf(timerItem);
+            if(timerIndex > -1) {
+                timeRenew.splice(timerIndex, 1);
+            }
+            // Add time
+            addPlaytime();
+        }
+    }
+    // Start moving the timer image
+    setTimeout(() => {
+        for(let i = 0; i < timeRenew.length; i++) {
+            timeRenew[i].x--;
+        }
+        initialTimeRenewPushed = true;
+    }, 15 * 1000);
 
     // Move the ship
     if(d == "LEFT") {
@@ -414,7 +450,7 @@ function draw(){
     // Draw the ship
     ctx.drawImage(ship, shipX, shipY);
 }
-
+let secondsLeft;
 // Timer
 function timer(seconds) {
     clearInterval(countdown);
@@ -424,7 +460,7 @@ function timer(seconds) {
     displayTimeLeft(seconds);
 
     countdown = setInterval(() =>{
-        const secondsLeft = Math.round((then - Date.now()) / 1000);
+        secondsLeft = Math.round((then - Date.now()) / 1000);
         // Show a warning for few seconds left
         if(secondsLeft === 10) {
             displayNotification(secondsLeft);
@@ -444,6 +480,12 @@ function displayTimeLeft(seconds) {
     const remainder = seconds % 60;
     timerDisplay.textContent = `${minutes}:${remainder < 10 ? 0 : ""}${remainder}`;
 }
+// Add additional playtime
+function addPlaytime() {
+    secondsLeft = secondsLeft + 15;
+    timer(secondsLeft);
+    console.log({time, secondsLeft});
+ }
 
 // Enemies 
 function enemiesShoot(){
@@ -464,7 +506,7 @@ function enemiesShoot(){
         }
 }
 
-const enemiesShootingInterval = setInterval(enemiesShoot, 400);
+const enemiesShootingInterval = setInterval(enemiesShoot, 700);
 
 // When player's ship is hit by aliens missiles
 function playerHit(){
@@ -606,7 +648,7 @@ function endgame(){
     }
 }
 
-// Callback function to spawn health renew every 30 seconds.
+// Spawn health renew every 30 seconds.
 function healthRenewFunction() {
     if(initialHealthPushed == true) {
         setTimeout(() => {
@@ -625,6 +667,24 @@ function healthRenewFunction() {
 }
 healthRenewFunction();
 
+// Spawn timer to add more time to play every 10-15 seconds
+function timeRenewFunction(){
+    if(initialTimeRenewPushed == true) {
+        setTimeout(() => {
+            timeRenew.push({
+                x: cWidth,
+                y: Math.floor(Math.random() * ( (maxHeight - timerImage.height) - minHeight) + minHeight)
+            })
+
+            timeRenewFunction();
+        }, 15 * 1000);
+    } else {
+        setTimeout(() => {
+            timeRenewFunction();
+        }, 15 * 1000);
+    }
+}
+timeRenewFunction();
 // Pause game
 function displayPauseMenu(){
     // Display the menu
