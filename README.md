@@ -60,8 +60,10 @@ Defend the Earth from the upcoming meteors! (WIP).
 * [x] Remove comets
 * [x] Fight against spaceships. REMOVE meteors
 * [x] Remove Earth HP
-* [] Add randomly spawned time booster that will add more time to play
-* [] Change: background, spaceship model, sounds.
+* [x] Add speed booster if player holds SHIFT key.
+* [x] Add a booster ammount(100) that decreases when the user holds shift, and gradually fills up or if it reaches 0 it takes 3 seconds and fills up instantly.
+* [x] Add randomly spawned time booster that will add more time to play
+* [ ] Change: background, spaceship model, sounds.
 ------------------------------------------------
 * [ ]  Adjust meteor speed after 6000 points.(?)
 * [ ]  Clean code
