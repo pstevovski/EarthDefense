@@ -18,10 +18,9 @@ const pauseMenu = document.querySelector(".pause--menu");
 let isSpaceDown = false;
 let gameStarted = false;
 let isOverheated = false;
-let bossSpawned = false;
 let enemiesSpawned = false;
 let displayTimer = false;
-let cometDestroyed = false;
+let speedBooster = false;
 
 // Canvas
 const canvas = document.querySelector("#canvas");
@@ -40,6 +39,7 @@ const explosion = new Image();
 const firstAid = new Image();
 const alienMissile = new Image();
 const missileSound = new Audio();
+const alienMissileSound = new Audio();
 const explosionSound = new Audio();
 
 ship.src = "images/spaceship.png";
@@ -53,11 +53,14 @@ missileSound.src = "Audio/weapon_player.wav";
 missileSound.volume = 0.1;
 explosionSound.src = "Audio/explosion_asteroid.wav";
 explosionSound.volume = 0.1;
+alienMissileSound.src = "Audio/weapon_enemy.wav";
+alienMissileSound.volume = 0.1;
 
 // Spaceship starting coordinates
 let shipX = 50;
 let shipY = 250;
 let hitBoundary = false;
+let playerSpeed = 5;
 
 // Alien spaceship coordinates
 let alienX = cWidth - 200;
@@ -144,7 +147,7 @@ function startGame(){
 // Move the spaceship
 function shipCommands(e){
     let key = e.keyCode;
-
+    console.log(key);
     // If game has started, enable ship movement.
     if(gameStarted) { 
         if(key == 37) {
@@ -156,13 +159,18 @@ function shipCommands(e){
         } else if (key == 40) {
             d = "DOWN"
         }
+
+        // Player spaceship speed boost
+        if(key == 16 && d == "LEFT" || key == 16 && d == "RIGHT") {
+            playerSpeed = 15;
+        }
     }
 }
 
 // Clear spaceship's commands when key is released
-// function clearShipCommands() {
-//     d = " ";
-// }
+function clearShipCommands() {
+    playerSpeed = 5;
+}
 
 // Player shoots
 function shoot(e){
@@ -226,7 +234,7 @@ function draw(){
     ctx.drawImage(bg, 0,0);
     
     // Check if the game started
-    if(gameStarted && bossSpawned == false) {
+    if(gameStarted) {
         for(let i = 0; i < enemies.length;i++){
             // Draw a enemy
             ctx.drawImage(enemy, enemies[i].x, enemies[i].y);
@@ -326,16 +334,16 @@ function draw(){
 
     // Move the ship
     if(d == "LEFT") {
-        shipX -= 5;
+        shipX -= playerSpeed;
     }
     if(d == "RIGHT"){
-        shipX += 5;
+        shipX += playerSpeed;
     }
     if(d == "UP") {
-        shipY -= 5;
+        shipY -= playerSpeed;
     }
     if(d == "DOWN") {
-        shipY += 5;
+        shipY += playerSpeed;
     }
 
     // ALIEN (ENEMY) ROCKETS
@@ -422,6 +430,8 @@ function enemiesShoot(){
             x: enemies[randomShip].x - enemy.width,
             y: enemies[randomShip].y + (enemy.height / 2)
         })
+        alienMissileSound.currentTime = 0;
+        alienMissileSound.play();
         }
 }
 
@@ -617,7 +627,7 @@ document.querySelectorAll(".exitGame").forEach(exit => exit.addEventListener("cl
 
 // Event listeners
 document.addEventListener("keydown", shipCommands);
-// document.addEventListener("keyup", clearShipCommands);
+document.addEventListener("keyup", clearShipCommands);
 document.querySelector("#startGame").addEventListener("click", startGame);
 document.addEventListener("keyup", shoot);
 document.querySelector("#openMenu").addEventListener("click", displayPauseMenu);
