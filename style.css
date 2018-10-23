@@ -195,14 +195,14 @@ canvas{
     cursor: pointer;
     border-radius: 1px;
 }
-.playerShipContainer, .overheatContainer, .speedBoosterContainer{
+.playerShipContainer, .overheatContainer, .speedBoosterContainer, .playerShipShieldContainer{
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
     width: 150px;
 }
-.playerShipContainer p, .overheatContainer p, .speedBoosterContainer p{
+.playerShipContainer p, .overheatContainer p, .speedBoosterContainer p, .playerShipShieldContainer{
     font-size: 14px;
     font-family: "Montserrat Medium";
 }
@@ -216,6 +216,13 @@ canvas{
     border: 1px solid #dddddd30;
     border-radius: 5px;
 }
+.shipShield{
+    width: 100px;
+    height: 20px;
+    border: 1px solid #dddddd30;
+    border-radius: 5px;;
+}
+
 .gunOverheat{
     width: 100px;
     height: 20px;
@@ -242,13 +249,28 @@ canvas{
     transition: 0.5s ease;
     border-radius: 5px;
 }
-
+.shipShield-fill{
+    width: 100%;
+    height: 100%;
+    background-color: #1aeb71;
+    transition: 0.5s ease;
+    border-radius: 5px;
+}
 .gunOverheat-fill{
     width: 0%;
     height: 100%;
     border-radius: 5px;
     background-color: rgb(168, 33, 33);
     transition: 0.5s ease;
+}
+#hpText, #shieldText, #overheatText, #boosterText {
+    height: 100%;
+    margin-left: 5px;
+    font-family: "Montserrat Medium";
+    display: flex;
+    justify-content: flex-start;
+    align-items: center; 
+    font-size: 12px;
 }
 /* PAUSE MENU */
 .pause--menu{
