@@ -73,6 +73,6 @@ Defend the Earth from the upcoming meteors! (WIP).
 * [ ]  Update assets
 -------------------
 ###### Bugs:
-* [ ]  Explosion image does not appears for every meteor hit. Sometimes it does, sometimes doesnt.
-* [ ]  Player dies instantly when he hits the METEORS * ONLY ON START *. When Alien spaceships are there instead of the meteors it works normal.
-* [ ]  Rockets arent being destroyed on enemy target hit, unless the rocket hits 2 enemies in a row, or if you shoot 2 rockets total before the first hits the enemy.
+* [x]  Explosion image does not appears for every meteor hit. Sometimes it does, sometimes doesnt.
+* [x]  Player dies instantly when he hits the METEORS * ONLY ON START *. When Alien spaceships are there instead of the meteors it works normal.
+* [x]  Rockets arent being destroyed on enemy target hit, unless the rocket hits 2 enemies in a row, or if you shoot 2 rockets total before the first hits the enemy.
