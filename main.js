@@ -201,10 +201,6 @@ function shoot(e){
         if(key == 32) {
             isSpaceDown = true;
             // Display the rocket WHEN the user shoots.
-            ammo[0] = {
-                x:shipX + ship.width,
-                y: shipY + (ship.height / 2)
-            }
             ammo.push({
                 x: shipX + ship.width,
                 y: shipY + (ship.height / 2)
@@ -239,7 +235,7 @@ function graduallyCoolOut(){
         overheatFill.style.width = `${overheat}%`;
     }
 }
-setInterval(graduallyCoolOut, 800)
+const cooloutInterval = setInterval(graduallyCoolOut, 800)
 
 // When gun overheats, wait 1 second, then cool it out and enable shooting.
 function coolOut(){
@@ -257,7 +253,7 @@ function graduallyFillBooster() {
         displaySpeedBooster.style.width = `${boost}%`;
     }
 }
-setInterval(graduallyFillBooster, 800);
+const boosterInterval = setInterval(graduallyFillBooster, 800);
 // If speed booster is empty (0), fill it up instantly after 3 seconds
 function fillBooster() {
     setTimeout(() => {
@@ -288,15 +284,24 @@ function draw(){
             }
             // If spaceship and enemy colide
             if(shipX + ship.width >= enemies[i].x && shipX <= enemies[i].x + enemy.width && shipY + ship.height >= enemies[i].y && shipY <= enemies[i].y + enemy.height) {
-                alert("HIT THE ENEMY")
                 // Draw explosion at those coords.
                 ctx.drawImage(explosion, enemies[i].x - enemy.width, enemies[i].y - enemy.height);
                 
                 // Delete the enemy from screen.
-                destroyEnemy();
-
+                let enemiesArray = enemies[i];
+                let enemiesArrayIndex = enemies.indexOf(enemiesArray);
+                if(enemiesArrayIndex > -1) {
+                    enemies.splice(enemiesArrayIndex, 1);
+                }
+                
                 // Deduct HP on hit.
                 decreaseShipHP();
+                
+                // Update the score
+                updateScore();
+
+                explosionSound.currentTime = 0;
+                explosionSound.play();
 
                 // If spaceship HP reaches 0, end game.
                 if(shipHP == 0) {
@@ -331,7 +336,24 @@ function draw(){
                     ctx.drawImage(explosion, enemies[i].x - enemy.width, enemies[i].y - enemy.height);
 
                     // Delete enemy from screen and add points.
-                    destroyEnemy();
+                    // destroyEnemy();
+                    
+                    // Remove the missiles
+                    let missile = ammo[j];
+                    let missileIndex = ammo.indexOf(missile);
+                    if(missileIndex > -1) {
+                        ammo.splice(missileIndex, 1);
+                    }
+
+                    // Remove the enemy from screen
+                    let enemiesArray = enemies[i];
+                    let enemiesArrayIndex = enemies.indexOf(enemiesArray);
+                    if(enemiesArrayIndex > -1) {
+                        enemies.splice(enemiesArrayIndex, 1)
+                    }
+                    explosionSound.play();
+                    explosionSound.currentTime = 0;
+                    updateScore();
                 }
             }
 
@@ -450,8 +472,8 @@ function draw(){
     // Draw the ship
     ctx.drawImage(ship, shipX, shipY);
 }
-let secondsLeft;
 // Timer
+let secondsLeft;
 function timer(seconds) {
     clearInterval(countdown);
 
@@ -522,9 +544,8 @@ function playerHit(){
     // Decrease ship HP
     decreaseShipHP();
     if(shipHP == 0) {
-        clearInterval(game);
-        clearInterval(alienShootingInterval);
         endgame();
+        clearInterval(game);
     }
 }
 
@@ -568,44 +589,15 @@ function displayNotification(secondsLeft){
     }, 4000);
 }
 
-// Destroy meteor / alien ship on impact.
-function destroyEnemy(){
-    for(let j = 0; j < ammo.length; j++){
-        for(let i = 0; i < enemies.length; i++) {
-            // Ammo hits enemy
-            let ammoDestroysMeteor = ammo[j].x >= enemies[i].x && ammo[j].x <= enemies[i].x + enemy.width && ammo[j].y >= enemies[i].y && ammo[j].y <= enemies[i].y + enemy.height;
-
-            // Ship hits enemy
-            let shipDestroysMeteor = shipX + ship.width >= enemies[i].x && shipX <= enemies[i].x + enemy.width && shipY + ship.height >= enemies[i].y && shipY <= enemies[i].y + enemy.height;
-
-            // // Destory missile if ammo destoys enemy
-            if(ammoDestroysMeteor) {
-                let missile = ammo[j];
-                let missileIndex = ammo.indexOf(missile);
-                if(missileIndex > -1) {
-                    ammo.splice(missileIndex, 1);
-                }
-            }
-
-            // Either the ammo destorys the enemy, or the ship.
-            if(ammoDestroysMeteor || shipDestroysMeteor) {
-                let item = enemies[i];
-                let index = enemies.indexOf(item);
-                if(index > -1) {
-                    enemies.splice(index, 1);
-                }
-            }
-            explosionSound.play();
-            explosionSound.currentTime = 0;
-        }
-    }
-    updateScore();
-}
-
-// SHIP AND EARTH HEALTH:
+// SHIP HEALTH:
 function decreaseShipHP()   {
     shipHP = shipHP - 20;
     displayShipHP.style.width = `${shipHP}%`;
+    if(shipHP == 0) {
+        endgame();
+        clearInterval(game);
+        clearInterval(enemiesShootingInterval);
+    }
 }
 
 function restoreShipHP() {
@@ -623,7 +615,9 @@ function restoreShipHP() {
 function endgame(){
     // Disable intervals
     clearInterval(enemiesShootingInterval);
-    clearInterval(alienShootingInterval);
+    clearInterval(cooloutInterval);
+    clearInterval(boosterInterval);
+    clearInterval(countdown);
 
     // Stop movements
     gameStarted = false;
@@ -692,6 +686,10 @@ function displayPauseMenu(){
 
     // Clear the interval for the game
     clearInterval(game);
+    clearInterval(enemiesShootingInterval);
+    clearInterval(cooloutInterval);
+    clearInterval(boosterInterval);
+    clearInterval(countdown);
 
     // Stop enemies and ship from moving
     gameStarted = false;
@@ -704,6 +702,9 @@ function continueGame(){
 
     // Run the interval
     game = setInterval(draw, 1000 / 60);
+    enemiesShootingInterval = setInterval(enemiesShoot, 700);
+    cooloutInterval = setInterval(graduallyCoolOut, 800);
+    boosterInterval = setInterval(graduallyFillBooster, 800);
 
     // Enable enemies and ship movement
     gameStarted = true;
