@@ -3,11 +3,13 @@ let d;
 let game;
 let score = 0;
 let shipHP = 100;
+let shield = 100;
 let overheat = 0;
 let boost = 100;
 let meteorSpawnDistance = 1200;
 let meteorsSpeed = 1;
 const displayShipHP = document.querySelector(".ship-hpFill");
+const displayShield = document.querySelector(".shipShield-fill");
 const notificationText = document.querySelector(".notification");
 const menu = document.querySelector(".menu");
 const displayScore = document.querySelector("#score");
@@ -15,6 +17,8 @@ const displayImage = document.querySelector("#displayImage");
 const message = document.querySelector("#message");
 const pauseMenu = document.querySelector(".pause--menu");
 const displaySpeedBooster = document.querySelector(".speedBooster-fill");
+const overheatText = document.querySelector("#overheatText");
+const boosterText = document.querySelector("#boosterText");
 
 // Flag variables
 let isSpaceDown = false;
@@ -23,6 +27,7 @@ let isOverheated = false;
 let enemiesSpawned = false;
 let displayTimer = false;
 let speedBooster = false;
+let shieldDestroyed = false;
 
 // Canvas
 const canvas = document.querySelector("#canvas");
@@ -176,6 +181,7 @@ function shipCommands(e){
                 // Empty out the speed booster
                 boost = boost - 5;
                 displaySpeedBooster.style.width = `${boost}%`;
+                boosterText.textContent = boost+'%';
             }
             // Disable speed boost if it reaches 0
             if(boost <= 0) {
@@ -219,6 +225,7 @@ const overheatFill = document.querySelector(".gunOverheat-fill");
 function overheated(){
     overheat = overheat + 5;
     overheatFill.style.width = `${overheat}%`;
+    overheatText.textContent = overheat+'%';
     // If overheat meter reaches max(100), stop the ship from shooting, when it starts cooling off enable shooting.
     if(overheat == 100) {
         isOverheated = true;
@@ -233,6 +240,7 @@ function graduallyCoolOut(){
     if(overheat <= 95 && overheat > 5) {
         overheat = overheat - 5;
         overheatFill.style.width = `${overheat}%`;
+        overheatText.textContent = overheat+'%';
     }
 }
 const cooloutInterval = setInterval(graduallyCoolOut, 800)
@@ -243,6 +251,7 @@ function coolOut(){
         overheat = 0;
         isOverheated = false;
         overheatFill.style.width = `${overheat}%`;
+        overheatText.textContent = overheat+'%';
     }, 1000);
 }
 
@@ -251,6 +260,7 @@ function graduallyFillBooster() {
     if(boost >= 5 && boost <= 95) {
         boost = boost + 5;
         displaySpeedBooster.style.width = `${boost}%`;
+        boosterText.textContent = boost+'%';
     }
 }
 const boosterInterval = setInterval(graduallyFillBooster, 800);
@@ -260,6 +270,7 @@ function fillBooster() {
         boost = 100;
         speedBooster = true;
         displaySpeedBooster.style.width = `${boost}%`;
+        boosterText.textContent = boost+'%';
     }, 3000);
 }
 
@@ -294,6 +305,9 @@ function draw(){
                     enemies.splice(enemiesArrayIndex, 1);
                 }
                 
+                // Deduct shield on hit
+                decreaseShield();
+
                 // Deduct HP on hit.
                 decreaseShipHP();
                 
@@ -491,6 +505,7 @@ function timer(seconds) {
             // If the timer ran out, end the game
             clearInterval(countdown);
             clearInterval(game);
+            endgame();
             return;
         }
         displayTimeLeft(secondsLeft);
@@ -509,7 +524,8 @@ function addPlaytime() {
     console.log({time, secondsLeft});
  }
 
-// Enemies 
+// Enemies
+let enemiesShootingSpeed = 700;
 function enemiesShoot(){
     // If the enemies are spawned
     if(enemiesSpawned) {
@@ -528,7 +544,7 @@ function enemiesShoot(){
         }
 }
 
-const enemiesShootingInterval = setInterval(enemiesShoot, 700);
+const enemiesShootingInterval = setInterval(enemiesShoot, enemiesShootingSpeed);
 
 // When player's ship is hit by aliens missiles
 function playerHit(){
@@ -540,6 +556,8 @@ function playerHit(){
             alienAmmo.splice(alienIndex, 1);
         } 
     }
+    // Decrease shield
+    decreaseShield();
 
     // Decrease ship HP
     decreaseShipHP();
@@ -560,10 +578,17 @@ function updateScore() {
         meteorsSpeed = 2;
         displayNotification();
     }
-    if (score == 6000) {
+    if (score == 5000) {
         meteorsSpeed = 4;
         meteorSpawnDistance = 1000;
+        enemiesShootingSpeed = 550;
         displayNotification();
+    }
+    if(score == 8000) {
+        enemiesShootingSpeed = 350;
+    }
+    if(score == 10000) {
+        enemiesShootingSpeed = 100;
     }
 }
 
@@ -589,14 +614,33 @@ function displayNotification(secondsLeft){
     }, 4000);
 }
 
+// SHIP SHIELD
+function decreaseShield() {
+    // Decrease from shield if its between 10 and 100
+    if(shield >= 10 && shield <= 100) {
+        shield = shield - 10;
+        displayShield.style.width = `${shield}%`;
+        document.querySelector("#shieldText").textContent = shield+'%';
+    }
+    // If shield is at 0, mark it as destroyed
+    if(shield == 0) {
+        shieldDestroyed = true;
+    }
+}
+
 // SHIP HEALTH:
 function decreaseShipHP()   {
-    shipHP = shipHP - 20;
-    displayShipHP.style.width = `${shipHP}%`;
-    if(shipHP == 0) {
-        endgame();
-        clearInterval(game);
-        clearInterval(enemiesShootingInterval);
+    if(shieldDestroyed) {
+        shipHP = shipHP - 20;
+        displayShipHP.style.width = `${shipHP}%`;
+        // Change the text in the bar
+        document.querySelector("#hpText").textContent = shipHP+'%';
+
+        if(shipHP == 0) {
+            endgame();
+            clearInterval(game);
+            clearInterval(enemiesShootingInterval);
+        }
     }
 }
 
