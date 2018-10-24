@@ -49,9 +49,10 @@ const missileSound = new Audio();
 const alienMissileSound = new Audio();
 const explosionSound = new Audio();
 const timerImage = new Image();
+const shieldImage = new Image();
 
 ship.src = "images/spaceship.png";
-bg.src = "images/bg2.jpg";
+bg.src = "images/background.png";
 enemy.src = "images/enemySpaceship.png";
 missile.src = "images/testRocket.png";
 explosion.src = `images/explosion/2.png`;
@@ -64,6 +65,7 @@ explosionSound.volume = 0.1;
 alienMissileSound.src = "Audio/weapon_enemy.wav";
 alienMissileSound.volume = 0.1;
 timerImage.src = "images/timer.png";
+shieldImage.src = "images/shieldImage.png";
 
 // Spaceship starting coordinates
 let shipX = 50;
@@ -88,6 +90,14 @@ healthRenew[0] = {
     y: Math.floor(Math.random() * ( (maxHeight - firstAid.height) - minHeight) + minHeight)
 }
 let initialHealthPushed = false;
+
+// Shield - player ship shield renewal
+let shieldRenew = [];
+shieldRenew[0] = {
+    x: cWidth,
+    y: Math.floor(Math.random() * ( (maxHeight - shieldImage.height) - minHeight) + minHeight)
+}
+let initialShieldRenewPushed = false;
 
 // Timer(s) array
 let timeRenew = [];
@@ -175,11 +185,11 @@ function shipCommands(e){
 
         // Player spaceship speed boost
         if(key == 16 && d == "LEFT" || key == 16 && d == "RIGHT") {
-            if(boost >= 5 && boost <= 100) {
+            if(boost >= 0 && boost <= 100) {
                 speedBooster = true;
                 playerSpeed = 15;
                 // Empty out the speed booster
-                boost = boost - 5;
+                boost = boost - 1;
                 displaySpeedBooster.style.width = `${boost}%`;
                 boosterText.textContent = boost+'%';
             }
@@ -257,8 +267,8 @@ function coolOut(){
 
 // Gradually fill booster
 function graduallyFillBooster() {
-    if(boost >= 5 && boost <= 95) {
-        boost = boost + 5;
+    if(boost >= 1 && boost <= 99) {
+        boost = boost + 1;
         displaySpeedBooster.style.width = `${boost}%`;
         boosterText.textContent = boost+'%';
     }
@@ -271,7 +281,7 @@ function fillBooster() {
         speedBooster = true;
         displaySpeedBooster.style.width = `${boost}%`;
         boosterText.textContent = boost+'%';
-    }, 3000);
+    }, 6000);
 }
 
 // The game
@@ -382,7 +392,7 @@ function draw(){
         }
     }
 
-    // Display health renew with a timeout
+    // HEALTH RESTORATION
     for(let i = 0; i < healthRenew.length; i++){
         ctx.drawImage(firstAid, healthRenew[i].x, healthRenew[i].y);
 
@@ -410,7 +420,37 @@ function draw(){
         initialHealthPushed = true;
     }, 30 * 1000);
 
-    // Display time renew 
+    // SHIELD RESTORATION
+    for(let i = 0; i < shieldRenew.length; i++) {
+        ctx.drawImage(shieldImage, shieldRenew[i].x, shieldRenew[i].y);
+
+        // If the ship touches the shield, renew its shield.
+        if(shipX + ship.width >= shieldRenew[i].x && shipX <= shieldRenew[i].x + shieldImage.width && shipY + ship.height >= shieldRenew[i].y && shipY <= shieldRenew[i].y + shieldImage.height) {
+            // Remove the shield from screen
+            let shieldItem = shieldRenew[i];
+            let shieldIndex = shieldRenew.indexOf(shieldItem);
+            if(shieldIndex > -1) {
+                shieldRenew.splice(shieldIndex, 1);
+            }
+
+            // Restore 50 points to the player ship shield
+            restoreShield();
+        }
+        // If the shield item goes off canvas, remove it
+        if(shieldRenew[i].x + shieldImage.width < 0) {
+            shieldRenew.splice(shieldRenew[i], 1);
+        }
+    }
+
+    // Start moving the shield after 1 minute passes
+    setTimeout(() => {
+        for(let i = 0; i < shieldRenew.length;i++) {
+            shieldRenew[i].x--;
+        }
+        initialShieldRenewPushed = true;
+    }, 60 * 1000);
+
+    // ADD PLAY TIME 
     for(let i = 0; i < timeRenew.length; i++){
         ctx.drawImage(timerImage, timeRenew[i].x, timeRenew[i].y)
         // If the ship touches the sand timer, add more time
@@ -521,7 +561,9 @@ function displayTimeLeft(seconds) {
 function addPlaytime() {
     secondsLeft = secondsLeft + 15;
     timer(secondsLeft);
-    console.log({time, secondsLeft});
+    document.querySelector(".time").classList.add("timeShake");
+    notificationText.innerHTML = `<i class="material-icons timer">timer</i><p>Added playtime!</p>`;
+    displayNotification();
  }
 
 // Enemies
@@ -650,9 +692,25 @@ function restoreShipHP() {
     } else {
         shipHP = shipHP + 20;
         displayShipHP.style.width = `${shipHP}%`;
-        notificationText.innerHTML = `<i class="material-icons">local_hospital</i><p>Health renewed!</p>`;
+        document.querySelector("#hpText").textContent = shipHP+'%';
+        notificationText.innerHTML = `<i class="material-icons health">local_hospital</i><p>Health renewed!</p>`;
         displayNotification();
     }
+}
+
+function restoreShield() {
+    if(shield == 100) {
+        shield = shield;
+    } else if (shield > 100) {
+        shield = 100;
+    } else {
+        shield = shield + 50;
+        displayShield.style.width = `${shield}%`;
+        notificationText.innerHTML = `<i class="material-icons shield">security</i><p>Shield restored!</p>`;
+        document.querySelector("#shieldText").textContent = shield+'%';
+        displayNotification();
+    }
+    shieldDestroyed = false;
 }
 
 // When the game has ended / been completed.
@@ -688,7 +746,7 @@ function endgame(){
 
 // Spawn health renew every 30 seconds.
 function healthRenewFunction() {
-    if(initialHealthPushed == true) {
+    if(initialHealthPushed) {
         setTimeout(() => {
             healthRenew.push({
                 x: cWidth,
@@ -705,9 +763,28 @@ function healthRenewFunction() {
 }
 healthRenewFunction();
 
+// Spawn shield renew every minute
+function shieldRenewFunction() {
+    if(initialShieldRenewPushed) {
+        setTimeout(() => {
+            shieldRenew.push({
+                x: cWidth,
+                y: Math.floor(Math.random() * ( (maxHeight - shieldImage.height) - minHeight) + minHeight)
+            })
+
+            shieldRenewFunction();
+        }, 60 * 1000);
+    } else {
+        setTimeout(() => {
+            shieldRenewFunction();
+        }, 60 * 1000);
+    }
+}
+shieldRenewFunction();
+
 // Spawn timer to add more time to play every 10-15 seconds
 function timeRenewFunction(){
-    if(initialTimeRenewPushed == true) {
+    if(initialTimeRenewPushed) {
         setTimeout(() => {
             timeRenew.push({
                 x: cWidth,
@@ -715,6 +792,7 @@ function timeRenewFunction(){
             })
 
             timeRenewFunction();
+            document.querySelector(".time").classList.remove("timeShake");
         }, 15 * 1000);
     } else {
         setTimeout(() => {
@@ -723,6 +801,7 @@ function timeRenewFunction(){
     }
 }
 timeRenewFunction();
+
 // Pause game
 function displayPauseMenu(){
     // Display the menu
