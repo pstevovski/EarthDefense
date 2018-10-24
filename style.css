@@ -4,9 +4,7 @@
     box-sizing: border-box;
 }
 body{
-    background-image: url("images/background.png");
-    background-size: cover;
-    background-position: center center;
+    background-color: #111;
     overflow: hidden;
 }
 
@@ -294,6 +292,7 @@ canvas{
     margin: 10px 0;
     cursor: pointer;
 }
+
 .controlsInfo{
     display: none;
     position: absolute;
@@ -347,6 +346,58 @@ canvas{
 .notification p {
     margin-left: 5px;
     color: #f5f5f5;
+}
+/* shield notification */
+.notification .shield {
+    color: #1aeb71;
+}
+/* health restore notification */
+.notification .health {
+    color: #f5f5f5;
+}
+/* added playime notification */
+.notification .timer{
+    color: gold;
+}
+.time{
+    width: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.timeShake{
+    animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+}
+@keyframes shake{
+    10%, 90% {
+        transform: translate3d(-1px, 0, 0);
+      }
+      
+      20%, 80% {
+        transform: translate3d(2px, 0, 0);
+      }
+    
+      30%, 50%, 70% {
+        transform: translate3d(-4px, 0, 0);
+      }
+    
+      40%, 60% {
+        transform: translate3d(4px, 0, 0);
+      }
+}
+.time > * {
+    margin: 0 3px;
+}
+.time i {
+    font-size: 30px;
+}
+#timerDisplay{
+    font-size: 20px;
+    letter-spacing: 2px;
+    font-family: "Kanit Black";
 }
 @keyframes notification{
     0%{
