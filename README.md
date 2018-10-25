@@ -71,13 +71,16 @@ Defend the Earth from the upcoming meteors! (WIP).
   * [x] Alien ship model
   * [x] Canvas background(game)
   * [x] Timer icon.
-* Different info box about whats happening.
-* 3-2-1 countdown with commands shown on screen.
-* Re-design main menu.
+* [x]  Added support for 1920x1080 resolution.
+* [ ]  Randomize the time in which the time renew spawns.
+* [ ]  Add an about section at the main menu.
+* [ ]  Add notification for gun overheated.
+* [ ]  Different info box about whats happening.
+* [ ]  3-2-1 countdown with commands shown on screen.
+* [ ]  Re-design main menu.
 ------------------------------------------------
 * [ ]  Clean code
 * [ ]  Refactoring
-* [ ]  Add media queries for 1080p, 1440p and 4k.
 * [ ]  Update assets
 -------------------
 ###### Bugs:
