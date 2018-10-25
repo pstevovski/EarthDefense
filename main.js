@@ -115,6 +115,8 @@ let countdown;
 const timerDisplay = document.querySelector("#timerDisplay");
 const time = 30;
 
+
+let preGame = 10;
 // Start game
 function startGame(){
     const mainMenu = document.querySelector(".main-menu");
@@ -135,10 +137,19 @@ function startGame(){
         setTimeout(() => {
             infobox.classList.add("infoBoxActive");
 
+            // PREGAME COUNTDOWN
+            let pregameCountdown = setInterval(()=>{
+                preGame--;
+                document.querySelector("#pregameCountdown").textContent = preGame;
+                if(preGame == 0) {
+                    clearInterval(pregameCountdown)
+                    document.querySelector("#pregameCountdown").textContent = "0";        
+                }
+            }, 1000)
+
             // After 5 seconds make the infobox fade away. (remove the active class).
             setTimeout(() => {
                 infobox.classList.remove('infoBoxActive')
-
                 // Activate enemies and ship movement.
                 gameStarted = true;
 
@@ -150,18 +161,18 @@ function startGame(){
                 
                 // Start the timer countdown untill boss spawns
                 timer(time);
-            }, 5000);
+            }, 10 * 1000);
         }, 1000);
 
-        const controlsInfo = document.querySelector(".controlsInfo");
-        setTimeout(() => {
-            controlsInfo.style.display = "block";
+        // const controlsInfo = document.querySelector(".controlsInfo");
+        // setTimeout(() => {
+        //     controlsInfo.style.display = "block";
 
-            // Hide the controls info
-            setTimeout(() => {
-                controlsInfo.classList.add("controlsInfoActive");
-            }, 2000);
-        }, 8000);
+        //     // Hide the controls info
+        //     setTimeout(() => {
+        //         controlsInfo.classList.add("controlsInfoActive");
+        //     }, 5000);
+        // }, 8000);
 
         game = setInterval(draw, 1000/60);
     }, 2500);
@@ -464,11 +475,16 @@ function draw(){
             // Add time
             addPlaytime();
         }
+
+        // If clock goes past canvas
+        if(timeRenew[i].x < 0) {
+            timeRenew.splice(timeRenew[i], 1);
+        }
     }
     // Start moving the timer image
     setTimeout(() => {
         for(let i = 0; i < timeRenew.length; i++) {
-            timeRenew[i].x--;
+            timeRenew[i].x -= 2;
         }
         initialTimeRenewPushed = true;
     }, 15 * 1000);
