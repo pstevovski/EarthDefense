@@ -16,7 +16,7 @@
             <h1>EARTH DEFENCE</h1>
     
             <!-- Start game button -->
-            <a id="startGame">START GAME</a>
+            <button id="startGame">START GAME</button>
         </div>
 
         <!-- Earth and satelite container -->
@@ -47,80 +47,90 @@
         </div>
     </div>
 
-    <!-- GAME FINISHED / GAME OVER MENU -->
-    <div class="game--over">
-        <img id="displayImage" src="images/gravestone.svg" alt="Gravestone" width="70px"  height="70px">
-        <p id="message">Thank you for your service.</p>
-        <div class="scores">
-            <p>Score: <span id="finalScore"></span></p>
-            <p>Highscore: <span id="highscore"></span></p>
-        </div>
-        <a class="exitGame">EXIT</a>
-    </div>
-
-    <!-- GAME WINDOW -->
-    <div class="menu">
-        <p id="openMenu">MENU</p>
-        <p class="score">SCORE: <span id="score">0</span></p>
-        <div class="time"><i class="material-icons">timer</i><p id="timerDisplay">0:30</p></div>
-        <div class="bars">
-            <!-- SHIP HP BAR -->
-            <div class="playerShipContainer">
-                <p>SHIP:</p>
-                <div class="ship-hp hp-bars">
-                    <div class="ship-hpFill"><p id="hpText">100%</p></div>
-                </div>
-            </div>
-            <!-- SHIP SHIELD BAR -->
-            <div class="playerShipShieldContainer">
-                <p>SHIELD:</p>
-                <div class="shipShield">
-                    <div class="shipShield-fill"><p id="shieldText">100%</p></div>
-                </div>
-            </div>
-            <!-- GUN OVERHEAT -->
-            <div class="overheatContainer">
-                <p>OVERHEAT:</p>
-                <div class="gunOverheat">
-                    <div class="gunOverheat-fill"><p id="overheatText">0%</p></div>
-                </div>
-            </div>
-            <!-- SPEED BOOSTER -->
-            <div class="speedBoosterContainer">
-                <p>BOOSTER:</p>
-                <div class="speedBooster">
-                    <div class="speedBooster-fill"><p id="boosterText">100%</p></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- PAUSE MENU -->
-    <div class="pause--menu">
-        <h3>GAME PAUSED...</h3>
-        <p id="continueGame">CONTINUE</p>
-        <p class="exitGame">QUIT</p>
-    </div>
-
-    <!-- GAME WINDOW - INFO BOX -->
-    <div class="infobox">
-        <div class="spacecorps">
-            <img src="images/space corps.svg" alt="Space corps" width="100px" height="100px">
-        </div>
-        <div class="game--info">
-            <h3>SPACECORPS:</h3>
-            <p>There was a disturbance in the Asteroid belt, which caused meteors to be launched towards Earth. We don't know what caused that at this moment. You must go up there and defend our Earth, otherwise we face total destruction. Go, take this ship, and defend humanity!</p>
-        </div>
-    </div>
-
-    <!-- CONTROLS INFO -->
-    <div class="controlsInfo">
-        <p>Use the arrow keys to move. Use spacebar to shoot.</p>
-    </div>
-
     <!-- CANVAS -->
     <div class="container">
+        <!-- INFO MENU - SCORE, TIMER, HP... -->
+        <div class="menu">
+            <p id="openMenu">MENU</p>
+            <p class="score">SCORE: <span id="score">0</span></p>
+            <div class="time"><i class="material-icons">timer</i><p id="timerDisplay">0:30</p></div>
+            <div class="bars">
+            <!-- SHIP HP BAR -->
+                <div class="playerShipContainer">
+                    <p>SHIP:</p>
+                    <div class="ship-hp hp-bars">
+                        <div class="ship-hpFill"><p id="hpText">100%</p></div>
+                    </div>
+                </div>
+                <!-- SHIP SHIELD BAR -->
+                <div class="playerShipShieldContainer">
+                    <p>SHIELD:</p>
+                    <div class="shipShield">
+                        <div class="shipShield-fill"><p id="shieldText">100%</p></div>
+                    </div>
+                </div>
+                <!-- GUN OVERHEAT -->
+                <div class="overheatContainer">
+                    <p>OVERHEAT:</p>
+                    <div class="gunOverheat">
+                        <div class="gunOverheat-fill"><p id="overheatText">0%</p></div>
+                    </div>
+                </div>
+                <!-- SPEED BOOSTER -->
+                <div class="speedBoosterContainer">
+                    <p>BOOSTER:</p>
+                    <div class="speedBooster">
+                        <div class="speedBooster-fill"><p id="boosterText">100%</p></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GAME FINISHED / GAME OVER MENU -->
+        <div class="game--over">
+            <img id="displayImage" src="images/gravestone.svg" alt="Gravestone" width="70px"  height="70px">
+            <p id="message">Thank you for your service.</p>
+            <div class="scores">
+                <p>Score: <span id="finalScore"></span></p>
+                <p>Highscore: <span id="highscore"></span></p>
+            </div>
+            <a class="exitGame">EXIT</a>
+        </div>
+        
+    
+        <!-- PAUSE MENU -->
+        <div class="pause--menu">
+            <h3>GAME PAUSED...</h3>
+            <p id="continueGame">CONTINUE</p>
+            <p class="exitGame">QUIT</p>
+        </div>
+    
+        <!-- GAME WINDOW - INFO BOX -->
+        <div class="infobox">
+            <div class="spacecorps">
+                <img src="images/space corps.svg" alt="Space corps" width="100px" height="100px">
+            </div>
+            <div class="game--info">
+                <h3>SPACECORPS:</h3>
+                <p>Aliens are comming! Help to protect the Earth. Destroy as much alien spaceships as you can. Commands:</p>
+                <ul>
+                    <li>- Arrow keys / WASD to move the ship !</li>
+                    <li>- Spacebar to shoot !</li>
+                    <li>- Shift key (HOLD) to use booster !</li>
+                </ul>
+                <p>Get ready: <span id="pregameCountdown">10</span></p>
+            </div>
+        </div>
+    
+        <!-- CONTROLS INFO
+        <div class="controlsInfo">
+            <p>Use the arrow keys to move. Use spacebar to shoot. Use shift key to activate booster!</p>
+        </div> -->
+
+        <!-- GAME WINDOW -->
         <canvas id="canvas" width="1280px" height="500px"></canvas>
+
+        <!-- NOTIFICATIONS -->
         <div class="notificationsContainer">
             <div class="notification"></div>
         </div>
