@@ -74,10 +74,12 @@ Defend the Earth from the upcoming meteors! (WIP).
 * [x]  Added support for 1920x1080 resolution.
 * [x]  Add notification for gun overheated.
 * [x]  Re-design main menu.
-* [ ]  Randomize the time in which the time renew spawns.
+* [x]  Randomize the time in which the time renew spawns.
+* [x]  Loading screen with loading bar
+* [x]  Show commands @ loading screen
+* [x]  3-2-1 countdown with commands shown on screen.
 * [ ]  Add an about section at the main menu.
-* [ ]  Different info box about whats happening.
-* [ ]  3-2-1 countdown with commands shown on screen.
+* [ ]  Update the game over menu and the pause menu.
 * [ ]  Timer bug
 * [ ]  HP restoration bug (?)
 ------------------------------------------------
