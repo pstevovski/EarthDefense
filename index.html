@@ -16,34 +16,13 @@
             <h1>EARTH DEFENCE</h1>
     
             <!-- Start game button -->
-            <button id="startGame">START GAME</button>
-        </div>
+            <button id="startGame" class="main-menu_buttons">start game</button>
+            <button id="about" class="main-menu_buttons">about</button>
 
-        <!-- Earth and satelite container -->
-        <div class="earth">
-            <img id="satelite" src="images/satellite.svg" alt="Satelite" width="25px" height="25px">
-            <img id="earthTest" src="images/planet-earth.svg" alt="Earth" width="300px" height="300px">
-        </div>
+            <!-- Github link -->
+            <a href="https://github.com/pecko95/EarthDefence" target="_blank"><img src="images/github.png" alt="Github" width="32x" height="32px"></a>
 
-        <!-- Astronauts -->
-        <div class="astronaut--right">
-            <img src="images/astronaut1.png" alt="Astronaut right" width="130px" height="130px">
-        </div>
-        <div class="astronaut--left">
-            <img src="images/astronaut2.png" alt="Astronaut left" width="90px" height="90px">
-        </div>
-
-        <!-- Github link -->
-        <div class="github">
-            <a href="https://github.com/pecko95/EarthDefence" target="_blank"><img src="images/github.png" alt="GitHub" width="30px" height="30px" title="GitHub link"></a>
-        </div>
-
-        <!-- Rocket -->
-        <div class="rocket--flybyOne">
-            <img src="images/rocket.svg" alt="Rocket Fly-by" width="40px" height="40px">
-        </div>
-        <div class="rocket--flybyTwo">
-            <img src="spaceshuttle.svg" alt="Spaceship Fly-by" width="40px" height="40px">
+            <p id="copyright">&copy; 2018</p>
         </div>
     </div>
 
@@ -52,39 +31,30 @@
         <!-- INFO MENU - SCORE, TIMER, HP... -->
         <div class="menu">
             <p id="openMenu">MENU</p>
+            <div class="time"><p id="timerDisplay">0:30</p></div>
             <p class="score">SCORE: <span id="score">0</span></p>
-            <div class="time"><i class="material-icons">timer</i><p id="timerDisplay">0:30</p></div>
-            <div class="bars">
-            <!-- SHIP HP BAR -->
-                <div class="playerShipContainer">
-                    <p>SHIP:</p>
-                    <div class="ship-hp hp-bars">
-                        <div class="ship-hpFill"><p id="hpText">100%</p></div>
-                    </div>
-                </div>
-                <!-- SHIP SHIELD BAR -->
-                <div class="playerShipShieldContainer">
-                    <p>SHIELD:</p>
-                    <div class="shipShield">
-                        <div class="shipShield-fill"><p id="shieldText">100%</p></div>
-                    </div>
-                </div>
-                <!-- GUN OVERHEAT -->
-                <div class="overheatContainer">
-                    <p>OVERHEAT:</p>
-                    <div class="gunOverheat">
-                        <div class="gunOverheat-fill"><p id="overheatText">0%</p></div>
-                    </div>
-                </div>
-                <!-- SPEED BOOSTER -->
-                <div class="speedBoosterContainer">
-                    <p>BOOSTER:</p>
-                    <div class="speedBooster">
-                        <div class="speedBooster-fill"><p id="boosterText">100%</p></div>
-                    </div>
-                </div>
-            </div>
         </div>
+
+        <!-- HEALTH CONTAINER -->
+        <div class="health-container">
+            <img src="images/firstAid.png" alt="Health" width="32px" height="32px">
+            <img src="images/firstAid.png" alt="Health" width="32px" height="32px">
+            <img src="images/firstAid.png" alt="Health" width="32px" height="32px">
+            <img src="images/firstAid.png" alt="Health" width="32px" height="32px">
+            <img src="images/firstAid.png" alt="Health" width="32px" height="32px">
+        </div>
+
+        <!-- SHIP SHIELD CONTAINER -->
+        <div class="shield-container">
+            <img src="images/shieldImage.png" alt="Shield" width="32px" height="32px">
+            <img src="images/shieldImage.png" alt="Shield" width="32px" height="32px">
+            <img src="images/shieldImage.png" alt="Shield" width="32px" height="32px">
+            <img src="images/shieldImage.png" alt="Shield" width="32px" height="32px">
+            <img src="images/shieldImage.png" alt="Shield" width="32px" height="32px">
+        </div>
+
+        <!-- OVERHEAT TEXT -->
+        <div class="emptyWarning-text"></div>
 
         <!-- GAME FINISHED / GAME OVER MENU -->
         <div class="game--over">
@@ -96,7 +66,6 @@
             </div>
             <a class="exitGame">EXIT</a>
         </div>
-        
     
         <!-- PAUSE MENU -->
         <div class="pause--menu">
@@ -121,11 +90,6 @@
                 <p>Get ready: <span id="pregameCountdown">10</span></p>
             </div>
         </div>
-    
-        <!-- CONTROLS INFO
-        <div class="controlsInfo">
-            <p>Use the arrow keys to move. Use spacebar to shoot. Use shift key to activate booster!</p>
-        </div> -->
 
         <!-- GAME WINDOW -->
         <canvas id="canvas" width="1280px" height="500px"></canvas>
