@@ -111,56 +111,76 @@ let countdown;
 const timerDisplay = document.querySelector("#timerDisplay");
 const time = 30;
 
+// Load game
+function loadGame() {
+    const mainMenu = document.querySelector(".main-menu");
+    // mainMenu.classList.add("mainMenuFade")
+    mainMenu.style.display = "none";
+    
+    // Display loading container
+    const loadingContainer = document.querySelector(".loading");
+    loadingContainer.style.display = "flex";
+    
+    // Loading bar
+    let loadingBarPercent = 0;
+    const loadingBar = document.querySelector(".loading-bar_fill");
+    const loadingBarText = document.querySelector(".loading-text");
 
-let preGame = 10;
+    let load = setInterval(()=>{
+        if(loadingBarPercent < 100) {
+            loadingBarPercent++;
+        }
+        loadingBarText.textContent = loadingBarPercent+"%";
+        loadingBar.style.width = `${loadingBarPercent}%`;
+
+        if(loadingBarPercent === 100) {
+            setTimeout(()=> loadingContainer.style.display = "none", 500);
+            startGame();
+            clearInterval(load);
+        }
+    }, 50)
+}
+
 // Start game
 function startGame(){
-    const mainMenu = document.querySelector(".main-menu");
-    mainMenu.classList.add("mainMenuFade")
 
     setTimeout(() => {
-        mainMenu.style.display = "none";
-        
         // Display the MENU/SCORE panel
         menu.style.display = "flex";
         setTimeout(() => {
             menu.classList.add("menuActive");
             healthContainer.style.display = "block";
             shieldContainer.style.display = "block";
-        }, 5000);
+        }, 500);
 
-        // Show the info box
-        const infobox = document.querySelector(".infobox");
-        infobox.style.display = "flex";
+        // Pre-start countdown - 3 seconds then GO !
+        let preGame = 3;
+        const preGameCountdown = document.querySelector(".countdown");
+        preGameCountdown.style.display = "block";
+        const preGameCountdownInterval = setInterval(()=>{
+            preGame--;
+            preGameCountdown.textContent = preGame;
+            if(preGame == 0) {
+                preGameCountdown.textContent = "GO !";
+                setTimeout(()=> preGameCountdown.style.display = "none", 250)
+                clearInterval(preGameCountdownInterval);
+            }
+        }, 1000)
+
+        // After 5 seconds make the infobox fade away. (remove the active class).
         setTimeout(() => {
-            infobox.classList.add("infoBoxActive");
+            // Activate enemies and ship movement.
+            gameStarted = true;
 
-            // PREGAME COUNTDOWN
-            let pregameCountdown = setInterval(()=>{
-                preGame--;
-                document.querySelector("#pregameCountdown").textContent = preGame;
-                if(preGame == 0) {
-                    clearInterval(pregameCountdown)
-                    document.querySelector("#pregameCountdown").textContent = "0";        
-                }
-            }, 1000)
-
-            // After 5 seconds make the infobox fade away. (remove the active class).
-            setTimeout(() => {
-                infobox.classList.remove('infoBoxActive')
-                // Activate enemies and ship movement.
-                gameStarted = true;
-
-                // Enemies shoot every 2 seconds
-                enemiesSpawned = true;
+            // Enemies shoot every 2 seconds
+            enemiesSpawned = true;
                 
-                // Start the timer countdown untill boss spawns
-                timer(time);
-            }, 10 * 1000);
-        }, 1000);
+            // Start the timer countdown untill boss spawns
+            timer(time);
+        }, 3000);
 
-        game = setInterval(draw, 1000/60);
-    }, 2500);
+        game = setInterval(draw, 1000 / 60);
+    }, 500);
 }
 
 // Move the spaceship
@@ -844,7 +864,7 @@ document.querySelectorAll(".exitGame").forEach(exit => exit.addEventListener("cl
 // Event listeners
 document.addEventListener("keydown", shipCommands);
 document.addEventListener("keyup", clearShipCommands);
-document.querySelector("#startGame").addEventListener("click", startGame);
+document.querySelector("#startGame").addEventListener("click", loadGame);
 document.addEventListener("keyup", shoot);
 document.querySelector("#openMenu").addEventListener("click", displayPauseMenu);
 document.querySelector("#continueGame").addEventListener("click", continueGame);
