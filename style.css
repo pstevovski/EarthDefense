@@ -4,7 +4,7 @@
     box-sizing: border-box;
 }
 body{
-    background-color: #111;
+    background-color: #000;
     overflow: hidden;
 }
 
@@ -17,86 +17,79 @@ body{
     opacity: 1;
     transition: 2.5s ease;
     z-index: 9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .mainMenuFade{
     opacity: 0;
 }
+.main-menu_buttons:hover{
+    animation: buttonsAnimation 0.8s ease forwards infinite alternate;
+}
+@keyframes buttonsAnimation{
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-5px); }
+}
 .title {
     text-align: center;
-    position: relative;
-    top: 20%;
-    left: 50%;
-    transform: translate(-50%, -20%)
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.title > *{
+    margin: 15px 0;
 }
 .title h1{
     text-align: center;
-    font-family: "Titillium Web Black";
-    font-size: 80px;
+    font-family: "Press Start 2P";
+    font-size: 50px;
     color: #f5f5f5;
-    width: 330px;
     letter-spacing: 1px;
     margin: 0 auto;
+    margin-bottom: 40px;
 }
 #startGame{
     border: none;
     background: none;
-    font-size: 25px;
-    font-family: "Titillium Web Black";
+    font-size: 14px;
+    font-family: "Press Start 2P";
     color: #f5f5f5;
     letter-spacing: 1px;
     cursor: pointer;
-    animation: startGameText 2s ease forwards infinite;
+    /* animation: startGameText 2s ease forwards infinite; */
     display: inline-block;
     transition: 0.3s ease;
     z-index: 9;
     outline: none;
 }
 #startGame:hover{
-    text-shadow: 0px 4px 0px goldenrod;
+    color: gold;
 }
-.earth{
-    position: absolute;
-    bottom: -160px;
-    left: 50%;
-    transform: translate(-50%);
-    display: flex;
-    flex-direction: column;
-}
-#satelite{
-    animation: satelite 15s ease forwards infinite;
-}
-.astronaut--right{
-    position: absolute;
-    right: 100px;
-    bottom: 50px;
-    animation: astronautRight 30s ease-in-out forwards infinite;
-}
-.astronaut--left{
-    position: absolute;
-    left: 25%;
-    bottom: 0px;
-    animation: astronautLeft 30s ease-in-out forwards infinite;
-}
-.rocket--flybyOne{
-    position:   absolute;
-    top: 60%;
-    left: -150px;
-    animation: flybyOne 10s ease forwards infinite;
-}
-.rocket--flybyTwo{
-    position: absolute;
-    bottom: 0%;
-    left: 50%;
-    transform: rotateZ(60deg);
-    animation: flybyTwo 10s ease forwards infinite;
-    animation-delay: 15s;
-    z-index: -1;
-}
-.github{
-    position: absolute;
-    bottom: 0px;
-    right: 20px;
+#about{
+    border: none;
+    background: none;
+    font-size: 14px;
+    font-family: "Press Start 2P";
+    color: #f5f5f5;
+    letter-spacing: 1px;
     cursor: pointer;
+    /* animation: startGameText 2s ease forwards infinite; */
+    display: inline-block;
+    transition: 0.3s ease;
+    z-index: 9;
+    outline: none;
+}
+#about:hover{
+    color: gold;
+}
+#copyright{
+    font-family: "Press Start 2P";
+    font-size: 8px;
+    color: #f5f5f5;
+    justify-self: flex-end;
+    margin-top: 80px;
 }
 
 /*////////////////////////////////////////////*/
@@ -105,28 +98,78 @@ body{
 .menu{
     display: none;
     opacity: 0;
-    width: 1280px;
+    width: 1250px;
     color: #f5f5f5;
     display: flex;
     justify-content: space-between;
     align-items: center;
     position: absolute;
-    top:55px;
+    top:10px;
     left: 50%;
-    transform: translate(-50%, 70px);
-    z-index: -1;
+    transform: translate(-50%);
+    z-index: 99;
     transition: 0.75s ease;
+    font-family: "Press Start 2P";
 }
 #openMenu{
     cursor: pointer;
 }
 .menuActive{
     opacity: 1;
-    transform: translate(-50%, -40px);
+}
+.container .health-container{
+    display: none;
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    z-index: 999;
+}
+.container .shield-container{
+    display: none;
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    z-index: 999;
 }
 .score{
     text-align: center;
 }
+.emptyWarning-text{
+    display: none;
+    font-family: "Press Start 2P";
+    font-size: 22px;
+    letter-spacing: 3px;
+    color: #f5f5f5;
+    text-shadow: 4px 4px #860905;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 999;
+}
+.emptyWarning-textActive{
+    display: block;
+    animation: overheatAnimation 0.6s ease forwards infinite;
+}
+
+@keyframes overheatAnimation{
+    0%{
+        color: #f5f5f5;
+        text-shadow: 4px 4px #860905;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    50%{
+        color: #b30d07;
+        text-shadow: 4px 4px #f5f5f5;
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+    100%{
+        color: #f5f5f5;
+        text-shadow: 4px 4px #860905;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
 canvas{
     display: none;
     border: 2px solid #dddddd10;
@@ -329,24 +372,23 @@ canvas{
     opacity: 0;
 }
 .container{
-    width: 100%;
-    height: 620px;
+    width: 1280px;
+    height: 500px;
     position: relative;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     align-items: center;
     position: absolute;
-    top: 10%;
+    top: 50%;
     left: 50%;
-    transform: translate(-50%, -10%);
+    transform: translate(-50%, -50%);
+    overflow: hidden;
 }
 .notificationsContainer{
-    width: 1300px;
-    height: 50px;
-    overflow: hidden;
+    width: 100%;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
 }
 .notification{
@@ -357,6 +399,8 @@ canvas{
     width: 300px;
     height: 40px;
     transform: translateY(100px);
+    font-size: 12px;
+    font-family: "Press Start 2P";
 }
 .activeNotification{
     animation: notification 4s ease forwards;
@@ -417,9 +461,10 @@ canvas{
     font-size: 30px;
 }
 #timerDisplay{
-    font-size: 20px;
+    font-size: 17px;
     letter-spacing: 2px;
-    font-family: "Kanit Black";
+    color: gold;
+    font-family: "Press Start 2P";
 }
 @keyframes notification{
     0%{
@@ -460,16 +505,10 @@ canvas{
 }
 
 @media (min-width: 1920px) {
-    .menu{
-        top: 40px;
-    }
     p{
         font-size: 20px;
     }
     .playerShipContainer p, .overheatContainer p, .speedBoosterContainer p, .playerShipShieldContainer p{
         font-size: 18px;
-    }
-    .container{
-        /* background-color: red; */
     }
 }
