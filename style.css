@@ -92,6 +92,52 @@ body{
     margin-top: 80px;
 }
 
+.loading{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.loading-text{
+    font-family: "Press Start 2P";
+    font-size: 12px;
+    color: #f5f5f5;
+    margin-bottom: 10px;
+}
+.loading-bar{
+    width: 200px;
+    height: 20px;
+    border: 1px solid grey;
+}
+.loading-bar_fill{
+    width: 5%;
+    height: 100%;
+    background-color: #f5f5f5;
+}
+.loading .info{
+    margin: 30px 0;
+}
+.loading .info h2{
+    color: #f5f5f5;
+    font-family: "Press Start 2P";
+    font-size: 16px;
+    margin: 10px 0;
+    text-align: center;
+}
+.loading .info p{
+    color: #f5f5f5;
+    font-family: "Press Start 2P";
+    font-size: 10px;
+    margin: 5px 0;
+}
+
+
 /*////////////////////////////////////////////*/
 
 /* GAME MENU */
@@ -151,7 +197,18 @@ body{
     display: block;
     animation: overheatAnimation 0.6s ease forwards infinite;
 }
-
+.countdown {
+    display: none;
+    font-family: "Press Start 2P";
+    font-size: 30px;
+    color: #f5f5f5;
+    text-shadow: 3px 3px rgba(168, 33, 33);
+    z-index: 999;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
 @keyframes overheatAnimation{
     0%{
         color: #f5f5f5;
