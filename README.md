@@ -72,12 +72,14 @@ Defend the Earth from the upcoming meteors! (WIP).
   * [x] Canvas background(game)
   * [x] Timer icon.
 * [x]  Added support for 1920x1080 resolution.
+* [x]  Add notification for gun overheated.
+* [x]  Re-design main menu.
 * [ ]  Randomize the time in which the time renew spawns.
 * [ ]  Add an about section at the main menu.
-* [ ]  Add notification for gun overheated.
 * [ ]  Different info box about whats happening.
 * [ ]  3-2-1 countdown with commands shown on screen.
-* [ ]  Re-design main menu.
+* [ ]  Timer bug
+* [ ]  HP restoration bug (?)
 ------------------------------------------------
 * [ ]  Clean code
 * [ ]  Refactoring
