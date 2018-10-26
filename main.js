@@ -1,5 +1,5 @@
 // Globals
-let d;
+let d; // Player ship direction
 let game;
 let score = 0;
 let shipHP = 100;
@@ -8,24 +8,20 @@ let overheat = 0;
 let boost = 100;
 let meteorSpawnDistance = 1200;
 let meteorsSpeed = 1;
-const displayShipHP = document.querySelector(".ship-hpFill");
-const displayShield = document.querySelector(".shipShield-fill");
 const notificationText = document.querySelector(".notification");
 const menu = document.querySelector(".menu");
 const displayScore = document.querySelector("#score");
 const displayImage = document.querySelector("#displayImage");
 const message = document.querySelector("#message");
 const pauseMenu = document.querySelector(".pause--menu");
-const displaySpeedBooster = document.querySelector(".speedBooster-fill");
-const overheatText = document.querySelector("#overheatText");
-const boosterText = document.querySelector("#boosterText");
+const shieldContainer = document.querySelector(".shield-container");
+const healthContainer = document.querySelector(".health-container");
 
 // Flag variables
 let isSpaceDown = false;
 let gameStarted = false;
 let isOverheated = false;
 let enemiesSpawned = false;
-let displayTimer = false;
 let speedBooster = false;
 let shieldDestroyed = false;
 
@@ -51,9 +47,9 @@ const explosionSound = new Audio();
 const timerImage = new Image();
 const shieldImage = new Image();
 
-ship.src = "images/spaceship.png";
+ship.src = "images/player.png";
 bg.src = "images/background.png";
-enemy.src = "images/enemySpaceship.png";
+enemy.src = "images/enemy.png";
 missile.src = "images/testRocket.png";
 explosion.src = `images/explosion/2.png`;
 firstAid.src = "images/firstAid.png";
@@ -129,6 +125,8 @@ function startGame(){
         menu.style.display = "flex";
         setTimeout(() => {
             menu.classList.add("menuActive");
+            healthContainer.style.display = "block";
+            shieldContainer.style.display = "block";
         }, 5000);
 
         // Show the info box
@@ -155,24 +153,11 @@ function startGame(){
 
                 // Enemies shoot every 2 seconds
                 enemiesSpawned = true;
-
-                // Display timer
-                displayTimer = true;
                 
                 // Start the timer countdown untill boss spawns
                 timer(time);
             }, 10 * 1000);
         }, 1000);
-
-        // const controlsInfo = document.querySelector(".controlsInfo");
-        // setTimeout(() => {
-        //     controlsInfo.style.display = "block";
-
-        //     // Hide the controls info
-        //     setTimeout(() => {
-        //         controlsInfo.classList.add("controlsInfoActive");
-        //     }, 5000);
-        // }, 8000);
 
         game = setInterval(draw, 1000/60);
     }, 2500);
@@ -181,7 +166,6 @@ function startGame(){
 // Move the spaceship
 function shipCommands(e){
     let key = e.keyCode;
-    console.log(key);
     // If game has started, enable ship movement.
     if(gameStarted) { 
         if(key == 37) {
@@ -196,21 +180,20 @@ function shipCommands(e){
 
         // Player spaceship speed boost
         if(key == 16 && d == "LEFT" || key == 16 && d == "RIGHT") {
-            if(boost >= 0 && boost <= 100) {
+            if(boost > 0 && boost <= 100) {
                 speedBooster = true;
-                playerSpeed = 15;
+                playerSpeed = 10;
                 // Empty out the speed booster
                 boost = boost - 1;
-                displaySpeedBooster.style.width = `${boost}%`;
-                boosterText.textContent = boost+'%';
             }
             // Disable speed boost if it reaches 0
             if(boost <= 0) {
                 speedBooster = false;
                 playerSpeed = 5;
+                emptyWarningText.textContent = "BOOSTER EMPTY !";
+                emptyWarningText.classList.add("emptyWarning-textActive");
                 fillBooster();
             }
-            console.log(boost);
         }
     }
 }
@@ -242,14 +225,15 @@ function shoot(e){
 }
 
 // Overheat the spaceship's guns.
-const overheatFill = document.querySelector(".gunOverheat-fill");
+const emptyWarningText = document.querySelector(".emptyWarning-text");
 function overheated(){
     overheat = overheat + 5;
-    overheatFill.style.width = `${overheat}%`;
-    overheatText.textContent = overheat+'%';
+
     // If overheat meter reaches max(100), stop the ship from shooting, when it starts cooling off enable shooting.
     if(overheat == 100) {
         isOverheated = true;
+        emptyWarningText.textContent = "OVERHEATED !";
+        emptyWarningText.classList.add("emptyWarning-textActive");
         coolOut();
     } else if (overheat < 100 && overheat > 0) {
         isOverheated = false;
@@ -258,40 +242,35 @@ function overheated(){
 
 // Gradually cool out the gun BEFORE it reaches overheating point
 function graduallyCoolOut(){
-    if(overheat <= 95 && overheat > 5) {
+    if(overheat <= 95 && overheat >= 5) {
         overheat = overheat - 5;
-        overheatFill.style.width = `${overheat}%`;
-        overheatText.textContent = overheat+'%';
     }
 }
 const cooloutInterval = setInterval(graduallyCoolOut, 800)
 
-// When gun overheats, wait 1 second, then cool it out and enable shooting.
+// // When gun overheats, wait 1 second, then cool it out and enable shooting.
 function coolOut(){
     setTimeout(() => {
         overheat = 0;
         isOverheated = false;
-        overheatFill.style.width = `${overheat}%`;
-        overheatText.textContent = overheat+'%';
-    }, 1000);
+        emptyWarningText.classList.remove("emptyWarning-textActive");
+    }, 2000);
 }
 
 // Gradually fill booster
 function graduallyFillBooster() {
-    if(boost >= 1 && boost <= 99) {
+    if(boost >= 0 && boost <= 99) {
         boost = boost + 1;
-        displaySpeedBooster.style.width = `${boost}%`;
-        boosterText.textContent = boost+'%';
     }
 }
 const boosterInterval = setInterval(graduallyFillBooster, 800);
+
 // If speed booster is empty (0), fill it up instantly after 3 seconds
 function fillBooster() {
     setTimeout(() => {
         boost = 100;
         speedBooster = true;
-        displaySpeedBooster.style.width = `${boost}%`;
-        boosterText.textContent = boost+'%';
+        emptyWarningText.classList.remove("emptyWarning-textActive");
     }, 6000);
 }
 
@@ -370,9 +349,6 @@ function draw(){
                     // Draw explosion of the enemy.
                     ctx.drawImage(explosion, enemies[i].x - enemy.width, enemies[i].y - enemy.height);
 
-                    // Delete enemy from screen and add points.
-                    // destroyEnemy();
-                    
                     // Remove the missiles
                     let missile = ammo[j];
                     let missileIndex = ammo.indexOf(missile);
@@ -487,7 +463,7 @@ function draw(){
             timeRenew[i].x -= 2;
         }
         initialTimeRenewPushed = true;
-    }, 15 * 1000);
+    }, 10 * 1000);
 
     // Move the ship
     if(d == "LEFT") {
@@ -575,7 +551,13 @@ function displayTimeLeft(seconds) {
 }
 // Add additional playtime
 function addPlaytime() {
-    secondsLeft = secondsLeft + 15;
+    let minTime = 8;
+    let maxTime = 12;
+    minTime = Math.ceil(minTime);
+    maxTime = Math.floor(maxTime);
+    let spawnTime = Math.floor(Math.random() * (maxTime - minTime + 1)) + minTime;
+
+    secondsLeft = secondsLeft + spawnTime;
     timer(secondsLeft);
     document.querySelector(".time").classList.add("timeShake");
     notificationText.innerHTML = `<i class="material-icons timer">timer</i><p>Added playtime!</p>`;
@@ -673,12 +655,12 @@ function displayNotification(secondsLeft){
 }
 
 // SHIP SHIELD
+
 function decreaseShield() {
-    // Decrease from shield if its between 10 and 100
-    if(shield >= 10 && shield <= 100) {
-        shield = shield - 10;
-        displayShield.style.width = `${shield}%`;
-        document.querySelector("#shieldText").textContent = shield+'%';
+    // Decrease shield
+    if(shield >= 20 && shield <= 100) {
+        shield = shield - 20;
+        shieldContainer.removeChild(shieldContainer.children[0]);
     }
     // If shield is at 0, mark it as destroyed
     if(shield == 0) {
@@ -687,14 +669,13 @@ function decreaseShield() {
 }
 
 // SHIP HEALTH:
-function decreaseShipHP()   {
+function decreaseShipHP() {
+    // BUGGED (?)
     if(shieldDestroyed) {
-        shipHP = shipHP - 20;
-        displayShipHP.style.width = `${shipHP}%`;
-        // Change the text in the bar
-        document.querySelector("#hpText").textContent = shipHP+'%';
-
-        if(shipHP == 0) {
+        if(shipHP <= 100){
+            shipHP = shipHP - 20;
+            healthContainer.removeChild(healthContainer.children[0]);
+        } else if(shipHP == 0) {
             endgame();
             clearInterval(game);
             clearInterval(enemiesShootingInterval);
@@ -702,28 +683,34 @@ function decreaseShipHP()   {
     }
 }
 
+const dispalyHealthItem = document.createElement("img");
+dispalyHealthItem.setAttribute('src', 'images/firstAid.png');
+dispalyHealthItem.setAttribute('width', '32px');
+dispalyHealthItem.setAttribute('height', '32px');
+
 function restoreShipHP() {
+    // BUGGED (?)
     if(shipHP == 100) {
         shipHP = shipHP;
-    } else {
+    } else{
+        healthContainer.insertBefore(dispalyHealthItem, healthContainer.firstChild);
         shipHP = shipHP + 20;
-        displayShipHP.style.width = `${shipHP}%`;
-        document.querySelector("#hpText").textContent = shipHP+'%';
         notificationText.innerHTML = `<i class="material-icons health">local_hospital</i><p>Health renewed!</p>`;
         displayNotification();
     }
 }
+const displayShieldItem = document.createElement("img");
+displayShieldItem.setAttribute('src', 'images/shieldImage.png');
+displayShieldItem.setAttribute('width', '32px');
+displayShieldItem.setAttribute('height', '32px');
 
 function restoreShield() {
     if(shield == 100) {
         shield = shield;
-    } else if (shield > 100) {
-        shield = 100;
-    } else {
-        shield = shield + 50;
-        displayShield.style.width = `${shield}%`;
+    } else if(shield <= 80){
+        shield = shield + 20;
+        shieldContainer.appendChild(displayShieldItem);
         notificationText.innerHTML = `<i class="material-icons shield">security</i><p>Shield restored!</p>`;
-        document.querySelector("#shieldText").textContent = shield+'%';
         displayNotification();
     }
     shieldDestroyed = false;
@@ -809,11 +796,11 @@ function timeRenewFunction(){
 
             timeRenewFunction();
             document.querySelector(".time").classList.remove("timeShake");
-        }, 15 * 1000);
+        }, 10 * 1000);
     } else {
         setTimeout(() => {
             timeRenewFunction();
-        }, 15 * 1000);
+        }, 20 * 1000);
     }
 }
 timeRenewFunction();
