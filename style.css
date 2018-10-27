@@ -308,17 +308,7 @@ canvas{
 #finalScore, #highscore{
     color: gold;
 }
-/* .playerShipContainer, .overheatContainer, .speedBoosterContainer, .playerShipShieldContainer{
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    width: 150px;
-}
-.playerShipContainer p, .overheatContainer p, .speedBoosterContainer p, .playerShipShieldContainer p{
-    font-size: 14px;
-    font-family: "Montserrat Medium";
-} */
+
 .bars{
     display: flex;
     align-items: center;
@@ -376,15 +366,6 @@ canvas{
     background-color: rgb(168, 33, 33);
     transition: 0.5s ease;
 }
-/* #hpText, #shieldText, #overheatText, #boosterText {
-    height: 100%;
-    margin-left: 5px;
-    font-family: "Montserrat Medium";
-    display: flex;
-    justify-content: flex-start;
-    align-items: center; 
-    font-size: 12px;
-} */
 /* PAUSE MENU */
 .pause--menu{
     display: none;
@@ -421,22 +402,6 @@ canvas{
     text-shadow: 2px 2px rgb(161, 9, 9);
 }
 
-/* .controlsInfo{
-    display: none;
-    position: absolute;
-    bottom: 10%;
-    left: 50%;
-    transform: translate(-50%, -90%);
-    color: #f5f5f5;
-    font-family: "Titillium Web Medium";
-    letter-spacing: 1px;
-    font-size: 18px;
-    z-index: 99;
-    text-transform: uppercase;
-    opacity: 1;
-    transition: 2s ease;
-    text-align: center;
-} */
 .controlsInfoActive{
     opacity: 0;
 }
