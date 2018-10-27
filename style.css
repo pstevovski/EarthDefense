@@ -141,7 +141,46 @@ button{
     font-size: 10px;
     margin: 5px 0;
 }
-
+.aboutMenu{
+    display: none;
+    padding: 15px;
+    width: 450px;
+    height: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #000;
+    z-index: 999;
+    border: 1px solid #dddddd30;
+    color: #f5f5f5;
+    font-family: "Press Start 2P";
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-align: center;
+    line-height: 15px;
+}
+.aboutMenu h3{
+    color: gold;
+    font-size: 20px;
+}
+.aboutMenu p {
+    padding: 25px;
+}
+.aboutMenu a {
+    color: gold;
+    text-decoration: none;
+}
+#closeAbout{
+    background: none;
+    border: none;
+    color: #f5f5f5;
+    font-family: "Press Start 2P";
+    cursor: pointer;
+}
+#closeAbout:hover{
+    color: gold;
+}
 
 /*////////////////////////////////////////////*/
 
@@ -288,7 +327,7 @@ canvas{
 .game--over{
     display: none;
     text-align: center;
-    background-color: #0d002b;
+    background-color: #000016;
     color: #f5f5f5;
     font-family: "Press Start 2P";
     font-size: 12px;
@@ -414,7 +453,7 @@ canvas{
     width: 250px;
     height: 180px;
     padding: 10px;
-    background-color: #0d002b;
+    background-color: #000016;
     color: #f5f5f5;
     text-align: center;
     flex-direction: column;
