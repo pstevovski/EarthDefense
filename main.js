@@ -78,7 +78,7 @@ alarm.volume = 0.1;
 engineFlames.src = "images/engineFlameNormal.png";
 
 // Play the theme music when page is loaded
-music.play();
+window.addEventListener("DOMContentLoaded", () => music.play());
 
 // Spaceship starting coordinates
 let shipX = 50;
