@@ -43,6 +43,7 @@ const missile = new Image();
 const explosion = new Image();
 const firstAid = new Image();
 const alienMissile = new Image();
+const engineFlames = new Image();
 const missileSound = new Audio();
 const enemyShootingSound = new Audio();
 const explosionSound = new Audio();
@@ -52,28 +53,29 @@ const music = new Audio();
 const restoreSoundEffect = new Audio();
 const alarm = new Audio();
 
-ship.src = "images/player.png";
 bg.src = "images/background.png";
+ship.src = "images/player.png";
 enemy.src = "images/enemy.png";
-missile.src = "images/test.png";
-explosion.src = `images/explosion/2.png`;
+missile.src = "images/playerRocket.png";
+explosion.src = `images/3.png`;
 firstAid.src = "images/firstAid.png";
-alienMissile.src = "images/testEnemyRocket.png";
+alienMissile.src = "images/enemyRocket.png";
 missileSound.src = "Audio/weapon_player.wav";
 missileSound.volume = 0.05;
-explosionSound.src = "Audio/explosion_asteroid.wav";
+explosionSound.src = "Audio/explosion_enemy.wav";
 explosionSound.volume = 0.1;
 enemyShootingSound.src = "Audio/laser1.ogg";
 enemyShootingSound.volume = 0.05;
 timerImage.src = "images/timer.png";
 shieldImage.src = "images/shieldImage.png";
-music.src = "Audio/Crimson Drive.mp3";
+music.src = "Audio/music_background.wav";
 music.volume = 0.3;
 music.loop = true;
 restoreSoundEffect.src = "Audio/powerUp11.ogg";
 restoreSoundEffect.volume = 0.5;
 alarm.src = "Audio/alarm.wav";
 alarm.volume = 0.1;
+engineFlames.src = "images/engineFlameNormal.png";
 
 // Play the theme music when page is loaded
 music.play();
@@ -83,6 +85,8 @@ let shipX = 50;
 let shipY = 250;
 let hitBoundary = false;
 let playerSpeed = 5;
+let engineFlameX;
+let engineFlameY;
 
 // Player ammo
 let ammo = [];
@@ -178,16 +182,16 @@ function startGame(){
     setTimeout(() => {
         // Display the MENU/SCORE panel
         menu.style.display = "flex";
+        const preGameCountdown = document.querySelector(".countdown");
         setTimeout(() => {
             menu.classList.add("menuActive");
             healthContainer.style.display = "block";
             shieldContainer.style.display = "block";
+            preGameCountdown.style.display = "block";
         }, 500);
 
         // Pre-start countdown - 3 seconds then GO !
         let preGame = 3;
-        const preGameCountdown = document.querySelector(".countdown");
-        preGameCountdown.style.display = "block";
         const preGameCountdownInterval = setInterval(()=>{
             preGame--;
             preGameCountdown.textContent = preGame;
@@ -228,10 +232,12 @@ function shipCommands(e){
             d = "LEFT"
         } else if (key == 38) {
             d = "UP"
+            ship.src = "images/playerUp.png";
         } else if (key == 39) {
             d = "RIGHT"
         } else if (key == 40) {
             d = "DOWN"
+            ship.src = "images/playerDown.png";
         }
 
         // Player spaceship speed boost
@@ -241,6 +247,7 @@ function shipCommands(e){
                 playerSpeed = 10;
                 // Empty out the speed booster
                 boost = boost - 1;
+                engineFlames.src = "images/engineFlameBooster.png";
             }
             // Disable speed boost if it reaches 0
             if(boost <= 0) {
@@ -260,6 +267,8 @@ function shipCommands(e){
 function clearShipCommands() {
     playerSpeed = 5;
     speedBooster = false;
+    ship.src = "images/player.png";
+    engineFlames.src = "images/engineFlameNormal.png";
 }
 
 // Player shoots
@@ -582,6 +591,9 @@ function draw(){
 
     // Draw the ship
     ctx.drawImage(ship, shipX, shipY);
+    engineFlameX = shipX - (ship.width - 42);
+    engineFlameY = shipY + (ship.height / 2 - 6);
+    ctx.drawImage(engineFlames, engineFlameX, engineFlameY);
 }
 // Restore sound effect (shield, health, time)
 function restoreSound() {
@@ -661,6 +673,9 @@ let enemiesShootingInterval = setInterval(enemiesShoot, enemiesShootingSpeed);
 
 // When player's ship is hit by aliens missiles
 function playerHit(){
+    explosionSound.currentTime = 0;
+    explosionSound.play();
+
     // Destroy the alien ammo upon hit
     for(let i = 0; i < alienAmmo.length; i++) {
         let alienRockets = alienAmmo[i];
