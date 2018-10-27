@@ -79,9 +79,18 @@ Defend the Earth from the upcoming meteors! (WIP).
 * [x]  Show commands @ loading screen
 * [x]  3-2-1 countdown with commands shown on screen.
 * [ ]  Add an about section at the main menu.
-* [ ]  Update the game over menu and the pause menu.
-* [ ]  Timer bug
-* [ ]  HP restoration bug (?)
+* [x]  Add options at the pause menu to mute the music
+* [x]  Add button to mute music at main menu.
+* [x]  Update the game over menu and the pause menu.
+* [ ]  Add animation with ship shooting at main menu
+* [x]  Paused game bugs sometimes.
+* [x]  Music:
+    * [x] Background / theme music
+    * [x] Loading menu music
+    * [x] Add health / time / shield restore sound effect
+    * [x] Player died / game over music
+    * [x] Change enemy shooting sound
+* [ ] Add meteors flying by.
 ------------------------------------------------
 * [ ]  Clean code
 * [ ]  Refactoring
