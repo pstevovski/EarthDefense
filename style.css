@@ -29,10 +29,7 @@ button{
 .main-menu_buttons:hover{
     animation: buttonsAnimation 0.3s ease forwards infinite alternate;
 }
-@keyframes buttonsAnimation{
-    0% { transform: translateY(0); }
-    100% { transform: translateY(-5px); }
-}
+
 .title {
     text-align: center;
     display: flex;
@@ -134,6 +131,8 @@ button{
     font-size: 16px;
     margin: 10px 0;
     text-align: center;
+    color: gold;
+    letter-spacing: 2px;
 }
 .loading .info p{
     color: #f5f5f5;
@@ -253,24 +252,6 @@ button{
     left: 50%;
     transform: translate(-50%, -50%);
 }
-@keyframes overheatAnimation{
-    0%{
-        color: #f5f5f5;
-        text-shadow: 4px 4px #860905;
-        transform: translate(-50%, -50%) scale(1);
-    }
-    50%{
-        color: #b30d07;
-        text-shadow: 4px 4px #f5f5f5;
-        transform: translate(-50%, -50%) scale(1.1);
-    }
-    100%{
-        color: #f5f5f5;
-        text-shadow: 4px 4px #860905;
-        transform: translate(-50%, -50%) scale(1);
-    }
-}
-
 canvas{
     display: none;
     border: 2px solid #dddddd10;
@@ -278,49 +259,6 @@ canvas{
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);  
-}
-.infobox{
-    width: 650px;
-    display: none;
-    opacity: 0;
-    justify-content: center;
-    align-items: center;
-    border: 2px solid #f5f5f5;
-    background-color: #111111;
-    position: absolute;
-    bottom: 100px;
-    left: 50%;
-    transform: translate(-50%);
-    z-index: 3;
-    transition: 2s ease;
-    padding: 10px;
-}
-.infoBoxActive{
-    opacity: 1;
-}
-.infobox .game--info{
-    padding: 10px;
-}
-.game--info h3{
-    font-family: "Titillium Web Black";
-    color: #f5f5f5;
-    font-size: 25px;
-    letter-spacing: 1px;
-}
-.game--info p {
-    font-family: "Titillium Web Medium";
-    font-size: 16px;
-    color: #f5f5f5;
-}
-.game--info ul li {
-    list-style-type: none;
-    color: #1aeb71;
-    font-family: "Titillium Web Medium";
-}
-#pregameCountdown{
-    font-size: 25px;
-    font-family: "Titillium Web Black";
-    color: #e1302a;
 }
 
 /* GAME OVER MENU */
@@ -370,7 +308,7 @@ canvas{
 #finalScore, #highscore{
     color: gold;
 }
-.playerShipContainer, .overheatContainer, .speedBoosterContainer, .playerShipShieldContainer{
+/* .playerShipContainer, .overheatContainer, .speedBoosterContainer, .playerShipShieldContainer{
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -380,7 +318,7 @@ canvas{
 .playerShipContainer p, .overheatContainer p, .speedBoosterContainer p, .playerShipShieldContainer p{
     font-size: 14px;
     font-family: "Montserrat Medium";
-}
+} */
 .bars{
     display: flex;
     align-items: center;
@@ -438,7 +376,7 @@ canvas{
     background-color: rgb(168, 33, 33);
     transition: 0.5s ease;
 }
-#hpText, #shieldText, #overheatText, #boosterText {
+/* #hpText, #shieldText, #overheatText, #boosterText {
     height: 100%;
     margin-left: 5px;
     font-family: "Montserrat Medium";
@@ -446,7 +384,7 @@ canvas{
     justify-content: flex-start;
     align-items: center; 
     font-size: 12px;
-}
+} */
 /* PAUSE MENU */
 .pause--menu{
     display: none;
@@ -472,17 +410,7 @@ canvas{
     margin: 20px 0;
     animation: pauseTitle 0.8s ease infinite forwards;
 }
-@keyframes pauseTitle{
-    0%{
-        color: #f5f5f5;
-    }
-    50%{
-        color: #b30d07;
-    }
-    100%{
-        color: #f5f5f5;
-    }
-}
+
 .pause--menu p{
     margin: 10px 0;
     cursor: pointer;
@@ -493,7 +421,7 @@ canvas{
     text-shadow: 2px 2px rgb(161, 9, 9);
 }
 
-.controlsInfo{
+/* .controlsInfo{
     display: none;
     position: absolute;
     bottom: 10%;
@@ -508,7 +436,7 @@ canvas{
     opacity: 1;
     transition: 2s ease;
     text-align: center;
-}
+} */
 .controlsInfoActive{
     opacity: 0;
 }
@@ -578,23 +506,7 @@ canvas{
     perspective: 1000px;
 }
 
-@keyframes shake{
-    10%, 90% {
-        transform: translate3d(-1px, 0, 0);
-      }
-      
-      20%, 80% {
-        transform: translate3d(2px, 0, 0);
-      }
-    
-      30%, 50%, 70% {
-        transform: translate3d(-4px, 0, 0);
-      }
-    
-      40%, 60% {
-        transform: translate3d(4px, 0, 0);
-      }
-}
+
 .time > * {
     margin: 0 3px;
 }
@@ -611,49 +523,32 @@ canvas{
     color: #b30d07;
     font-size: 22px;
 }
-@keyframes notification{
-    0%{
-        transform: translateY(100px)
-    }
-    50%{
-        transform: translateY(0)
-    }
-    100%{
-        transform: translateY(100px);
-    }
-}
-
-/* MATERIAL DESIGN ICONS CSS */
-.material-icons {
-	font-family: 'Material Icons';
-	font-weight: normal;
-	font-style: normal;
-	font-size: 24px;  /* Preferred icon size */
-	display: inline-block;
-	line-height: 1;
-	text-transform: none;
-	letter-spacing: normal;
-	word-wrap: normal;
-	white-space: nowrap;
-	direction: ltr;
-  
-	/* Support for all WebKit browsers. */
-	-webkit-font-smoothing: antialiased;
-	/* Support for Safari and Chrome. */
-	text-rendering: optimizeLegibility;
-  
-	/* Support for Firefox. */
-	-moz-osx-font-smoothing: grayscale;
-  
-	/* Support for IE. */
-	font-feature-settings: 'liga';
-}
 
 @media (min-width: 1920px) {
-    /* p{
-        font-size: 20px;
-    } */
-    /* .playerShipContainer p, .overheatContainer p, .speedBoosterContainer p, .playerShipShieldContainer p{
+    #title {
+        font-size: 40px;
+    }
+    #startGame, #about{
+        font-size: 22px;
+    }
+    #copyright{
+        font-size: 16px;
+    }
+    .aboutMenu{
+        width: 600px;
+        line-height: 20px;
+    }
+    .aboutMenu p{
         font-size: 18px;
-    } */
+    }
+    .loading .info h2{
+        font-size: 22px;
+        letter-spacing: 3px;
+    }
+    .loading .loading-text {
+        font-size: 18px;
+    }
+    .loading .info p {
+        font-size: 18px;
+    }
 }
