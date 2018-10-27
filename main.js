@@ -6,8 +6,8 @@ let shipHP = 100;
 let shield = 100;
 let overheat = 0;
 let boost = 100;
-let meteorSpawnDistance = 1200;
-let meteorsSpeed = 1;
+let enemySpawnDistance = 1200;
+let enemySpeed = 1;
 const notificationText = document.querySelector(".notification");
 const menu = document.querySelector(".menu");
 const displayScore = document.querySelector("#score");
@@ -16,6 +16,7 @@ const message = document.querySelector("#message");
 const pauseMenu = document.querySelector(".pause--menu");
 const shieldContainer = document.querySelector(".shield-container");
 const healthContainer = document.querySelector(".health-container");
+const soundControl = document.querySelectorAll(".soundControl");
 
 // Flag variables
 let isSpaceDown = false;
@@ -24,6 +25,7 @@ let isOverheated = false;
 let enemiesSpawned = false;
 let speedBooster = false;
 let shieldDestroyed = false;
+let soundOff = false;
 
 // Canvas
 const canvas = document.querySelector("#canvas");
@@ -42,26 +44,36 @@ const explosion = new Image();
 const firstAid = new Image();
 const alienMissile = new Image();
 const missileSound = new Audio();
-const alienMissileSound = new Audio();
+const enemyShootingSound = new Audio();
 const explosionSound = new Audio();
 const timerImage = new Image();
 const shieldImage = new Image();
+const music = new Audio();
+const restoreSoundEffect = new Audio();
 
 ship.src = "images/player.png";
 bg.src = "images/background.png";
 enemy.src = "images/enemy.png";
-missile.src = "images/testRocket.png";
+missile.src = "images/test.png";
 explosion.src = `images/explosion/2.png`;
 firstAid.src = "images/firstAid.png";
 alienMissile.src = "images/testEnemyRocket.png";
 missileSound.src = "Audio/weapon_player.wav";
-missileSound.volume = 0.1;
+missileSound.volume = 0.05;
 explosionSound.src = "Audio/explosion_asteroid.wav";
 explosionSound.volume = 0.1;
-alienMissileSound.src = "Audio/weapon_enemy.wav";
-alienMissileSound.volume = 0.1;
+enemyShootingSound.src = "Audio/laser1.ogg";
+enemyShootingSound.volume = 0.05;
 timerImage.src = "images/timer.png";
 shieldImage.src = "images/shieldImage.png";
+music.src = "Audio/Crimson Drive.mp3";
+music.volume = 0.3;
+music.loop = true;
+restoreSoundEffect.src = "Audio/powerUp11.ogg";
+restoreSoundEffect.volume = 0.5;
+
+// Play the theme music when page is loaded
+music.play();
 
 // Spaceship starting coordinates
 let shipX = 50;
@@ -111,8 +123,24 @@ let countdown;
 const timerDisplay = document.querySelector("#timerDisplay");
 const time = 30;
 
+// Sound control
+function toggleMusic() {
+    soundOff = !soundOff;
+    if(soundOff) {
+        this.src = "images/soundOff.png";
+        music.volume = 0;
+    } else {
+        this.src = "images/soundOn.png";
+        music.volume = 0.2;
+    }
+}
+
 // Load game
 function loadGame() {
+    // Play loading music
+    music.src = "Audio/loading.wav";
+    music.play();
+
     const mainMenu = document.querySelector(".main-menu");
     // mainMenu.classList.add("mainMenuFade")
     mainMenu.style.display = "none";
@@ -166,6 +194,11 @@ function startGame(){
                 clearInterval(preGameCountdownInterval);
             }
         }, 1000)
+
+        // Play the theme music again
+        music.src = "Audio/Mecha Collection.mp3";
+        music.volume = 0.2;
+        music.play();
 
         // After 5 seconds make the infobox fade away. (remove the active class).
         setTimeout(() => {
@@ -261,12 +294,18 @@ function overheated(){
 }
 
 // Gradually cool out the gun BEFORE it reaches overheating point
-function graduallyCoolOut(){
+function graduallyRestore(){
+    // Restore / coolout gun overheating
     if(overheat <= 95 && overheat >= 5) {
         overheat = overheat - 5;
     }
+
+    // Restore ship's booster
+    if(boost >= 0 && boost <= 99) {
+        boost = boost + 1;
+    }
 }
-const cooloutInterval = setInterval(graduallyCoolOut, 800)
+let graduallyRestoreInterval = setInterval(graduallyRestore, 800)
 
 // // When gun overheats, wait 1 second, then cool it out and enable shooting.
 function coolOut(){
@@ -276,14 +315,6 @@ function coolOut(){
         emptyWarningText.classList.remove("emptyWarning-textActive");
     }, 2000);
 }
-
-// Gradually fill booster
-function graduallyFillBooster() {
-    if(boost >= 0 && boost <= 99) {
-        boost = boost + 1;
-    }
-}
-const boosterInterval = setInterval(graduallyFillBooster, 800);
 
 // If speed booster is empty (0), fill it up instantly after 3 seconds
 function fillBooster() {
@@ -305,9 +336,9 @@ function draw(){
             // Draw a enemy
             ctx.drawImage(enemy, enemies[i].x, enemies[i].y);
 
-            enemies[i].x -= meteorsSpeed;
+            enemies[i].x -= enemySpeed;
 
-            if(enemies[i].x == meteorSpawnDistance) {
+            if(enemies[i].x == enemySpawnDistance) {
                 enemies.push({
                     x: cWidth,
                     y: Math.floor(Math.random() * ( (maxHeight-enemy.height) - minHeight) + minHeight) 
@@ -413,6 +444,8 @@ function draw(){
             }
             // Restore ship's HP.
             restoreShipHP();
+            // Play Sound effect
+            restoreSound();
         }
         // If HP restore goes past the canvas width, remove it.
         if(healthRenew[i].x + firstAid.width < 0 ) {
@@ -442,6 +475,8 @@ function draw(){
 
             // Restore 50 points to the player ship shield
             restoreShield();
+            // Play Sound effect
+            restoreSound();
         }
         // If the shield item goes off canvas, remove it
         if(shieldRenew[i].x + shieldImage.width < 0) {
@@ -470,6 +505,9 @@ function draw(){
             }
             // Add time
             addPlaytime();
+
+            // Play Sound effect
+            restoreSound();
         }
 
         // If clock goes past canvas
@@ -538,6 +576,12 @@ function draw(){
     // Draw the ship
     ctx.drawImage(ship, shipX, shipY);
 }
+// Restore sound effect (shield, health, time)
+function restoreSound() {
+    restoreSoundEffect.currentTime = 0;
+    restoreSoundEffect.play();
+}
+
 // Timer
 let secondsLeft;
 function timer(seconds) {
@@ -551,13 +595,15 @@ function timer(seconds) {
         secondsLeft = Math.round((then - Date.now()) / 1000);
         // Show a warning for few seconds left
         if(secondsLeft === 10) {
+            timerDisplay.classList.add("timeLow");
             displayNotification(secondsLeft);
-        }
-        if(secondsLeft < 0) {
+        } else if (secondsLeft > 10) {
+            timerDisplay.classList.remove("timeLow");
+        } else if (secondsLeft < 0) {
             // If the timer ran out, end the game
             clearInterval(countdown);
             clearInterval(game);
-            endgame();
+            endgame(secondsLeft);
             return;
         }
         displayTimeLeft(secondsLeft);
@@ -599,12 +645,12 @@ function enemiesShoot(){
             x: enemies[randomShip].x - enemy.width,
             y: enemies[randomShip].y + (enemy.height / 2)
         })
-        alienMissileSound.currentTime = 0;
-        alienMissileSound.play();
+        enemyShootingSound.currentTime = 0;
+        enemyShootingSound.play();
         }
 }
 
-const enemiesShootingInterval = setInterval(enemiesShoot, enemiesShootingSpeed);
+let enemiesShootingInterval = setInterval(enemiesShoot, enemiesShootingSpeed);
 
 // When player's ship is hit by aliens missiles
 function playerHit(){
@@ -635,20 +681,20 @@ function updateScore() {
     
     // Increase difficulty when user reaches a certain score point.
     if(score == 3000) {
-        meteorsSpeed = 2;
+        enemySpeed = 2;
+        enemiesShootingSpeed = 400;
         displayNotification();
     }
     if (score == 5000) {
-        meteorsSpeed = 4;
-        meteorSpawnDistance = 1000;
-        enemiesShootingSpeed = 550;
+        enemySpeed = 5;
+        enemiesShootingSpeed = 300;
         displayNotification();
     }
     if(score == 8000) {
-        enemiesShootingSpeed = 350;
+        enemiesShootingSpeed = 150;
     }
     if(score == 10000) {
-        enemiesShootingSpeed = 100;
+        enemiesShootingSpeed = 60;
     }
 }
 
@@ -737,11 +783,10 @@ function restoreShield() {
 }
 
 // When the game has ended / been completed.
-function endgame(){
+function endgame(secondsLeft){
     // Disable intervals
     clearInterval(enemiesShootingInterval);
-    clearInterval(cooloutInterval);
-    clearInterval(boosterInterval);
+    clearInterval(graduallyRestoreInterval);
     clearInterval(countdown);
 
     // Stop movements
@@ -753,9 +798,21 @@ function endgame(){
 
     // If player was killed.
     if(shipHP === 0){
-        displayImage.src = "images/gravestone.svg";
-        message.textContent = "Thank you for your service. At least you tried.";
+        displayImage.src = "images/tombstone.png";
+        message.textContent = "At least you tried...";
+        music.src = "Audio/Fallen in Battle.mp3";
+        music.volume = 0.2;
+        music.play();
+        music.loop = false;
     }
+    if(secondsLeft <= 0) {
+        message.textContent = "Time's up !"
+        music.src = "Audio/Fallen in Battle.mp3";
+        music.volume = 0.2;
+        music.play();
+        music.loop = false;
+    }
+    
 
     // Score and Highscore
     document.querySelector("#finalScore").textContent = score;
@@ -833,27 +890,31 @@ function displayPauseMenu(){
     // Clear the interval for the game
     clearInterval(game);
     clearInterval(enemiesShootingInterval);
-    clearInterval(cooloutInterval);
-    clearInterval(boosterInterval);
+    clearInterval(graduallyRestoreInterval);
     clearInterval(countdown);
 
     // Stop enemies and ship from moving
     gameStarted = false;
+    // Enemies shoot every 2 seconds
+    enemiesSpawned = false;
 }
 
 // Continue game
 function continueGame(){
+    console.log({secondsLeft})
     // Hide the menu
     pauseMenu.style.display = "none";
 
     // Run the interval
     game = setInterval(draw, 1000 / 60);
     enemiesShootingInterval = setInterval(enemiesShoot, 700);
-    cooloutInterval = setInterval(graduallyCoolOut, 800);
-    boosterInterval = setInterval(graduallyFillBooster, 800);
+    graduallyRestoreInterval = setInterval(graduallyRestore, 800);
+    timer(secondsLeft);
 
     // Enable enemies and ship movement
     gameStarted = true;
+    // Enemies shoot every 2 seconds
+    enemiesSpawned = true;
 }
 
 // Exit game
@@ -868,5 +929,4 @@ document.querySelector("#startGame").addEventListener("click", loadGame);
 document.addEventListener("keyup", shoot);
 document.querySelector("#openMenu").addEventListener("click", displayPauseMenu);
 document.querySelector("#continueGame").addEventListener("click", continueGame);
-
-
+soundControl.forEach(control => control.addEventListener("click", toggleMusic));
