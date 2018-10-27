@@ -50,6 +50,7 @@ const timerImage = new Image();
 const shieldImage = new Image();
 const music = new Audio();
 const restoreSoundEffect = new Audio();
+const alarm = new Audio();
 
 ship.src = "images/player.png";
 bg.src = "images/background.png";
@@ -71,6 +72,8 @@ music.volume = 0.3;
 music.loop = true;
 restoreSoundEffect.src = "Audio/powerUp11.ogg";
 restoreSoundEffect.volume = 0.5;
+alarm.src = "Audio/alarm.wav";
+alarm.volume = 0.1;
 
 // Play the theme music when page is loaded
 music.play();
@@ -245,6 +248,8 @@ function shipCommands(e){
                 playerSpeed = 5;
                 emptyWarningText.textContent = "BOOSTER EMPTY !";
                 emptyWarningText.classList.add("emptyWarning-textActive");
+                alarm.currentSrc = 0;
+                alarm.play();
                 fillBooster();
             }
         }
@@ -287,6 +292,8 @@ function overheated(){
         isOverheated = true;
         emptyWarningText.textContent = "OVERHEATED !";
         emptyWarningText.classList.add("emptyWarning-textActive");
+        alarm.currentSrc = 0;
+        alarm.play();
         coolOut();
     } else if (overheat < 100 && overheat > 0) {
         isOverheated = false;
