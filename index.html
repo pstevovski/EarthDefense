@@ -26,6 +26,13 @@
             <img class="soundControl" src="images/soundOn.png" alt="" width="16px" height="16px">
 
             <p id="copyright">&copy; 2018</p>
+
+            <!-- About menu -->
+            <div class="aboutMenu">
+                <h3>ABOUT</h3>
+                <p>Remake of the classic Space Shooter type of games, with minor additions. All the assets used to create this game were free, provided by: <a href="https://jonathan-so.itch.io/" target="_blank">Jonathan So</a>, <a href="https://kenney.nl/">Kenny</a>, and some are randomly googled (still free !). This was a learning project, hope you like it. Have fun !</p>
+                <button id="closeAbout" class="main-menu_buttons">Close</button>
+            </div>
         </div>
     </div>
 
@@ -49,7 +56,7 @@
     <div class="container">
         <!-- INFO MENU - SCORE, TIMER, HP... -->
         <div class="menu">
-            <p id="openMenu">MENU</p>
+            <p id="openMenu" class="main-menu_buttons">MENU</p>
             <div class="time"><p id="timerDisplay">0:30</p></div>
             <p class="score">SCORE: <span id="score">0</span></p>
         </div>
@@ -86,14 +93,14 @@
                 <p>Score: <span id="finalScore"></span></p>
                 <p>Highscore: <span id="highscore"></span></p>
             </div>
-            <button class="exitGame">EXIT</button>
+            <button class="exitGame main-menu_buttons">EXIT</button>
         </div>
     
         <!-- PAUSE MENU -->
         <div class="pause--menu">
             <h3>GAME PAUSED</h3>
-            <p id="continueGame">CONTINUE</p>
-            <p class="exitGame">QUIT</p>
+            <p id="continueGame" class="main-menu_buttons">CONTINUE</p>
+            <p class="exitGame main-menu_buttons">QUIT</p>
             <img class="soundControl" src="images/soundOn.png" alt="" width="16px" height="16px">
         </div>
     
