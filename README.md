@@ -78,11 +78,9 @@ Defend the Earth from the upcoming meteors! (WIP).
 * [x]  Loading screen with loading bar
 * [x]  Show commands @ loading screen
 * [x]  3-2-1 countdown with commands shown on screen.
-* [ ]  Add an about section at the main menu.
 * [x]  Add options at the pause menu to mute the music
 * [x]  Add button to mute music at main menu.
 * [x]  Update the game over menu and the pause menu.
-* [ ]  Add animation with ship shooting at main menu
 * [x]  Paused game bugs sometimes.
 * [x]  Music:
     * [x] Background / theme music
@@ -90,7 +88,9 @@ Defend the Earth from the upcoming meteors! (WIP).
     * [x] Add health / time / shield restore sound effect
     * [x] Player died / game over music
     * [x] Change enemy shooting sound
-* [ ] Add meteors flying by.
+* [ ] Add meteors flying by. (?)
+* [x] Add an about section at the main menu.
+* [x] Added menu items sounds (hover / select).
 ------------------------------------------------
 * [ ]  Clean code
 * [ ]  Refactoring
@@ -100,3 +100,4 @@ Defend the Earth from the upcoming meteors! (WIP).
 * [x]  Explosion image does not appears for every meteor hit. Sometimes it does, sometimes doesnt.
 * [x]  Player dies instantly when he hits the METEORS * ONLY ON START *. When Alien spaceships are there instead of the meteors it works normal.
 * [x]  Rockets arent being destroyed on enemy target hit, unless the rocket hits 2 enemies in a row, or if you shoot 2 rockets total before the first hits the enemy.
+* [ ]  Health restoration bug after the user restores shield.
