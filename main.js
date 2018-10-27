@@ -922,6 +922,33 @@ document.querySelectorAll(".exitGame").forEach(exit => exit.addEventListener("cl
     location.reload();
 }))
 
+// About menu show/hide
+const aboutMenu = document.querySelector(".aboutMenu");
+document.getElementById("about").addEventListener("click", ()=>{
+    aboutMenu.style.display = "block";
+})
+document.getElementById("closeAbout").addEventListener("click", ()=>{
+    aboutMenu.style.display = "none";
+})
+
+
+// Menu buttons sounds
+const mainMenuButtons = document.querySelectorAll(".main-menu_buttons");
+const menuMove = new Audio();
+const menuSelect = new Audio();
+menuMove.volume = 0.35;
+menuMove.src = "Audio/menu hover.wav"
+menuSelect.volume = 0.35;
+menuSelect.src = "Audio/menu select.wav";
+mainMenuButtons.forEach(btn => btn.addEventListener("mouseover", ()=>{
+    menuMove.currentTime = 0;
+    menuMove.play();
+}))
+mainMenuButtons.forEach(btn => btn.addEventListener("click", ()=>{
+    menuSelect.currentTime = 0;
+    menuSelect.play();
+}))
+
 // Event listeners
 document.addEventListener("keydown", shipCommands);
 document.addEventListener("keyup", clearShipCommands);
