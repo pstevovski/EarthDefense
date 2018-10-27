@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Earth Defence</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="fonts.css">
     <link rel="stylesheet" href="animations.css">
 </head>
 <body>
@@ -13,7 +14,7 @@
     <div class="main-menu">
         <!-- Title -->
         <div class="title">
-            <h1>EARTH DEFENCE</h1>
+            <h1 id="title">EARTH DEFENCE</h1>
     
             <!-- Start game button -->
             <button id="startGame" class="main-menu_buttons">start game</button>
@@ -30,7 +31,7 @@
             <!-- About menu -->
             <div class="aboutMenu">
                 <h3>ABOUT</h3>
-                <p>Remake of the classic Space Shooter type of games, with minor additions. All the assets used to create this game were free, provided by: <a href="https://jonathan-so.itch.io/" target="_blank">Jonathan So</a>, <a href="https://kenney.nl/">Kenny</a>, and some are randomly googled (still free !). This was a learning project, hope you like it. Have fun !</p>
+                <p>Remake of the classic Space Shooter type of games, with minor additions. All the assets used to create this game were free, provided by: <a href="https://jonathan-so.itch.io/" target="_blank">Jonathan So</a>, <a href="https://kenney.nl/" target="_blank">Kenny</a>, and some are randomly googled (still free !). This was a learning project, hope you like it. Have fun !</p>
                 <button id="closeAbout" class="main-menu_buttons">Close</button>
             </div>
         </div>
@@ -102,23 +103,6 @@
             <p id="continueGame" class="main-menu_buttons">CONTINUE</p>
             <p class="exitGame main-menu_buttons">QUIT</p>
             <img class="soundControl" src="images/soundOn.png" alt="" width="16px" height="16px">
-        </div>
-    
-        <!-- GAME WINDOW - INFO BOX -->
-        <div class="infobox">
-            <div class="spacecorps">
-                <img src="images/space corps.svg" alt="Space corps" width="100px" height="100px">
-            </div>
-            <div class="game--info">
-                <h3>SPACECORPS:</h3>
-                <p>Aliens are comming! Help to protect the Earth. Destroy as much alien spaceships as you can. Commands:</p>
-                <ul>
-                    <li>- Arrow keys / WASD to move the ship !</li>
-                    <li>- Spacebar to shoot !</li>
-                    <li>- Shift key (HOLD) to use booster !</li>
-                </ul>
-                <p>Get ready: <span id="pregameCountdown">10</span></p>
-            </div>
         </div>
 
         <!-- GAME WINDOW -->
