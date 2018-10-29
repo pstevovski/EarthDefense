@@ -77,9 +77,39 @@ alarm.src = "Audio/alarm.wav";
 alarm.volume = 0.1;
 engineFlames.src = "images/engineFlameNormal.png";
 
+// TEST
+
 // Play the theme music when page is loaded
 window.onload = function playMusic() {
     music.play();
+    
+    // Create 5 heart images
+    drawHealthAndShield();
+}
+
+// Create player health and shield images 
+function drawHealthAndShield() {
+    let playerHealthAndShield = setInterval(()=>{
+        for(let i = 0; i < 5; i++) {
+            // Create 5 heart images
+            let dispalyHealthItem = document.createElement("img");
+            dispalyHealthItem.setAttribute('src', 'images/firstAid.png');
+            dispalyHealthItem.setAttribute('width', '32px');
+            dispalyHealthItem.setAttribute('height', '32px');
+            healthContainer.appendChild(dispalyHealthItem);
+
+            // Create 5 shield images
+            const displayShieldItem = document.createElement("img");
+            displayShieldItem.setAttribute('src', 'images/shieldImage.png');
+            displayShieldItem.setAttribute('width', '32px');
+            displayShieldItem.setAttribute('height', '32px');
+            shieldContainer.appendChild(displayShieldItem);
+
+            if(i <= 5) {
+                clearInterval(playerHealthAndShield);
+            }
+        }
+    }, 1)
 }
 
 // Spaceship starting coordinates
@@ -745,6 +775,27 @@ function displayNotification(secondsLeft){
 }
 
 // SHIP SHIELD
+function restoreShield() {
+    if(shield == 100) {
+        shieldDestroyed = false;
+        shield = shield;
+    } else if(shield <= 80){
+        // Create a new shield image and append it to the shield container
+        const displayShieldItem = document.createElement("img");
+        displayShieldItem.setAttribute('src', 'images/shieldImage.png');
+        displayShieldItem.setAttribute('width', '32px');
+        displayShieldItem.setAttribute('height', '32px');
+        shieldContainer.appendChild(displayShieldItem);
+        
+        // Enable shield on player's ship
+        shieldDestroyed = false;
+
+        // Restore shield points and display a notification
+        shield = shield + 20;
+        notificationText.innerHTML = `<i class="material-icons shield">security</i><p>Shield restored!</p>`;
+        displayNotification();
+    }
+}
 
 function decreaseShield() {
     // Decrease shield
@@ -759,10 +810,28 @@ function decreaseShield() {
 }
 
 // SHIP HEALTH:
+function restoreShipHP() {
+    if(shipHP == 100) {
+        shipHP = shipHP;
+    } else{
+        // Draw a heart element when user picks up first aid
+        let dispalyHealthItem = document.createElement("img");
+        dispalyHealthItem.setAttribute('src', 'images/firstAid.png');
+        dispalyHealthItem.setAttribute('width', '32px');
+        dispalyHealthItem.setAttribute('height', '32px');
+
+        // Append the newly created heart element to the health container
+        healthContainer.appendChild(dispalyHealthItem);
+
+        // Restore ships HP and display a notification.
+        shipHP = shipHP + 20;
+        notificationText.innerHTML = `<i class="material-icons health">local_hospital</i><p>Health renewed!</p>`;
+        displayNotification();
+    }
+}
 function decreaseShipHP() {
-    // BUGGED (?)
     if(shieldDestroyed) {
-        if(shipHP <= 100){
+        if(shipHP >= 20 && shipHP <= 100){
             shipHP = shipHP - 20;
             healthContainer.removeChild(healthContainer.children[0]);
         } else if(shipHP == 0) {
@@ -771,39 +840,6 @@ function decreaseShipHP() {
             clearInterval(enemiesShootingInterval);
         }
     }
-}
-
-const dispalyHealthItem = document.createElement("img");
-dispalyHealthItem.setAttribute('src', 'images/firstAid.png');
-dispalyHealthItem.setAttribute('width', '32px');
-dispalyHealthItem.setAttribute('height', '32px');
-
-function restoreShipHP() {
-    // BUGGED (?)
-    if(shipHP == 100) {
-        shipHP = shipHP;
-    } else{
-        healthContainer.insertBefore(dispalyHealthItem, healthContainer.firstChild);
-        shipHP = shipHP + 20;
-        notificationText.innerHTML = `<i class="material-icons health">local_hospital</i><p>Health renewed!</p>`;
-        displayNotification();
-    }
-}
-const displayShieldItem = document.createElement("img");
-displayShieldItem.setAttribute('src', 'images/shieldImage.png');
-displayShieldItem.setAttribute('width', '32px');
-displayShieldItem.setAttribute('height', '32px');
-
-function restoreShield() {
-    if(shield == 100) {
-        shield = shield;
-    } else if(shield <= 80){
-        shield = shield + 20;
-        shieldContainer.appendChild(displayShieldItem);
-        notificationText.innerHTML = `<i class="material-icons shield">security</i><p>Shield restored!</p>`;
-        displayNotification();
-    }
-    shieldDestroyed = false;
 }
 
 // When the game has ended / been completed.
