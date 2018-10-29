@@ -68,7 +68,7 @@ music.src = "Audio/music_background.wav";
 restoreSoundEffect.src = "Audio/powerUp11.ogg";
 alarm.src = "Audio/alarm.wav";
 
-// Setting the volume of the sound assets
+// Set the volume of the sound assets
 missileSound.volume = 0.05;
 explosionSound.volume = 0.1;
 enemyShootingSound.volume = 0.05;
@@ -160,7 +160,7 @@ timeRenew[0] = {
 let initialTimeRenewPushed = false;
 
 // Aliens (enemies)
-let alienAmmo = [];
+let enemyAmmo = [];
 
 // Timer variables
 let countdown;
@@ -592,11 +592,11 @@ function draw(){
 
     // ALIEN (ENEMY) ROCKETS
     if(gameStarted && enemiesSpawned){
-        for(let i = 0; i < alienAmmo.length;i++) {
-            ctx.drawImage(alienMissile, alienAmmo[i].x, alienAmmo[i].y);
-            alienAmmo[i].x -= 15;
+        for(let i = 0; i < enemyAmmo.length;i++) {
+            ctx.drawImage(alienMissile, enemyAmmo[i].x, enemyAmmo[i].y);
+            enemyAmmo[i].x -= 15;
         
-            if(alienAmmo[i].x >= player.x && alienAmmo[i].x <= player.x + ship.width && alienAmmo[i].y >= player.y && alienAmmo[i].y <= player.y + ship.height && enemiesSpawned == true ) {
+            if(enemyAmmo[i].x >= player.x && enemyAmmo[i].x <= player.x + ship.width && enemyAmmo[i].y >= player.y && enemyAmmo[i].y <= player.y + ship.height && enemiesSpawned == true ) {
                 // Draw explosion at the spot
                 ctx.drawImage(explosion, player.x, player.y);
         
@@ -605,11 +605,11 @@ function draw(){
             }
 
             // If the alien rocket goes behind player's ship
-            if(alienAmmo[i].x < 0) {
-                let alienRocket = alienAmmo[i];
-                let alienRocketIndex = alienAmmo.indexOf(alienRocket);
-                if(alienRocketIndex > -1) {
-                    alienAmmo.splice(alienRocketIndex, 1)
+            if(enemyAmmo[i].x < 0) {
+                let enemyRocket = enemyAmmo[i];
+                let enemyRocketIndex = enemyAmmo.indexOf(enemyRocket);
+                if(enemyRocketIndex > -1) {
+                    enemyAmmo.splice(enemyRocketIndex, 1)
                 }
             }
         }
@@ -697,7 +697,7 @@ function enemiesShoot(){
         maxShip = Math.floor(maxShip);
         let randomShip = Math.floor(Math.random() * (maxShip - minShip + 1)) + minShip;
         // Randomize
-        alienAmmo.push({
+        enemyAmmo.push({
             x: enemies[randomShip].x - enemy.width,
             y: enemies[randomShip].y + (enemy.height / 2)
         })
@@ -705,7 +705,6 @@ function enemiesShoot(){
         enemyShootingSound.play();
         }
 }
-
 let enemiesShootingInterval = setInterval(enemiesShoot, enemiesShootingSpeed);
 
 // When player's ship is hit by aliens missiles
@@ -714,11 +713,11 @@ function playerHit(){
     explosionSound.play();
 
     // Destroy the alien ammo upon hit
-    for(let i = 0; i < alienAmmo.length; i++) {
-        let alienRockets = alienAmmo[i];
-        let alienIndex = alienAmmo.indexOf(alienRockets);
-        if(alienIndex > -1) {
-            alienAmmo.splice(alienIndex, 1);
+    for(let i = 0; i < enemyAmmo.length; i++) {
+        let enemyRockets = enemyAmmo[i];
+        let enemyRocketsIndex = enemyAmmo.indexOf(enemyRockets);
+        if(enemyRocketsIndex > -1) {
+            enemyAmmo.splice(enemyRocketsIndex, 1);
         } 
     }
     // Decrease shield
@@ -865,23 +864,19 @@ function endgame(secondsLeft){
     if(player.hp === 0){
         displayImage.src = "images/tombstone.png";
         message.textContent = "At least you tried...";
-        music.src = "Audio/Fallen in Battle.mp3";
-        music.volume = 0.2;
-        music.play();
-        music.loop = false;
     }
     if(secondsLeft <= 0) {
         message.textContent = "Time's up !"
-        music.src = "Audio/Fallen in Battle.mp3";
-        music.volume = 0.2;
-        music.play();
-        music.loop = false;
     }
     
+    music.src = "Audio/Fallen in Battle.mp3";
+    music.volume = 0.2;
+    music.play();
+    music.loop = false;
 
     // Score and Highscore
-    document.querySelector("#finalScore").textContent = score;
     let highscore = localStorage.getItem("highscore");
+    document.querySelector("#finalScore").textContent = score;
     document.querySelector("#highscore").textContent = highscore;
     if(score > highscore) {
         localStorage.setItem("highscore", score);
@@ -948,7 +943,7 @@ function timeRenewFunction(){
 timeRenewFunction();
 
 // Pause game
-function displayPauseMenu(){
+function pauseGame(){
     // Display the menu
     pauseMenu.style.display = "flex";
 
@@ -996,7 +991,6 @@ document.getElementById("closeAbout").addEventListener("click", ()=>{
     aboutMenu.style.display = "none";
 })
 
-
 // Menu buttons sounds
 const mainMenuButtons = document.querySelectorAll(".main-menu_buttons");
 const menuMove = new Audio();
@@ -1018,7 +1012,7 @@ mainMenuButtons.forEach(btn => btn.addEventListener("click", ()=>{
 document.addEventListener("keydown", shipCommands);
 document.addEventListener("keyup", clearShipCommands);
 document.querySelector("#startGame").addEventListener("click", loadGame);
-document.addEventListener("keyup", shoot);
-document.querySelector("#openMenu").addEventListener("click", displayPauseMenu);
+document.addEventListener("keydown", shoot);
+document.querySelector("#openMenu").addEventListener("click", pauseGame);
 document.querySelector("#continueGame").addEventListener("click", continueGame);
 soundControl.forEach(control => control.addEventListener("click", toggleMusic));
