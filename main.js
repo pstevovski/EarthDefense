@@ -2,10 +2,6 @@
 let d; // Player ship direction
 let game;
 let score = 0;
-let shipHP = 100;
-let shield = 100;
-let overheat = 0;
-let boost = 100;
 let enemySpawnDistance = 1200;
 let enemySpeed = 1;
 const notificationText = document.querySelector(".notification");
@@ -32,10 +28,10 @@ const canvas = document.querySelector("#canvas");
 const ctx = canvas.getContext("2d");
 const cWidth = canvas.width;
 const cHeight = canvas.height;
-let minHeight = 0;
-let maxHeight = 500;
+const minHeight = 0;
+const maxHeight = 500;
 
-// Assets
+// Image assets
 const bg = new Image();
 const ship = new Image();
 const enemy = new Image();
@@ -44,15 +40,8 @@ const explosion = new Image();
 const firstAid = new Image();
 const alienMissile = new Image();
 const engineFlames = new Image();
-const missileSound = new Audio();
-const enemyShootingSound = new Audio();
-const explosionSound = new Audio();
 const timerImage = new Image();
 const shieldImage = new Image();
-const music = new Audio();
-const restoreSoundEffect = new Audio();
-const alarm = new Audio();
-
 bg.src = "images/background.png";
 ship.src = "images/player.png";
 enemy.src = "images/enemy.png";
@@ -60,24 +49,35 @@ missile.src = "images/playerRocket.png";
 explosion.src = `images/3.png`;
 firstAid.src = "images/firstAid.png";
 alienMissile.src = "images/enemyRocket.png";
-missileSound.src = "Audio/weapon_player.wav";
-missileSound.volume = 0.05;
-explosionSound.src = "Audio/explosion_enemy.wav";
-explosionSound.volume = 0.1;
-enemyShootingSound.src = "Audio/laser1.ogg";
-enemyShootingSound.volume = 0.05;
 timerImage.src = "images/timer.png";
 shieldImage.src = "images/shieldImage.png";
-music.src = "Audio/music_background.wav";
-music.volume = 0.3;
-music.loop = true;
-restoreSoundEffect.src = "Audio/powerUp11.ogg";
-restoreSoundEffect.volume = 0.5;
-alarm.src = "Audio/alarm.wav";
-alarm.volume = 0.1;
 engineFlames.src = "images/engineFlameNormal.png";
 
-// TEST
+// Sound assets
+const enemyShootingSound = new Audio();
+const missileSound = new Audio();
+const explosionSound = new Audio();
+const music = new Audio();
+const restoreSoundEffect = new Audio();
+const alarm = new Audio();
+
+missileSound.src = "Audio/weapon_player.wav";
+explosionSound.src = "Audio/explosion_enemy.wav";
+enemyShootingSound.src = "Audio/laser1.ogg";
+music.src = "Audio/music_background.wav";
+restoreSoundEffect.src = "Audio/powerUp11.ogg";
+alarm.src = "Audio/alarm.wav";
+
+// Setting the volume of the sound assets
+missileSound.volume = 0.05;
+explosionSound.volume = 0.1;
+enemyShootingSound.volume = 0.05;
+music.volume = 0.3;
+restoreSoundEffect.volume = 0.5;
+alarm.volume = 0.1;
+
+// Enable looping of the background music
+music.loop = true;
 
 // Play the theme music when page is loaded
 window.onload = function playMusic() {
@@ -113,10 +113,15 @@ function drawHealthAndShield() {
 }
 
 // Spaceship starting coordinates
-let shipX = 50;
-let shipY = 250;
-let hitBoundary = false;
-let playerSpeed = 5;
+let player = {
+    x: 50,
+    y: 250,
+    speed: 5,
+    hp: 100,
+    shield: 100,
+    overheat: 0,
+    boost: 100
+}
 let engineFlameX;
 let engineFlameY;
 
@@ -274,17 +279,17 @@ function shipCommands(e){
 
         // Player spaceship speed boost
         if(key == 16 && d == "LEFT" || key == 16 && d == "RIGHT") {
-            if(boost > 0 && boost <= 100) {
+            if(player.boost > 0 && player.boost <= 100) {
                 speedBooster = true;
-                playerSpeed = 10;
+                player.speed = 15;
                 // Empty out the speed booster
-                boost = boost - 1;
+                player.boost = player.boost - 2;
                 engineFlames.src = "images/engineFlameBooster.png";
             }
             // Disable speed boost if it reaches 0
-            if(boost <= 0) {
+            if(player.boost <= 0) {
                 speedBooster = false;
-                playerSpeed = 5;
+                player.speed = 5;
                 emptyWarningText.textContent = "BOOSTER EMPTY !";
                 emptyWarningText.classList.add("emptyWarning-textActive");
                 alarm.currentSrc = 0;
@@ -297,7 +302,7 @@ function shipCommands(e){
 
 // Clear spaceship's commands when key is released
 function clearShipCommands() {
-    playerSpeed = 5;
+    player.speed = 5;
     speedBooster = false;
     ship.src = "images/player.png";
     engineFlames.src = "images/engineFlameNormal.png";
@@ -311,8 +316,8 @@ function shoot(e){
             isSpaceDown = true;
             // Display the rocket WHEN the user shoots.
             ammo.push({
-                x: shipX + ship.width,
-                y: shipY + (ship.height / 2)
+                x: player.x + ship.width,
+                y: player.y + (ship.height / 2)
             })
             missileSound.play();
             missileSound.currentTime = 0;
@@ -326,17 +331,17 @@ function shoot(e){
 // Overheat the spaceship's guns.
 const emptyWarningText = document.querySelector(".emptyWarning-text");
 function overheated(){
-    overheat = overheat + 5;
+    player.overheat = player.overheat + 5;
 
-    // If overheat meter reaches max(100), stop the ship from shooting, when it starts cooling off enable shooting.
-    if(overheat == 100) {
+    // If player.overheat meter reaches max(100), stop the ship from shooting, when it starts cooling off enable shooting.
+    if(player.overheat == 100) {
         isOverheated = true;
         emptyWarningText.textContent = "OVERHEATED !";
         emptyWarningText.classList.add("emptyWarning-textActive");
         alarm.currentSrc = 0;
         alarm.play();
         coolOut();
-    } else if (overheat < 100 && overheat > 0) {
+    } else if (player.overheat < 100 && player.overheat > 0) {
         isOverheated = false;
     }
 }
@@ -344,13 +349,13 @@ function overheated(){
 // Gradually cool out the gun BEFORE it reaches overheating point
 function graduallyRestore(){
     // Restore / coolout gun overheating
-    if(overheat <= 95 && overheat >= 5) {
-        overheat = overheat - 5;
+    if(player.overheat <= 95 && player.overheat >= 5) {
+        player.overheat = player.overheat - 5;
     }
 
     // Restore ship's booster
-    if(boost >= 0 && boost <= 99) {
-        boost = boost + 1;
+    if(player.boost >= 0 && player.boost <= 99) {
+        player.boost = player.boost + 2;
     }
 }
 let graduallyRestoreInterval = setInterval(graduallyRestore, 800)
@@ -358,7 +363,7 @@ let graduallyRestoreInterval = setInterval(graduallyRestore, 800)
 // // When gun overheats, wait 1 second, then cool it out and enable shooting.
 function coolOut(){
     setTimeout(() => {
-        overheat = 0;
+        player.overheat = 0;
         isOverheated = false;
         emptyWarningText.classList.remove("emptyWarning-textActive");
     }, 2000);
@@ -367,7 +372,7 @@ function coolOut(){
 // If speed booster is empty (0), fill it up instantly after 3 seconds
 function fillBooster() {
     setTimeout(() => {
-        boost = 100;
+        player.boost = 100;
         speedBooster = true;
         emptyWarningText.classList.remove("emptyWarning-textActive");
     }, 6000);
@@ -393,7 +398,7 @@ function draw(){
                 })
             }
             // If spaceship and enemy colide
-            if(shipX + ship.width >= enemies[i].x && shipX <= enemies[i].x + enemy.width && shipY + ship.height >= enemies[i].y && shipY <= enemies[i].y + enemy.height) {
+            if(player.x + ship.width >= enemies[i].x && player.x <= enemies[i].x + enemy.width && player.y + ship.height >= enemies[i].y && player.y <= enemies[i].y + enemy.height) {
                 // Draw explosion at those coords.
                 ctx.drawImage(explosion, enemies[i].x - enemy.width, enemies[i].y - enemy.height);
                 
@@ -417,7 +422,7 @@ function draw(){
                 explosionSound.play();
 
                 // If spaceship HP reaches 0, end game.
-                if(shipHP == 0) {
+                if(player.hp == 0) {
                     clearInterval(game);
                     endgame();
                 }
@@ -483,7 +488,7 @@ function draw(){
         ctx.drawImage(firstAid, healthRenew[i].x, healthRenew[i].y);
 
         // If the ship touches the health, restore the ship's HP.
-        if(shipX + ship.width >= healthRenew[i].x && shipX <= healthRenew[i].x + firstAid.width && shipY + ship.height >= healthRenew[i].y && shipY <= healthRenew[i].y + firstAid.height) {
+        if(player.x + ship.width >= healthRenew[i].x && player.x <= healthRenew[i].x + firstAid.width && player.y + ship.height >= healthRenew[i].y && player.y <= healthRenew[i].y + firstAid.height) {
             // Remove the HP restore.
             let hpItem = healthRenew[i];
             let hpIndex = healthRenew.indexOf(hpItem);
@@ -513,7 +518,7 @@ function draw(){
         ctx.drawImage(shieldImage, shieldRenew[i].x, shieldRenew[i].y);
 
         // If the ship touches the shield, renew its shield.
-        if(shipX + ship.width >= shieldRenew[i].x && shipX <= shieldRenew[i].x + shieldImage.width && shipY + ship.height >= shieldRenew[i].y && shipY <= shieldRenew[i].y + shieldImage.height) {
+        if(player.x + ship.width >= shieldRenew[i].x && player.x <= shieldRenew[i].x + shieldImage.width && player.y + ship.height >= shieldRenew[i].y && player.y <= shieldRenew[i].y + shieldImage.height) {
             // Remove the shield from screen
             let shieldItem = shieldRenew[i];
             let shieldIndex = shieldRenew.indexOf(shieldItem);
@@ -544,7 +549,7 @@ function draw(){
     for(let i = 0; i < timeRenew.length; i++){
         ctx.drawImage(timerImage, timeRenew[i].x, timeRenew[i].y)
         // If the ship touches the sand timer, add more time
-        if(shipX + ship.width >= timeRenew[i].x && shipX <= timeRenew[i].x + timerImage.width && shipY + ship.height >= timeRenew[i].y && shipY <= timeRenew[i].y + timerImage.height) {
+        if(player.x + ship.width >= timeRenew[i].x && player.x <= timeRenew[i].x + timerImage.width && player.y + ship.height >= timeRenew[i].y && player.y <= timeRenew[i].y + timerImage.height) {
             // Remove the timer from the array
             let timerItem = timeRenew[i];
             let timerIndex = timeRenew.indexOf(timerItem);
@@ -573,16 +578,16 @@ function draw(){
 
     // Move the ship
     if(d == "LEFT") {
-        shipX -= playerSpeed;
+        player.x -= player.speed;
     }
     if(d == "RIGHT"){
-        shipX += playerSpeed;
+        player.x += player.speed;
     }
     if(d == "UP") {
-        shipY -= playerSpeed;
+        player.y -= player.speed;
     }
     if(d == "DOWN") {
-        shipY += playerSpeed;
+        player.y += player.speed;
     }
 
     // ALIEN (ENEMY) ROCKETS
@@ -591,9 +596,9 @@ function draw(){
             ctx.drawImage(alienMissile, alienAmmo[i].x, alienAmmo[i].y);
             alienAmmo[i].x -= 15;
         
-            if(alienAmmo[i].x >= shipX && alienAmmo[i].x <= shipX + ship.width && alienAmmo[i].y >= shipY && alienAmmo[i].y <= shipY + ship.height && enemiesSpawned == true ) {
+            if(alienAmmo[i].x >= player.x && alienAmmo[i].x <= player.x + ship.width && alienAmmo[i].y >= player.y && alienAmmo[i].y <= player.y + ship.height && enemiesSpawned == true ) {
                 // Draw explosion at the spot
-                ctx.drawImage(explosion, shipX, shipY);
+                ctx.drawImage(explosion, player.x, player.y);
         
                 // Run function when player's ship is hit.
                 playerHit();
@@ -611,20 +616,20 @@ function draw(){
     }
 
     // If spaceship hits the boundry, remove the direction
-    if(shipX <= 0) {
-        shipX += 5;
-    } else if (shipX >= 1300 - ship.width) {
-        shipX -= 5;
-    } else if (shipY <= 0) {
-        shipY += 5;
-    } else if (shipY >= 500 - ship.height) {
-        shipY -= 5;
+    if(player.x <= 0) {
+        player.x += 5;
+    } else if (player.x >= 1300 - ship.width) {
+        player.x -= 5;
+    } else if (player.y <= 0) {
+        player.y += 5;
+    } else if (player.y >= 500 - ship.height) {
+        player.y -= 5;
     }
 
     // Draw the ship
-    ctx.drawImage(ship, shipX, shipY);
-    engineFlameX = shipX - (ship.width - 42);
-    engineFlameY = shipY + (ship.height / 2 - 6);
+    ctx.drawImage(ship, player.x, player.y);
+    engineFlameX = player.x - (ship.width - 42);
+    engineFlameY = player.y + (ship.height / 2 - 6);
     ctx.drawImage(engineFlames, engineFlameX, engineFlameY);
 }
 // Restore sound effect (shield, health, time)
@@ -721,7 +726,7 @@ function playerHit(){
 
     // Decrease ship HP
     decreaseShipHP();
-    if(shipHP == 0) {
+    if(player.hp == 0) {
         endgame();
         clearInterval(game);
     }
@@ -776,10 +781,10 @@ function displayNotification(secondsLeft){
 
 // SHIP SHIELD
 function restoreShield() {
-    if(shield == 100) {
+    if(player.shield == 100) {
         shieldDestroyed = false;
-        shield = shield;
-    } else if(shield <= 80){
+        player.shield = player.shield;
+    } else if(player.shield <= 80){
         // Create a new shield image and append it to the shield container
         const displayShieldItem = document.createElement("img");
         displayShieldItem.setAttribute('src', 'images/shieldImage.png');
@@ -791,7 +796,7 @@ function restoreShield() {
         shieldDestroyed = false;
 
         // Restore shield points and display a notification
-        shield = shield + 20;
+        player.shield = player.shield + 20;
         notificationText.innerHTML = `<i class="material-icons shield">security</i><p>Shield restored!</p>`;
         displayNotification();
     }
@@ -799,20 +804,20 @@ function restoreShield() {
 
 function decreaseShield() {
     // Decrease shield
-    if(shield >= 20 && shield <= 100) {
-        shield = shield - 20;
+    if(player.shield >= 20 && player.shield <= 100) {
+        player.shield = player.shield - 20;
         shieldContainer.removeChild(shieldContainer.children[0]);
     }
     // If shield is at 0, mark it as destroyed
-    if(shield == 0) {
+    if(player.shield == 0) {
         shieldDestroyed = true;
     }
 }
 
 // SHIP HEALTH:
 function restoreShipHP() {
-    if(shipHP == 100) {
-        shipHP = shipHP;
+    if(player.hp == 100) {
+        player.hp = player.hp;
     } else{
         // Draw a heart element when user picks up first aid
         let dispalyHealthItem = document.createElement("img");
@@ -824,17 +829,17 @@ function restoreShipHP() {
         healthContainer.appendChild(dispalyHealthItem);
 
         // Restore ships HP and display a notification.
-        shipHP = shipHP + 20;
+        player.hp = player.hp + 20;
         notificationText.innerHTML = `<i class="material-icons health">local_hospital</i><p>Health renewed!</p>`;
         displayNotification();
     }
 }
 function decreaseShipHP() {
     if(shieldDestroyed) {
-        if(shipHP >= 20 && shipHP <= 100){
-            shipHP = shipHP - 20;
+        if(player.hp >= 20 && player.hp <= 100){
+            player.hp = player.hp - 20;
             healthContainer.removeChild(healthContainer.children[0]);
-        } else if(shipHP == 0) {
+        } else if(player.hp == 0) {
             endgame();
             clearInterval(game);
             clearInterval(enemiesShootingInterval);
@@ -857,7 +862,7 @@ function endgame(secondsLeft){
     gameOver.style.display = "block";
 
     // If player was killed.
-    if(shipHP === 0){
+    if(player.hp === 0){
         displayImage.src = "images/tombstone.png";
         message.textContent = "At least you tried...";
         music.src = "Audio/Fallen in Battle.mp3";
