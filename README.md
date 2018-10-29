@@ -11,4 +11,4 @@ Earth Defense is a remake of the classic Space shooter type of games, with 8-bit
 * [ ] Refactoring
 -------------------
 ###### Bugs:
-* [ ]  Health restoration bugs out after the user restores shield.
+* [x]  Health restoration bugs out after the user restores shield.
