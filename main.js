@@ -12,6 +12,10 @@ const message = document.querySelector("#message");
 const pauseMenu = document.querySelector(".pause--menu");
 const shieldContainer = document.querySelector(".shield-container");
 const healthContainer = document.querySelector(".health-container");
+
+const overheatContainer = document.querySelector(".overheat-container");
+const overheatProgress = document.querySelector(".overheat-progress");
+
 const soundControl = document.querySelectorAll(".soundControl");
 
 // Flag variables
@@ -89,27 +93,21 @@ window.onload = function playMusic() {
 
 // Create player health and shield images 
 function drawHealthAndShield() {
-    let playerHealthAndShield = setInterval(()=>{
-        for(let i = 0; i < 5; i++) {
-            // Create 5 heart images
-            let dispalyHealthItem = document.createElement("img");
-            dispalyHealthItem.setAttribute('src', 'images/firstAid.png');
-            dispalyHealthItem.setAttribute('width', '32px');
-            dispalyHealthItem.setAttribute('height', '32px');
-            healthContainer.appendChild(dispalyHealthItem);
+    for(let i = 0; i < 5; i++) {
+        // Create 5 heart images
+        let dispalyHealthItem = document.createElement("img");
+        dispalyHealthItem.setAttribute('src', 'images/firstAid.png');
+        dispalyHealthItem.setAttribute('width', '32px');
+        dispalyHealthItem.setAttribute('height', '32px');
+        healthContainer.appendChild(dispalyHealthItem);
 
-            // Create 5 shield images
-            const displayShieldItem = document.createElement("img");
-            displayShieldItem.setAttribute('src', 'images/shieldImage.png');
-            displayShieldItem.setAttribute('width', '32px');
-            displayShieldItem.setAttribute('height', '32px');
-            shieldContainer.appendChild(displayShieldItem);
-
-            if(i <= 5) {
-                clearInterval(playerHealthAndShield);
-            }
-        }
-    }, 1)
+        // Create 5 shield images
+        const displayShieldItem = document.createElement("img");
+        displayShieldItem.setAttribute('src', 'images/shieldImage.png');
+        displayShieldItem.setAttribute('width', '32px');
+        displayShieldItem.setAttribute('height', '32px');
+        shieldContainer.appendChild(displayShieldItem);
+    }
 }
 
 // Spaceship starting coordinates
@@ -224,6 +222,7 @@ function startGame(){
             menu.classList.add("menuActive");
             healthContainer.style.display = "block";
             shieldContainer.style.display = "block";
+            overheatContainer.style.display = "block";
             preGameCountdown.style.display = "block";
         }, 500);
 
@@ -332,6 +331,7 @@ function shoot(e){
 const emptyWarningText = document.querySelector(".emptyWarning-text");
 function overheated(){
     player.overheat = player.overheat + 5;
+    overheatProgress.style.width = `${player.overheat}%`;
 
     // If player.overheat meter reaches max(100), stop the ship from shooting, when it starts cooling off enable shooting.
     if(player.overheat == 100) {
@@ -344,6 +344,14 @@ function overheated(){
     } else if (player.overheat < 100 && player.overheat > 0) {
         isOverheated = false;
     }
+
+    if (player.overheat >= 0 && player.overheat <= 60) {
+        overheatProgress.style.background = 'lawngreen';
+    } else if (player.overheat > 60 && player.overheat <= 90) {
+        overheatProgress.style.background = 'yellow';
+    } else if (player.overheat > 90 && player.overheat <= 100) {
+        overheatProgress.style.background = 'red';
+    }
 }
 
 // Gradually cool out the gun BEFORE it reaches overheating point
@@ -351,6 +359,15 @@ function graduallyRestore(){
     // Restore / coolout gun overheating
     if(player.overheat <= 95 && player.overheat >= 5) {
         player.overheat = player.overheat - 5;
+        overheatProgress.style.width = `${player.overheat}%`;
+    }
+    
+    if (player.overheat >= 0 && player.overheat <= 60) {
+        overheatProgress.style.background = 'lawngreen';
+    } else if (player.overheat > 60 && player.overheat <= 90) {
+        overheatProgress.style.background = 'yellow';
+    } else if (player.overheat > 90 && player.overheat <= 100) {
+        overheatProgress.style.background = 'red';
     }
 
     // Restore ship's booster
@@ -358,12 +375,13 @@ function graduallyRestore(){
         player.boost = player.boost + 2;
     }
 }
-let graduallyRestoreInterval = setInterval(graduallyRestore, 800)
+let graduallyRestoreInterval = setInterval(graduallyRestore, 500)
 
 // // When gun overheats, wait 1 second, then cool it out and enable shooting.
 function coolOut(){
     setTimeout(() => {
         player.overheat = 0;
+        overheatProgress.style.width = '0%';
         isOverheated = false;
         emptyWarningText.classList.remove("emptyWarning-textActive");
     }, 2000);
@@ -398,16 +416,15 @@ function draw(){
                 })
             }
             // If spaceship and enemy colide
-            if(player.x + ship.width >= enemies[i].x && player.x <= enemies[i].x + enemy.width && player.y + ship.height >= enemies[i].y && player.y <= enemies[i].y + enemy.height) {
+            if(player.x + ship.width >= enemies[i].x 
+                && player.x <= enemies[i].x + enemy.width 
+                && player.y + ship.height >= enemies[i].y 
+                && player.y <= enemies[i].y + enemy.height) {
                 // Draw explosion at those coords.
                 ctx.drawImage(explosion, enemies[i].x - enemy.width, enemies[i].y - enemy.height);
                 
                 // Delete the enemy from screen.
-                let enemiesArray = enemies[i];
-                let enemiesArrayIndex = enemies.indexOf(enemiesArray);
-                if(enemiesArrayIndex > -1) {
-                    enemies.splice(enemiesArrayIndex, 1);
-                }
+                enemies.splice(i, 1);
                 
                 // Deduct shield on hit
                 decreaseShield();
@@ -426,11 +443,9 @@ function draw(){
                     clearInterval(game);
                     endgame();
                 }
-            }
-            // Remove the alien space ship from the enemies array.
-            if(enemies[i].x + enemy.width < 0) {
-                enemies.splice(enemies[i], 1);
-            }
+            } else if(enemies[i].x + enemy.width < 0) { // Remove the alien space ship from the enemies array.
+                enemies.splice(i, 1);
+            }            
         }
         // Create a new enemy if all enemies on screen are destroyed.
         if(enemies.length == 0) {
@@ -447,38 +462,30 @@ function draw(){
             ctx.drawImage(missile, ammo[j].x, ammo[j].y);
             ammo[j].x += 15;
 
+            const hitEnemy = enemies.find(e => {
+                return ammo[j].x >= e.x 
+                && ammo[j].x <= e.x + enemy.width 
+                && ammo[j].y >= e.y 
+                && ammo[j].y <= e.y + enemy.height
+            })
+
             // Ammo colides enemy
-            for(let i = 0; i < enemies.length; i++) {
-                if(ammo[j].x >= enemies[i].x && ammo[j].x <= enemies[i].x + enemy.width && ammo[j].y >= enemies[i].y && ammo[j].y <= enemies[i].y + enemy.height){
-                    // Draw explosion of the enemy.
-                    ctx.drawImage(explosion, enemies[i].x - enemy.width, enemies[i].y - enemy.height);
+            if (hitEnemy) {
+                ctx.drawImage(explosion, hitEnemy.x - enemy.width, hitEnemy.y - enemy.height);
 
-                    // Remove the missiles
-                    let missile = ammo[j];
-                    let missileIndex = ammo.indexOf(missile);
-                    if(missileIndex > -1) {
-                        ammo.splice(missileIndex, 1);
-                    }
+                // Remove the missiles
+                ammo.splice(j, 1);
 
-                    // Remove the enemy from screen
-                    let enemiesArray = enemies[i];
-                    let enemiesArrayIndex = enemies.indexOf(enemiesArray);
-                    if(enemiesArrayIndex > -1) {
-                        enemies.splice(enemiesArrayIndex, 1)
-                    }
-                    explosionSound.play();
-                    explosionSound.currentTime = 0;
-                    updateScore();
+                // Remove the enemy from screen
+                let enemiesArrayIndex = enemies.indexOf(hitEnemy);
+                if(enemiesArrayIndex > -1) {
+                    enemies.splice(enemiesArrayIndex, 1)
                 }
-            }
-
-            // If player's ammo goes past canvas width
-            if(ammo[j].x > cWidth){
-                let missile = ammo[j];
-                let missileIndex = ammo.indexOf(missile);
-                if(missileIndex > -1) {
-                    ammo.splice(missileIndex, 1);
-                }
+                explosionSound.play();
+                explosionSound.currentTime = 0;
+                updateScore();
+            } else if (ammo[j].x > cWidth) { // If player's ammo goes past canvas width
+                ammo.splice(j, 1);                
             }
         }
     }
@@ -487,22 +494,20 @@ function draw(){
     for(let i = 0; i < healthRenew.length; i++){
         ctx.drawImage(firstAid, healthRenew[i].x, healthRenew[i].y);
 
+        const pickedUpHealthRenew = player.x + ship.width >= healthRenew[i].x 
+                                && player.x <= healthRenew[i].x + firstAid.width 
+                                && player.y + ship.height >= healthRenew[i].y 
+                                && player.y <= healthRenew[i].y + firstAid.height;
         // If the ship touches the health, restore the ship's HP.
-        if(player.x + ship.width >= healthRenew[i].x && player.x <= healthRenew[i].x + firstAid.width && player.y + ship.height >= healthRenew[i].y && player.y <= healthRenew[i].y + firstAid.height) {
+        if(pickedUpHealthRenew) {
             // Remove the HP restore.
-            let hpItem = healthRenew[i];
-            let hpIndex = healthRenew.indexOf(hpItem);
-            if(hpIndex > -1) {
-                healthRenew.splice(hpIndex, 1)
-            }
+            healthRenew.splice(i, 1)
             // Restore ship's HP.
             restoreShipHP();
             // Play Sound effect
             restoreSound();
-        }
-        // If HP restore goes past the canvas width, remove it.
-        if(healthRenew[i].x + firstAid.width < 0 ) {
-            healthRenew.splice(healthRenew[i], 1);
+        } else if(healthRenew[i].x + firstAid.width < 0 ) { // If HP restore goes past the canvas width, remove it.
+            healthRenew.splice(i, 1);
         }
     }
     // Start moving the HP renew after a set timeout.
@@ -517,23 +522,22 @@ function draw(){
     for(let i = 0; i < shieldRenew.length; i++) {
         ctx.drawImage(shieldImage, shieldRenew[i].x, shieldRenew[i].y);
 
+        const pickedUpShieldRenew = player.x + ship.width >= shieldRenew[i].x 
+                                && player.x <= shieldRenew[i].x + shieldImage.width 
+                                && player.y + ship.height >= shieldRenew[i].y 
+                                && player.y <= shieldRenew[i].y + shieldImage.height
+
         // If the ship touches the shield, renew its shield.
-        if(player.x + ship.width >= shieldRenew[i].x && player.x <= shieldRenew[i].x + shieldImage.width && player.y + ship.height >= shieldRenew[i].y && player.y <= shieldRenew[i].y + shieldImage.height) {
+        if(pickedUpShieldRenew) {
             // Remove the shield from screen
-            let shieldItem = shieldRenew[i];
-            let shieldIndex = shieldRenew.indexOf(shieldItem);
-            if(shieldIndex > -1) {
-                shieldRenew.splice(shieldIndex, 1);
-            }
+            shieldRenew.splice(i, 1);
 
             // Restore 50 points to the player ship shield
             restoreShield();
             // Play Sound effect
             restoreSound();
-        }
-        // If the shield item goes off canvas, remove it
-        if(shieldRenew[i].x + shieldImage.width < 0) {
-            shieldRenew.splice(shieldRenew[i], 1);
+        } else if(shieldRenew[i].x + shieldImage.width < 0) { // If the shield item goes off canvas, remove it
+            shieldRenew.splice(i, 1);
         }
     }
 
@@ -549,25 +553,25 @@ function draw(){
     for(let i = 0; i < timeRenew.length; i++){
         ctx.drawImage(timerImage, timeRenew[i].x, timeRenew[i].y)
         // If the ship touches the sand timer, add more time
-        if(player.x + ship.width >= timeRenew[i].x && player.x <= timeRenew[i].x + timerImage.width && player.y + ship.height >= timeRenew[i].y && player.y <= timeRenew[i].y + timerImage.height) {
-            // Remove the timer from the array
-            let timerItem = timeRenew[i];
-            let timerIndex = timeRenew.indexOf(timerItem);
-            if(timerIndex > -1) {
-                timeRenew.splice(timerIndex, 1);
-            }
+
+        const pickedUpTimeRenew = player.x + ship.width >= timeRenew[i].x 
+                            && player.x <= timeRenew[i].x + timerImage.width 
+                            && player.y + ship.height >= timeRenew[i].y 
+                            && player.y <= timeRenew[i].y + timerImage.height
+
+        if(pickedUpTimeRenew) {
+            // Remove the timer from the array            
+            timeRenew.splice(i, 1);
             // Add time
             addPlaytime();
 
             // Play Sound effect
             restoreSound();
-        }
-
-        // If clock goes past canvas
-        if(timeRenew[i].x < 0) {
-            timeRenew.splice(timeRenew[i], 1);
+        } else if(timeRenew[i].x < 0) { // If clock goes past canvas
+            timeRenew.splice(i, 1);
         }
     }
+
     // Start moving the timer image
     setTimeout(() => {
         for(let i = 0; i < timeRenew.length; i++) {
@@ -595,22 +599,21 @@ function draw(){
         for(let i = 0; i < enemyAmmo.length;i++) {
             ctx.drawImage(alienMissile, enemyAmmo[i].x, enemyAmmo[i].y);
             enemyAmmo[i].x -= 15;
+
+            const hitEnemyAmmo = enemyAmmo[i].x >= player.x 
+                            && enemyAmmo[i].x <= player.x + ship.width 
+                            && enemyAmmo[i].y >= player.y 
+                            && enemyAmmo[i].y <= player.y + ship.height 
+                            && enemiesSpawned
         
-            if(enemyAmmo[i].x >= player.x && enemyAmmo[i].x <= player.x + ship.width && enemyAmmo[i].y >= player.y && enemyAmmo[i].y <= player.y + ship.height && enemiesSpawned == true ) {
+            if(hitEnemyAmmo) {
                 // Draw explosion at the spot
                 ctx.drawImage(explosion, player.x, player.y);
         
                 // Run function when player's ship is hit.
                 playerHit();
-            }
-
-            // If the alien rocket goes behind player's ship
-            if(enemyAmmo[i].x < 0) {
-                let enemyRocket = enemyAmmo[i];
-                let enemyRocketIndex = enemyAmmo.indexOf(enemyRocket);
-                if(enemyRocketIndex > -1) {
-                    enemyAmmo.splice(enemyRocketIndex, 1)
-                }
+            } else if(enemyAmmo[i].x < 0) { // If the alien rocket goes behind player's ship
+                enemyAmmo.splice(i, 1);
             }
         }
     }
@@ -692,9 +695,7 @@ function enemiesShoot(){
     // If the enemies are spawned
     if(enemiesSpawned) {
         let minShip = 0;
-        let maxShip = enemies.length;
-        minShip = Math.ceil(minShip);
-        maxShip = Math.floor(maxShip);
+        let maxShip = enemies.length - 1;
         let randomShip = Math.floor(Math.random() * (maxShip - minShip + 1)) + minShip;
         // Randomize
         enemyAmmo.push({
