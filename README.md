@@ -9,6 +9,22 @@ Earth Defense is a remake of the classic Space shooter type of games, with 8-bit
 * [ ] Add meteors flying by. (?)
 * [ ] Clean code
 * [ ] Refactoring
+* [ ] Settings
+* [ ] Clearer indication ship was hit
 -------------------
 ###### Bugs:
 * [x]  Health restoration bugs out after the user restores shield.
+----------
+#### Releases:
+##### v1.0.0 - Oct 29 2018
+* Initial release!
+* It does things!
+* Pewpewpew!
+----------
+#### Contributors:
+* pecko95 (Creator)(https://github.com/pecko95)
+<!-- * nartc (https://github.com/nartc) -->
+* karnthis (https://github.com/karnthis)
+
+##### Contributing:
+* Contact pecko95 for info
