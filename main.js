@@ -14,6 +14,7 @@ const pauseMenu = document.querySelector(".pause--menu");
 const overheatContainer = document.querySelector(".overheat-container");
 const shieldContainer = document.querySelector(".shield-container");
 const healthContainer = document.querySelector(".health-container");
+let highscore = localStorage.getItem("highscore");
 
 // const overheatContainer = document.querySelector(".overheat-container");
 const overheatProgress = document.querySelector(".overheat-progress");
@@ -262,7 +263,7 @@ function startGame(){
 }
 
 // Move the spaceship
-function shipCommands(e){
+function movement(e){
     let key = e.keyCode;
     // If game has started, enable ship movement.
     if(gameStarted) { 
@@ -758,12 +759,29 @@ function playerHit(){
     }
 }
 
+// Display notification that the user has a new HIGHSCORE
+function newHighscore() {
+    emptyWarningText.textContent = "NEW HIGHSCORE !!";
+    emptyWarningText.classList.add("emptyWarning-Highscore");
+
+    // Remove the notification
+    setTimeout(() => {
+        emptyWarningText.classList.remove("emptyWarning-Highscore");
+    }, 2000);
+}
+
 // Update the score and deal with difficulty
 function updateScore() {
+    // Display notification that you reached a new HIGHSCORE
+    if(score >= highscore && score <= highscore) {
+        highscore = score;
+        newHighscore();
+    }
+
     // Update score
     score += 100;
     displayScore.textContent = score;
-    
+
     // Increase difficulty when user reaches a certain score point.
     if(score == 3000) {
         enemySpeed = 2;
@@ -907,7 +925,6 @@ function endgame(secondsLeft){
     music.loop = false;
 
     // Score and Highscore
-    let highscore = localStorage.getItem("highscore");
     document.querySelector("#finalScore").textContent = score;
     document.querySelector("#highscore").textContent = highscore;
     if(score > highscore) {
@@ -1041,7 +1058,7 @@ mainMenuButtons.forEach(btn => btn.addEventListener("click", ()=>{
 }))
 
 // Event listeners
-document.addEventListener("keydown", shipCommands);
+document.addEventListener("keydown", movement);
 document.addEventListener("keyup", clearShipCommands);
 document.querySelector("#startGame").addEventListener("click", loadGame);
 document.addEventListener("keydown", shoot);
