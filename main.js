@@ -17,6 +17,7 @@ const healthContainer = document.querySelector(".health-container");
 
 // const overheatContainer = document.querySelector(".overheat-container");
 const overheatProgress = document.querySelector(".overheat-progress");
+// const overheatProgress = document.querySelector(".overheat-progress");
 
 const soundControl = document.querySelectorAll(".soundControl");
 
@@ -342,18 +343,13 @@ function overheating() {
     if(heat >= 0 && heat <= 10) {
         blocks[heat].classList.add("testing");
     }
-    console.log(heat);
-}
-function testCool(){
-    if(heat >= 0 && heat <= 10) {
-        blocks[heat].classList.remove("testing");
-        heat--;
-    }
-    console.log(heat);
 }
 
 function overheated(){
-    player.overheat = player.overheat + 10;
+    // player.overheat = player.overheat + 10;
+    player.overheat = player.overheat + 5;
+    overheatProgress.style.width = `${player.overheat}%`;
+
     // If player.overheat meter reaches max(100), stop the ship from shooting, when it starts cooling off enable shooting.
     if(player.overheat == 100) {
         isOverheated = true;
@@ -367,29 +363,47 @@ function overheated(){
         overheating();
     }
 
-    if (player.overheat >= 0 && player.overheat <= 60) {
-        overheatProgress.style.background = 'lawngreen';
-    } else if (player.overheat > 60 && player.overheat <= 90) {
-        overheatProgress.style.background = 'yellow';
-    } else if (player.overheat > 90 && player.overheat <= 100) {
-        overheatProgress.style.background = 'red';
-    }
+    // if (player.overheat >= 0 && player.overheat <= 60) {
+    //     overheatProgress.style.background = 'lawngreen';
+    // } else if (player.overheat > 60 && player.overheat <= 90) {
+    //     overheatProgress.style.background = 'yellow';
+    // } else if (player.overheat > 90 && player.overheat <= 100) {
+    //     overheatProgress.style.background = 'red';
+    // }
 }
 
 // Gradually cool out the gun BEFORE it reaches overheating point
 function graduallyRestore(){
     // Restore / coolout gun overheating
-    if(player.overheat <= 90 && player.overheat >= 10) {
-        player.overheat = player.overheat - 10;
-        testCool()
+    // if(player.overheat <= 90 && player.overheat >= 10) {
+    //     player.overheat = player.overheat - 10;
+    //     testCool()
+    // }
+    if(player.overheat <= 95 && player.overheat >= 5) {
+        player.overheat = player.overheat - 5;
+        overheatProgress.style.width = `${player.overheat}%`;
     }
+    
+    // if (player.overheat >= 0 && player.overheat <= 60) {
+    //     overheatProgress.style.background = 'lawngreen';
+    // } else if (player.overheat > 60 && player.overheat <= 90) {
+    //     overheatProgress.style.background = 'yellow';
+    // } else if (player.overheat > 90 && player.overheat <= 100) {
+    //     overheatProgress.style.background = 'red';
+    // }
 
     // Restore ship's booster
     if(player.boost >= 0 && player.boost <= 99) {
         player.boost = player.boost + 2;
     }
+
+    if(heat >= 0 && heat <= 10) {
+        blocks[heat].classList.remove("testing");
+        heat--;
+    }
 }
-let graduallyRestoreInterval = setInterval(graduallyRestore, 300)
+// let graduallyRestoreInterval = setInterval(graduallyRestore, 300)
+let graduallyRestoreInterval = setInterval(graduallyRestore, 500)
 
 // When gun overheats, wait 1 second, then cool it out and enable shooting.
 function coolOut(){
@@ -436,8 +450,8 @@ function draw(){
                 && player.x <= enemies[i].x + enemy.width 
                 && player.y + ship.height >= enemies[i].y 
                 && player.y <= enemies[i].y + enemy.height) {
-                // Increase kill count
-                killCount++;
+                // // Increase kill count
+                // killCount++;
 
                 // Draw explosion at those coords.
                 ctx.drawImage(explosion, enemies[i].x - enemy.width, enemies[i].y - enemy.height);
