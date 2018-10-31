@@ -2,16 +2,16 @@
 	font-family: 'Material Icons';
 	font-style: normal;
 	font-weight: 400;
-	src: url("fonts/MaterialIcons-Regular.eot"); /* For IE6-8 */
+	src: url("/static/fonts/MaterialIcons-Regular.eot"); /* For IE6-8 */
 	src: local('Material Icons'),
 	  local('MaterialIcons-Regular'),
-	  url("fonts/MaterialIcons-Regular.woff2") format('woff2'),
-	  url("fonts/MaterialIcons-Regular.woff") format('woff'),
-	  url("fonts/MaterialIcons-Regular.ttf") format('truetype');
+	  url("/static/fonts/MaterialIcons-Regular.woff2") format('woff2'),
+	  url("/static/fonts/MaterialIcons-Regular.woff") format('woff'),
+	  url("/static/fonts/MaterialIcons-Regular.ttf") format('truetype');
 }
 @font-face {
     font-family: "Press Start 2P";
-    src: url("fonts/PressStart2P.ttf");
+    src: url("/static/fonts/PressStart2P.ttf");
 }
 
 

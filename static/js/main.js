@@ -50,16 +50,16 @@ const alienMissile = new Image();
 const engineFlames = new Image();
 const timerImage = new Image();
 const shieldImage = new Image();
-bg.src = "images/background.png";
-ship.src = "images/player.png";
-enemy.src = "images/enemy.png";
-missile.src = "images/playerRocket.png";
+bg.src = "/assets/images/background.png";
+ship.src = "/assets/images/player.png";
+enemy.src = "/assets/images/enemy.png";
+missile.src = "/assets/images/playerRocket.png";
 explosion.src = `images/3.png`;
-firstAid.src = "images/firstAid.png";
-alienMissile.src = "images/enemyRocket.png";
-timerImage.src = "images/timer.png";
-shieldImage.src = "images/shieldImage.png";
-engineFlames.src = "images/engineFlameNormal.png";
+firstAid.src = "/assets/images/firstAid.png";
+alienMissile.src = "/assets/images/enemyRocket.png";
+timerImage.src = "/assets/images/timer.png";
+shieldImage.src = "/assets/images/shieldImage.png";
+engineFlames.src = "/assets/images/engineFlameNormal.png";
 
 // Sound assets
 const enemyShootingSound = new Audio();
@@ -69,12 +69,12 @@ const music = new Audio();
 const restoreSoundEffect = new Audio();
 const alarm = new Audio();
 
-missileSound.src = "Audio/weapon_player.wav";
-explosionSound.src = "Audio/explosion_enemy.wav";
-enemyShootingSound.src = "Audio/laser1.ogg";
-music.src = "Audio/music_background.wav";
-restoreSoundEffect.src = "Audio/powerUp11.ogg";
-alarm.src = "Audio/alarm.wav";
+missileSound.src = "/assets/audio/weapon_player.wav";
+explosionSound.src = "/assets/audio/explosion_enemy.wav";
+enemyShootingSound.src = "/assets/audio/laser1.ogg";
+music.src = "/assets/audio/music_background.wav";
+restoreSoundEffect.src = "/assets/audio/powerUp11.ogg";
+alarm.src = "/assets/audio/alarm.wav";
 
 // Set the volume of the sound assets
 missileSound.volume = 0.05;
@@ -173,10 +173,10 @@ const time = 30;
 function toggleMusic() {
     soundOff = !soundOff;
     if(soundOff) {
-        this.src = "images/soundOff.png";
+        this.src = "/assets/images/soundOff.png";
         music.volume = 0;
     } else {
-        this.src = "images/soundOn.png";
+        this.src = "/assets/images/soundOn.png";
         music.volume = 0.2;
     }
 }
@@ -184,7 +184,7 @@ function toggleMusic() {
 // Load game
 function loadGame() {
     // Play loading music
-    music.src = "Audio/loading.wav";
+    music.src = "/assets/audio/loading.wav";
     music.play();
 
     const mainMenu = document.querySelector(".main-menu");
@@ -242,7 +242,7 @@ function startGame(){
         }, 1000)
 
         // Play the theme music again
-        music.src = "Audio/Mecha Collection.mp3";
+        music.src = "/assets/audio/Mecha Collection.mp3";
         music.volume = 0.2;
         music.play();
 
@@ -271,12 +271,12 @@ function movement(e){
             d = "LEFT"
         } else if (key == 38) {
             d = "UP"
-            ship.src = "images/playerUp.png";
+            ship.src = "/assets/images/playerUp.png";
         } else if (key == 39) {
             d = "RIGHT"
         } else if (key == 40) {
             d = "DOWN"
-            ship.src = "images/playerDown.png";
+            ship.src = "/assets/images/playerDown.png";
         }
 
         // Player spaceship speed boost
@@ -286,7 +286,7 @@ function movement(e){
                 player.speed = 15;
                 // Empty out the speed booster
                 player.boost = player.boost - 2;
-                engineFlames.src = "images/engineFlameBooster.png";
+                engineFlames.src = "/assets/images/engineFlameBooster.png";
             }
             // Disable speed boost if it reaches 0
             if(player.boost <= 0) {
@@ -306,8 +306,8 @@ function movement(e){
 function clearShipCommands() {
     player.speed = 5;
     speedBooster = false;
-    ship.src = "images/player.png";
-    engineFlames.src = "images/engineFlameNormal.png";
+    ship.src = "/assets/images/player.png";
+    engineFlames.src = "/assets/images/engineFlameNormal.png";
 }
 
 // Player shoots
@@ -912,14 +912,14 @@ function endgame(secondsLeft){
 
     // If player was killed.
     if(player.hp === 0){
-        displayImage.src = "images/tombstone.png";
+        displayImage.src = "/assets/images/tombstone.png";
         message.textContent = "At least you tried...";
     }
     if(secondsLeft <= 0) {
         message.textContent = "Time's up !"
     }
     
-    music.src = "Audio/Fallen in Battle.mp3";
+    music.src = "/assets/audio/Fallen in Battle.mp3";
     music.volume = 0.2;
     music.play();
     music.loop = false;
@@ -1045,9 +1045,9 @@ const mainMenuButtons = document.querySelectorAll(".main-menu_buttons");
 const menuMove = new Audio();
 const menuSelect = new Audio();
 menuMove.volume = 0.35;
-menuMove.src = "Audio/menu hover.wav"
+menuMove.src = "/assets/audio/menu hover.wav"
 menuSelect.volume = 0.35;
-menuSelect.src = "Audio/menu select.wav";
+menuSelect.src = "/assets/audio/menu select.wav";
 mainMenuButtons.forEach(btn => btn.addEventListener("mouseover", ()=>{
     menuMove.currentTime = 0;
     menuMove.play();
