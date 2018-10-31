@@ -216,17 +216,15 @@ function loadGame() {
 
 // Start game
 function startGame(){
-
     setTimeout(() => {
         // Display the MENU/SCORE panel
         menu.style.display = "flex";
         const preGameCountdown = document.querySelector(".countdown");
         setTimeout(() => {
             menu.classList.add("menuActive");
-            overheatContainer.style.display = "block";
             healthContainer.style.display = "block";
             shieldContainer.style.display = "block";
-            overheatContainer.style.display = "block";
+            overheatContainer.style.display = "flex";
             preGameCountdown.style.display = "block";
         }, 500);
 
@@ -334,21 +332,25 @@ function shoot(e){
 // Overheat the spaceship's guns.
 const emptyWarningText = document.querySelector(".emptyWarning-text");
 const blocks = document.querySelectorAll(".overheat-bar_block");
-
 let heat = -1;
-function overheating() {
+
+// Display the overheating by painting the blocks
+function heatingUp() {
     if(heat >= -1 && heat <= 10) {
         heat++;
     }
-    if(heat >= 0 && heat <= 10) {
-        blocks[heat].classList.add("testing");
+    if(heat >= 0 && heat <= 3) {
+        blocks[heat].classList.add("greenPhase");
+    } else if (heat >= 4 && heat <= 6) {
+        blocks[heat].classList.add("yellowPhase");
+    } else if (heat >= 7 && heat <= 10) {
+        blocks[heat].classList.add("redPhase");
     }
 }
 
+// Increase the overheat of the ship and see if it reaches "boiling" point
 function overheated(){
-    // player.overheat = player.overheat + 10;
-    player.overheat = player.overheat + 5;
-    overheatProgress.style.width = `${player.overheat}%`;
+    player.overheat = player.overheat + 10;
 
     // If player.overheat meter reaches max(100), stop the ship from shooting, when it starts cooling off enable shooting.
     if(player.overheat == 100) {
@@ -360,59 +362,47 @@ function overheated(){
         coolOut();
     } else if (player.overheat < 100 && player.overheat > 0) {
         isOverheated = false;
-        overheating();
+        heatingUp();
     }
-
-    // if (player.overheat >= 0 && player.overheat <= 60) {
-    //     overheatProgress.style.background = 'lawngreen';
-    // } else if (player.overheat > 60 && player.overheat <= 90) {
-    //     overheatProgress.style.background = 'yellow';
-    // } else if (player.overheat > 90 && player.overheat <= 100) {
-    //     overheatProgress.style.background = 'red';
-    // }
 }
 
 // Gradually cool out the gun BEFORE it reaches overheating point
 function graduallyRestore(){
-    // Restore / coolout gun overheating
-    // if(player.overheat <= 90 && player.overheat >= 10) {
-    //     player.overheat = player.overheat - 10;
-    //     testCool()
-    // }
-    if(player.overheat <= 95 && player.overheat >= 5) {
-        player.overheat = player.overheat - 5;
-        overheatProgress.style.width = `${player.overheat}%`;
+    if(player.overheat <= 90 && player.overheat >= 10) {
+        player.overheat = player.overheat - 10;
+        
+        // Coolout the ship's heat
+        if(heat >= 0 && heat <= 3) {
+            blocks[heat].classList.remove("greenPhase");
+            heat--;
+        } else if(heat >= 4 && heat <= 6) {
+            blocks[heat].classList.remove("yellowPhase");
+            heat--;
+        } else if(heat >= 7 && heat <= 10) {
+            blocks[heat].classList.remove("redPhase");
+            heat--;
+        }
     }
-    
-    // if (player.overheat >= 0 && player.overheat <= 60) {
-    //     overheatProgress.style.background = 'lawngreen';
-    // } else if (player.overheat > 60 && player.overheat <= 90) {
-    //     overheatProgress.style.background = 'yellow';
-    // } else if (player.overheat > 90 && player.overheat <= 100) {
-    //     overheatProgress.style.background = 'red';
-    // }
 
     // Restore ship's booster
     if(player.boost >= 0 && player.boost <= 99) {
         player.boost = player.boost + 2;
     }
-
-    if(heat >= 0 && heat <= 10) {
-        blocks[heat].classList.remove("testing");
-        heat--;
-    }
 }
 // let graduallyRestoreInterval = setInterval(graduallyRestore, 300)
-let graduallyRestoreInterval = setInterval(graduallyRestore, 500)
+let graduallyRestoreInterval = setInterval(graduallyRestore, 300)
 
 // When gun overheats, wait 1 second, then cool it out and enable shooting.
 function coolOut(){
     setTimeout(() => {
         player.overheat = 0;
-        overheatProgress.style.width = '0%';
         isOverheated = false;
         emptyWarningText.classList.remove("emptyWarning-textActive");
-        blocks.forEach(block => block.classList.remove("testing"));
+        blocks.forEach(block => {
+            block.classList.remove("greenPhase")
+            block.classList.remove("yellowPhase")
+            block.classList.remove("redPhase")
+        });
         heat = -1;
     }, 2000);
 }
@@ -795,6 +785,8 @@ function updateScore() {
 
 // Display notifications
 function displayNotification(secondsLeft){
+    overheatContainer.classList.add("goUp");
+
     notificationText.classList.add("activeNotification");
     if(score == 3000) {
         notificationText.innerHTML = `<i class="material-icons">warning</i> <p>Another Disturbance!</p>`
@@ -813,6 +805,9 @@ function displayNotification(secondsLeft){
     setTimeout(() => {
         notificationText.classList.remove('activeNotification');
     }, 4000);
+    setTimeout(() => {
+        overheatContainer.classList.remove("goUp");
+    }, 2000);
 }
 
 // SHIP SHIELD

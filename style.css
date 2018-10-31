@@ -220,24 +220,6 @@ button{
     right: 5px;
     z-index: 999;
 }
-
-.container .overheat-container {
-    display: none;
-    position: absolute;
-    bottom: 5px;
-    height: 30px;
-    border: 1px solid grey;
-    width: 250px;
-    z-index: 999;
-}
-
-.container .overheat-container .overheat-progress {
-    width: 0%;
-    background: lawngreen;
-    height: 28px;
-    transition: 100ms all ease-in-out;
-}
-
 .score{
     text-align: center;
 }
@@ -281,11 +263,21 @@ canvas{
 .overheat-container{
     display: none;
     position: absolute;
-    left: 5px;
-    bottom: 45px;
+    left: 50%;
+    bottom: 5px;
+    transform: translate(-50%, 5px);
     z-index: 999;
+    transition: 0.5s ease;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.goUp {
+    transform: translate(-50%, -25px)
 }
 .overheat-container p {
+    text-transform: uppercase;
+    text-align: center;
     font-family: "Press Start 2P";
     font-size: 12px;
     letter-spacing: 2px;
@@ -306,10 +298,20 @@ canvas{
     height: 20px;
     background-color: #fff;
 }
-.testing{
+.greenPhase{
     width: 10px;
     height: 20px;
-    background-color: #b30d07;
+    background-color: #1aeb71
+}
+.yellowPhase{
+    width: 10px;
+    height: 20px;
+    background-color: gold
+}
+.redPhase{
+    width: 10px;
+    height: 20px;
+    background-color: #b30d07
 }
 
 /* GAME OVER MENU */
@@ -471,14 +473,18 @@ canvas{
     overflow: hidden;
 }
 .notificationsContainer{
-    width: 100%;
+    /* width: 100%; */
     display: flex;
     justify-content: center;
     align-items: center;
+    position: absolute;
+    left: 50%;
+    bottom: 5px;
+    transform: translate(-50%, 5px);
 }
 .notification{
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
     padding: 5px;
     width: 300px;
