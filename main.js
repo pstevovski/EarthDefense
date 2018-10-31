@@ -4,12 +4,14 @@ let game;
 let score = 0;
 let enemySpawnDistance = 1200;
 let enemySpeed = 1;
+let killCount = 0;
 const notificationText = document.querySelector(".notification");
 const menu = document.querySelector(".menu");
 const displayScore = document.querySelector("#score");
 const displayImage = document.querySelector("#displayImage");
 const message = document.querySelector("#message");
 const pauseMenu = document.querySelector(".pause--menu");
+const overheatContainer = document.querySelector(".overheat-container");
 const shieldContainer = document.querySelector(".shield-container");
 const healthContainer = document.querySelector(".health-container");
 
@@ -85,7 +87,7 @@ music.loop = true;
 
 // Play the theme music when page is loaded
 window.onload = function playMusic() {
-    music.play();
+    // music.play();
     
     // Create 5 heart images
     drawHealthAndShield();
@@ -220,6 +222,7 @@ function startGame(){
         const preGameCountdown = document.querySelector(".countdown");
         setTimeout(() => {
             menu.classList.add("menuActive");
+            overheatContainer.style.display = "block";
             healthContainer.style.display = "block";
             shieldContainer.style.display = "block";
             overheatContainer.style.display = "block";
@@ -329,9 +332,33 @@ function shoot(e){
 
 // Overheat the spaceship's guns.
 const emptyWarningText = document.querySelector(".emptyWarning-text");
+const blocks = document.querySelectorAll(".overheat-bar_block");
+
+let heat = -1;
+function overheating() {
+    if(heat >= -1 && heat <= 10) {
+        heat++;
+    }
+    if(heat >= 0 && heat <= 10) {
+        blocks[heat].classList.add("testing");
+    }
+    console.log(heat);
+}
+function testCool(){
+    if(heat >= 0 && heat <= 10) {
+        blocks[heat].classList.remove("testing");
+        heat--;
+    }
+    console.log(heat);
+}
+
 function overheated(){
+<<<<<<< Updated upstream
     player.overheat = player.overheat + 5;
     overheatProgress.style.width = `${player.overheat}%`;
+=======
+    player.overheat = player.overheat + 10;
+>>>>>>> Stashed changes
 
     // If player.overheat meter reaches max(100), stop the ship from shooting, when it starts cooling off enable shooting.
     if(player.overheat == 100) {
@@ -343,6 +370,7 @@ function overheated(){
         coolOut();
     } else if (player.overheat < 100 && player.overheat > 0) {
         isOverheated = false;
+        overheating();
     }
 
     if (player.overheat >= 0 && player.overheat <= 60) {
@@ -357,6 +385,7 @@ function overheated(){
 // Gradually cool out the gun BEFORE it reaches overheating point
 function graduallyRestore(){
     // Restore / coolout gun overheating
+<<<<<<< Updated upstream
     if(player.overheat <= 95 && player.overheat >= 5) {
         player.overheat = player.overheat - 5;
         overheatProgress.style.width = `${player.overheat}%`;
@@ -368,6 +397,11 @@ function graduallyRestore(){
         overheatProgress.style.background = 'yellow';
     } else if (player.overheat > 90 && player.overheat <= 100) {
         overheatProgress.style.background = 'red';
+=======
+    if(player.overheat <= 90 && player.overheat >= 10) {
+        player.overheat = player.overheat - 10;
+        testCool()
+>>>>>>> Stashed changes
     }
 
     // Restore ship's booster
@@ -375,7 +409,11 @@ function graduallyRestore(){
         player.boost = player.boost + 2;
     }
 }
+<<<<<<< Updated upstream
 let graduallyRestoreInterval = setInterval(graduallyRestore, 500)
+=======
+let graduallyRestoreInterval = setInterval(graduallyRestore, 300)
+>>>>>>> Stashed changes
 
 // // When gun overheats, wait 1 second, then cool it out and enable shooting.
 function coolOut(){
@@ -384,6 +422,8 @@ function coolOut(){
         overheatProgress.style.width = '0%';
         isOverheated = false;
         emptyWarningText.classList.remove("emptyWarning-textActive");
+        blocks.forEach(block => block.classList.remove("testing"));
+        heat = -1;
     }, 2000);
 }
 
@@ -416,10 +456,17 @@ function draw(){
                 })
             }
             // If spaceship and enemy colide
+<<<<<<< Updated upstream
             if(player.x + ship.width >= enemies[i].x 
                 && player.x <= enemies[i].x + enemy.width 
                 && player.y + ship.height >= enemies[i].y 
                 && player.y <= enemies[i].y + enemy.height) {
+=======
+            if(player.x + ship.width >= enemies[i].x && player.x <= enemies[i].x + enemy.width && player.y + ship.height >= enemies[i].y && player.y <= enemies[i].y + enemy.height) {
+                // Increase kill count
+                killCount++;
+
+>>>>>>> Stashed changes
                 // Draw explosion at those coords.
                 ctx.drawImage(explosion, enemies[i].x - enemy.width, enemies[i].y - enemy.height);
                 
@@ -470,11 +517,40 @@ function draw(){
             })
 
             // Ammo colides enemy
+<<<<<<< Updated upstream
             if (hitEnemy) {
                 ctx.drawImage(explosion, hitEnemy.x - enemy.width, hitEnemy.y - enemy.height);
 
                 // Remove the missiles
                 ammo.splice(j, 1);
+=======
+            for(let i = 0; i < enemies.length; i++) {
+                if(ammo[j].x >= enemies[i].x && ammo[j].x <= enemies[i].x + enemy.width && ammo[j].y >= enemies[i].y && ammo[j].y <= enemies[i].y + enemy.height){
+                    // Increase kill count
+                    killCount++;
+
+                    // Draw explosion of the enemy.
+                    ctx.drawImage(explosion, enemies[i].x - enemy.width, enemies[i].y - enemy.height);
+
+                    // Remove the missiles
+                    let missile = ammo[j];
+                    let missileIndex = ammo.indexOf(missile);
+                    if(missileIndex > -1) {
+                        ammo.splice(missileIndex, 1);
+                    }
+
+                    // Remove the enemy from screen
+                    let enemiesArray = enemies[i];
+                    let enemiesArrayIndex = enemies.indexOf(enemiesArray);
+                    if(enemiesArrayIndex > -1) {
+                        enemies.splice(enemiesArrayIndex, 1)
+                    }
+                    explosionSound.play();
+                    explosionSound.currentTime = 0;
+                    updateScore();
+                }
+            }
+>>>>>>> Stashed changes
 
                 // Remove the enemy from screen
                 let enemiesArrayIndex = enemies.indexOf(hitEnemy);
@@ -634,6 +710,7 @@ function draw(){
     engineFlameX = player.x - (ship.width - 42);
     engineFlameY = player.y + (ship.height / 2 - 6);
     ctx.drawImage(engineFlames, engineFlameX, engineFlameY);
+    document.querySelector("#killCount").textContent = killCount;
 }
 // Restore sound effect (shield, health, time)
 function restoreSound() {

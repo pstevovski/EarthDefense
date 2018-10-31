@@ -278,6 +278,39 @@ canvas{
     top: 50%;
     transform: translate(-50%, -50%);  
 }
+.overheat-container{
+    display: none;
+    position: absolute;
+    left: 5px;
+    bottom: 45px;
+    z-index: 999;
+}
+.overheat-container p {
+    font-family: "Press Start 2P";
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: gold;
+}
+.overheat-bar{
+    width: 140px;
+    height: 35px;
+    display: flex;
+    justify-content: flex-start;;
+    align-items: center;
+}
+.overheat-bar > * {
+    margin: 0px 2px;
+}
+.overheat-bar_block{
+    width: 10px;
+    height: 20px;
+    background-color: #fff;
+}
+.testing{
+    width: 10px;
+    height: 20px;
+    background-color: #b30d07;
+}
 
 /* GAME OVER MENU */
 .game--over{
