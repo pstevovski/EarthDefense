@@ -220,6 +220,24 @@ button{
     right: 5px;
     z-index: 999;
 }
+
+.container .overheat-container {
+    display: none;
+    position: absolute;
+    bottom: 5px;
+    height: 30px;
+    border: 1px solid grey;
+    width: 250px;
+    z-index: 999;
+}
+
+.container .overheat-container .overheat-progress {
+    width: 0%;
+    background: lawngreen;
+    height: 28px;
+    transition: 100ms all ease-in-out;
+}
+
 .score{
     text-align: center;
 }
