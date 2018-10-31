@@ -220,24 +220,6 @@ button{
     right: 5px;
     z-index: 999;
 }
-
-.container .overheat-container {
-    display: none;
-    position: absolute;
-    bottom: 5px;
-    height: 30px;
-    border: 1px solid grey;
-    width: 250px;
-    z-index: 999;
-}
-
-.container .overheat-container .overheat-progress {
-    width: 0%;
-    background: lawngreen;
-    height: 28px;
-    transition: 100ms all ease-in-out;
-}
-
 .score{
     text-align: center;
 }
@@ -258,6 +240,12 @@ button{
     display: block;
     animation: overheatAnimation 0.6s ease forwards infinite;
 }
+.emptyWarning-Highscore{
+    font-size: 25px;
+    display: block;
+    animation: highscoreAnimation 0.6s ease forwards infinite;
+}
+
 .countdown {
     display: none;
     font-family: "Press Start 2P";
@@ -277,6 +265,59 @@ canvas{
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);  
+}
+.overheat-container{
+    display: none;
+    position: absolute;
+    left: 50%;
+    bottom: 5px;
+    transform: translate(-50%, 5px);
+    z-index: 999;
+    transition: 0.5s ease;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.goUp {
+    transform: translate(-50%, -25px)
+}
+.overheat-container p {
+    text-transform: uppercase;
+    text-align: center;
+    font-family: "Press Start 2P";
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: gold;
+}
+.overheat-bar{
+    width: 140px;
+    height: 35px;
+    display: flex;
+    justify-content: flex-start;;
+    align-items: center;
+}
+.overheat-bar > * {
+    margin: 0px 2px;
+}
+.overheat-bar_block{
+    width: 10px;
+    height: 20px;
+    background-color: #fff;
+}
+.greenPhase{
+    width: 10px;
+    height: 20px;
+    background-color: #1aeb71
+}
+.yellowPhase{
+    width: 10px;
+    height: 20px;
+    background-color: gold
+}
+.redPhase{
+    width: 10px;
+    height: 20px;
+    background-color: #b30d07
 }
 
 /* GAME OVER MENU */
@@ -438,14 +479,18 @@ canvas{
     overflow: hidden;
 }
 .notificationsContainer{
-    width: 100%;
+    /* width: 100%; */
     display: flex;
     justify-content: center;
     align-items: center;
+    position: absolute;
+    left: 50%;
+    bottom: 5px;
+    transform: translate(-50%, 5px);
 }
 .notification{
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
     padding: 5px;
     width: 300px;

@@ -4,17 +4,21 @@ let game;
 let score = 0;
 let enemySpawnDistance = 1200;
 let enemySpeed = 1;
+let killCount = 0;
 const notificationText = document.querySelector(".notification");
 const menu = document.querySelector(".menu");
 const displayScore = document.querySelector("#score");
 const displayImage = document.querySelector("#displayImage");
 const message = document.querySelector("#message");
 const pauseMenu = document.querySelector(".pause--menu");
+const overheatContainer = document.querySelector(".overheat-container");
 const shieldContainer = document.querySelector(".shield-container");
 const healthContainer = document.querySelector(".health-container");
+let highscore = localStorage.getItem("highscore");
 
-const overheatContainer = document.querySelector(".overheat-container");
+// const overheatContainer = document.querySelector(".overheat-container");
 const overheatProgress = document.querySelector(".overheat-progress");
+// const overheatProgress = document.querySelector(".overheat-progress");
 
 const soundControl = document.querySelectorAll(".soundControl");
 
@@ -85,7 +89,7 @@ music.loop = true;
 
 // Play the theme music when page is loaded
 window.onload = function playMusic() {
-    music.play();
+    // music.play();
     
     // Create 5 heart images
     drawHealthAndShield();
@@ -213,7 +217,6 @@ function loadGame() {
 
 // Start game
 function startGame(){
-
     setTimeout(() => {
         // Display the MENU/SCORE panel
         menu.style.display = "flex";
@@ -222,7 +225,7 @@ function startGame(){
             menu.classList.add("menuActive");
             healthContainer.style.display = "block";
             shieldContainer.style.display = "block";
-            overheatContainer.style.display = "block";
+            overheatContainer.style.display = "flex";
             preGameCountdown.style.display = "block";
         }, 500);
 
@@ -260,7 +263,7 @@ function startGame(){
 }
 
 // Move the spaceship
-function shipCommands(e){
+function movement(e){
     let key = e.keyCode;
     // If game has started, enable ship movement.
     if(gameStarted) { 
@@ -329,9 +332,26 @@ function shoot(e){
 
 // Overheat the spaceship's guns.
 const emptyWarningText = document.querySelector(".emptyWarning-text");
+const blocks = document.querySelectorAll(".overheat-bar_block");
+let heat = -1;
+
+// Display the overheating by painting the blocks
+function heatingUp() {
+    if(heat >= -1 && heat <= 10) {
+        heat++;
+    }
+    if(heat >= 0 && heat <= 3) {
+        blocks[heat].classList.add("greenPhase");
+    } else if (heat >= 4 && heat <= 6) {
+        blocks[heat].classList.add("yellowPhase");
+    } else if (heat >= 7 && heat <= 10) {
+        blocks[heat].classList.add("redPhase");
+    }
+}
+
+// Increase the overheat of the ship and see if it reaches "boiling" point
 function overheated(){
-    player.overheat = player.overheat + 5;
-    overheatProgress.style.width = `${player.overheat}%`;
+    player.overheat = player.overheat + 10;
 
     // If player.overheat meter reaches max(100), stop the ship from shooting, when it starts cooling off enable shooting.
     if(player.overheat == 100) {
@@ -343,31 +363,26 @@ function overheated(){
         coolOut();
     } else if (player.overheat < 100 && player.overheat > 0) {
         isOverheated = false;
-    }
-
-    if (player.overheat >= 0 && player.overheat <= 60) {
-        overheatProgress.style.background = 'lawngreen';
-    } else if (player.overheat > 60 && player.overheat <= 90) {
-        overheatProgress.style.background = 'yellow';
-    } else if (player.overheat > 90 && player.overheat <= 100) {
-        overheatProgress.style.background = 'red';
+        heatingUp();
     }
 }
 
 // Gradually cool out the gun BEFORE it reaches overheating point
 function graduallyRestore(){
-    // Restore / coolout gun overheating
-    if(player.overheat <= 95 && player.overheat >= 5) {
-        player.overheat = player.overheat - 5;
-        overheatProgress.style.width = `${player.overheat}%`;
-    }
-    
-    if (player.overheat >= 0 && player.overheat <= 60) {
-        overheatProgress.style.background = 'lawngreen';
-    } else if (player.overheat > 60 && player.overheat <= 90) {
-        overheatProgress.style.background = 'yellow';
-    } else if (player.overheat > 90 && player.overheat <= 100) {
-        overheatProgress.style.background = 'red';
+    if(player.overheat <= 90 && player.overheat >= 10) {
+        player.overheat = player.overheat - 10;
+        
+        // Coolout the ship's heat
+        if(heat >= 0 && heat <= 3) {
+            blocks[heat].classList.remove("greenPhase");
+            heat--;
+        } else if(heat >= 4 && heat <= 6) {
+            blocks[heat].classList.remove("yellowPhase");
+            heat--;
+        } else if(heat >= 7 && heat <= 10) {
+            blocks[heat].classList.remove("redPhase");
+            heat--;
+        }
     }
 
     // Restore ship's booster
@@ -375,15 +390,21 @@ function graduallyRestore(){
         player.boost = player.boost + 2;
     }
 }
-let graduallyRestoreInterval = setInterval(graduallyRestore, 500)
+// let graduallyRestoreInterval = setInterval(graduallyRestore, 300)
+let graduallyRestoreInterval = setInterval(graduallyRestore, 300)
 
-// // When gun overheats, wait 1 second, then cool it out and enable shooting.
+// When gun overheats, wait 1 second, then cool it out and enable shooting.
 function coolOut(){
     setTimeout(() => {
         player.overheat = 0;
-        overheatProgress.style.width = '0%';
         isOverheated = false;
         emptyWarningText.classList.remove("emptyWarning-textActive");
+        blocks.forEach(block => {
+            block.classList.remove("greenPhase")
+            block.classList.remove("yellowPhase")
+            block.classList.remove("redPhase")
+        });
+        heat = -1;
     }, 2000);
 }
 
@@ -420,6 +441,9 @@ function draw(){
                 && player.x <= enemies[i].x + enemy.width 
                 && player.y + ship.height >= enemies[i].y 
                 && player.y <= enemies[i].y + enemy.height) {
+                // // Increase kill count
+                // killCount++;
+
                 // Draw explosion at those coords.
                 ctx.drawImage(explosion, enemies[i].x - enemy.width, enemies[i].y - enemy.height);
                 
@@ -472,6 +496,8 @@ function draw(){
             // Ammo colides enemy
             if (hitEnemy) {
                 ctx.drawImage(explosion, hitEnemy.x - enemy.width, hitEnemy.y - enemy.height);
+                // Increase kill count
+                killCount++;
 
                 // Remove the missiles
                 ammo.splice(j, 1);
@@ -634,6 +660,7 @@ function draw(){
     engineFlameX = player.x - (ship.width - 42);
     engineFlameY = player.y + (ship.height / 2 - 6);
     ctx.drawImage(engineFlames, engineFlameX, engineFlameY);
+    document.querySelector("#killCount").textContent = killCount;
 }
 // Restore sound effect (shield, health, time)
 function restoreSound() {
@@ -732,12 +759,29 @@ function playerHit(){
     }
 }
 
+// Display notification that the user has a new HIGHSCORE
+function newHighscore() {
+    emptyWarningText.textContent = "NEW HIGHSCORE !!";
+    emptyWarningText.classList.add("emptyWarning-Highscore");
+
+    // Remove the notification
+    setTimeout(() => {
+        emptyWarningText.classList.remove("emptyWarning-Highscore");
+    }, 2000);
+}
+
 // Update the score and deal with difficulty
 function updateScore() {
+    // Display notification that you reached a new HIGHSCORE
+    if(score >= highscore && score <= highscore) {
+        highscore = score;
+        newHighscore();
+    }
+
     // Update score
     score += 100;
     displayScore.textContent = score;
-    
+
     // Increase difficulty when user reaches a certain score point.
     if(score == 3000) {
         enemySpeed = 2;
@@ -759,6 +803,8 @@ function updateScore() {
 
 // Display notifications
 function displayNotification(secondsLeft){
+    overheatContainer.classList.add("goUp");
+
     notificationText.classList.add("activeNotification");
     if(score == 3000) {
         notificationText.innerHTML = `<i class="material-icons">warning</i> <p>Another Disturbance!</p>`
@@ -777,6 +823,9 @@ function displayNotification(secondsLeft){
     setTimeout(() => {
         notificationText.classList.remove('activeNotification');
     }, 4000);
+    setTimeout(() => {
+        overheatContainer.classList.remove("goUp");
+    }, 2000);
 }
 
 // SHIP SHIELD
@@ -876,7 +925,6 @@ function endgame(secondsLeft){
     music.loop = false;
 
     // Score and Highscore
-    let highscore = localStorage.getItem("highscore");
     document.querySelector("#finalScore").textContent = score;
     document.querySelector("#highscore").textContent = highscore;
     if(score > highscore) {
@@ -1010,7 +1058,7 @@ mainMenuButtons.forEach(btn => btn.addEventListener("click", ()=>{
 }))
 
 // Event listeners
-document.addEventListener("keydown", shipCommands);
+document.addEventListener("keydown", movement);
 document.addEventListener("keyup", clearShipCommands);
 document.querySelector("#startGame").addEventListener("click", loadGame);
 document.addEventListener("keydown", shoot);
