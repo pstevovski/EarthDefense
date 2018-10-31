@@ -93,29 +93,6 @@ window.onload = function playMusic() {
 
 // Create player health and shield images 
 function drawHealthAndShield() {
-<<<<<<< HEAD:static/js/main.js
-    let playerHealthAndShield = setInterval(()=>{
-        for(let i = 0; i < 5; i++) {
-            // Create 5 heart images
-            let dispalyHealthItem = document.createElement("img");
-            dispalyHealthItem.setAttribute('src', '/assets/images/firstAid.png');
-            dispalyHealthItem.setAttribute('width', '32px');
-            dispalyHealthItem.setAttribute('height', '32px');
-            healthContainer.appendChild(dispalyHealthItem);
-
-            // Create 5 shield images
-            const displayShieldItem = document.createElement("img");
-            displayShieldItem.setAttribute('src', '/assets/images/shieldImage.png');
-            displayShieldItem.setAttribute('width', '32px');
-            displayShieldItem.setAttribute('height', '32px');
-            shieldContainer.appendChild(displayShieldItem);
-
-            if(i <= 5) {
-                clearInterval(playerHealthAndShield);
-            }
-        }
-    }, 1)
-=======
     for(let i = 0; i < 5; i++) {
         // Create 5 heart images
         let dispalyHealthItem = document.createElement("img");
@@ -131,7 +108,6 @@ function drawHealthAndShield() {
         displayShieldItem.setAttribute('height', '32px');
         shieldContainer.appendChild(displayShieldItem);
     }
->>>>>>> master:main.js
 }
 
 // Spaceship starting coordinates
