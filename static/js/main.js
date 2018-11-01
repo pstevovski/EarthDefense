@@ -5,6 +5,9 @@ let score = 0;
 let enemySpawnDistance = 1200;
 let enemySpeed = 1;
 let killCount = 0;
+let highscore = localStorage.getItem("highscore");
+let startingTime, endTime; // Measure time
+
 const notificationText = document.querySelector(".notification");
 const menu = document.querySelector(".menu");
 const displayScore = document.querySelector("#score");
@@ -12,14 +15,9 @@ const displayImage = document.querySelector("#displayImage");
 const message = document.querySelector("#message");
 const pauseMenu = document.querySelector(".pause--menu");
 const overheatContainer = document.querySelector(".overheat-container");
+const overheatProgress = document.querySelector(".overheat-progress");
 const shieldContainer = document.querySelector(".shield-container");
 const healthContainer = document.querySelector(".health-container");
-let highscore = localStorage.getItem("highscore");
-
-// const overheatContainer = document.querySelector(".overheat-container");
-const overheatProgress = document.querySelector(".overheat-progress");
-// const overheatProgress = document.querySelector(".overheat-progress");
-
 const soundControl = document.querySelectorAll(".soundControl");
 
 // Flag variables
@@ -54,7 +52,7 @@ bg.src = "/assets/images/background.png";
 ship.src = "/assets/images/player.png";
 enemy.src = "/assets/images/enemy.png";
 missile.src = "/assets/images/playerRocket.png";
-explosion.src = `images/3.png`;
+explosion.src = "/assets/images/3.png";
 firstAid.src = "/assets/images/firstAid.png";
 alienMissile.src = "/assets/images/enemyRocket.png";
 timerImage.src = "/assets/images/timer.png";
@@ -100,14 +98,14 @@ function drawHealthAndShield() {
     for(let i = 0; i < 5; i++) {
         // Create 5 heart images
         let dispalyHealthItem = document.createElement("img");
-        dispalyHealthItem.setAttribute('src', 'images/firstAid.png');
+        dispalyHealthItem.setAttribute('src', 'assets/images/firstAid.png');
         dispalyHealthItem.setAttribute('width', '32px');
         dispalyHealthItem.setAttribute('height', '32px');
         healthContainer.appendChild(dispalyHealthItem);
 
         // Create 5 shield images
         const displayShieldItem = document.createElement("img");
-        displayShieldItem.setAttribute('src', 'images/shieldImage.png');
+        displayShieldItem.setAttribute('src', 'assets/images/shieldImage.png');
         displayShieldItem.setAttribute('width', '32px');
         displayShieldItem.setAttribute('height', '32px');
         shieldContainer.appendChild(displayShieldItem);
@@ -256,6 +254,9 @@ function startGame(){
                 
             // Start the timer countdown untill boss spawns
             timer(time);
+
+            // Start measuring played time
+            startingTime = new Date();
         }, 3000);
 
         game = setInterval(draw, 1000 / 60);
@@ -441,8 +442,8 @@ function draw(){
                 && player.x <= enemies[i].x + enemy.width 
                 && player.y + ship.height >= enemies[i].y 
                 && player.y <= enemies[i].y + enemy.height) {
-                // // Increase kill count
-                // killCount++;
+                // Increase kill count
+                killCount++;
 
                 // Draw explosion at those coords.
                 ctx.drawImage(explosion, enemies[i].x - enemy.width, enemies[i].y - enemy.height);
@@ -467,7 +468,8 @@ function draw(){
                     clearInterval(game);
                     endgame();
                 }
-            } else if(enemies[i].x + enemy.width < 0) { // Remove the alien space ship from the enemies array.
+            } else if(enemies[i].x + enemy.width < 0) { 
+                // Remove the alien space ship from the enemies array.
                 enemies.splice(i, 1);
             }            
         }
@@ -836,7 +838,7 @@ function restoreShield() {
     } else if(player.shield <= 80){
         // Create a new shield image and append it to the shield container
         const displayShieldItem = document.createElement("img");
-        displayShieldItem.setAttribute('src', 'images/shieldImage.png');
+        displayShieldItem.setAttribute('src', 'assets/images/shieldImage.png');
         displayShieldItem.setAttribute('width', '32px');
         displayShieldItem.setAttribute('height', '32px');
         shieldContainer.appendChild(displayShieldItem);
@@ -870,7 +872,7 @@ function restoreShipHP() {
     } else{
         // Draw a heart element when user picks up first aid
         let dispalyHealthItem = document.createElement("img");
-        dispalyHealthItem.setAttribute('src', 'images/firstAid.png');
+        dispalyHealthItem.setAttribute('src', 'assets/images/firstAid.png');
         dispalyHealthItem.setAttribute('width', '32px');
         dispalyHealthItem.setAttribute('height', '32px');
 
@@ -903,6 +905,18 @@ function endgame(secondsLeft){
     clearInterval(graduallyRestoreInterval);
     clearInterval(countdown);
 
+    // End measuring time
+    endTime = new Date();
+    let timeDifference = endTime - startingTime;
+
+    // Divide the difference to get milliseconds.
+    timeDifference /= 1000;
+    let timePlayed = Math.round(timeDifference);
+    // Multiplie the ending score by the time played divided by 100, which will result in a multiplier
+    // in the form of, for example x0.5 - x3, based on time played
+    let multiplier = timePlayed / 100;
+    let finalScore = score + (score * multiplier);
+
     // Stop movements
     gameStarted = false;
 
@@ -925,10 +939,13 @@ function endgame(secondsLeft){
     music.loop = false;
 
     // Score and Highscore
-    document.querySelector("#finalScore").textContent = score;
+    document.querySelector("#currentScore").textContent = score;
+    document.querySelector("#multiplier").textContent = "x"+multiplier;
+    document.querySelector("#finalScore").textContent = finalScore;
     document.querySelector("#highscore").textContent = highscore;
-    if(score > highscore) {
-        localStorage.setItem("highscore", score);
+
+    if(finalScore > highscore) {
+        localStorage.setItem("highscore", finalScore);
         document.querySelector("#highscore").textContent = localStorage.getItem("highscore");
     }
 }
