@@ -49,16 +49,16 @@ const alienMissile = new Image();
 const engineFlames = new Image();
 const timerImage = new Image();
 const shieldImage = new Image();
-bg.src = "/assets/images/background.png";
-ship.src = "/assets/images/player.png";
-enemy.src = "/assets/images/enemy.png";
-missile.src = "/assets/images/playerRocket.png";
-explosion.src = "/assets/images/3.png";
-firstAid.src = "/assets/images/firstAid.png";
-alienMissile.src = "/assets/images/enemyRocket.png";
-timerImage.src = "/assets/images/timer.png";
-shieldImage.src = "/assets/images/shieldImage.png";
-engineFlames.src = "/assets/images/engineFlameNormal.png";
+bg.src = "assets/images/background.png";
+ship.src = "assets/images/player.png";
+enemy.src = "assets/images/enemy.png";
+missile.src = "assets/images/playerRocket.png";
+explosion.src = "assets/images/3.png";
+firstAid.src = "assets/images/firstAid.png";
+alienMissile.src = "assets/images/enemyRocket.png";
+timerImage.src = "assets/images/timer.png";
+shieldImage.src = "assets/images/shieldImage.png";
+engineFlames.src = "assets/images/engineFlameNormal.png";
 
 // Sound assets
 const enemyShootingSound = new Audio();
@@ -68,12 +68,12 @@ const music = new Audio();
 const restoreSoundEffect = new Audio();
 const alarm = new Audio();
 
-missileSound.src = "/assets/audio/weapon_player.wav";
-explosionSound.src = "/assets/audio/explosion_enemy.wav";
-enemyShootingSound.src = "/assets/audio/laser1.ogg";
-music.src = "/assets/audio/music_background.wav";
-restoreSoundEffect.src = "/assets/audio/powerUp11.ogg";
-alarm.src = "/assets/audio/alarm.wav";
+missileSound.src = "assets/audio/weapon_player.wav";
+explosionSound.src = "assets/audio/explosion_enemy.wav";
+enemyShootingSound.src = "assets/audio/laser1.ogg";
+music.src = "assets/audio/music_background.wav";
+restoreSoundEffect.src = "assets/audio/powerUp11.ogg";
+alarm.src = "assets/audio/alarm.wav";
 
 // Set the volume of the sound assets
 missileSound.volume = 0.05;
