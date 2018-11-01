@@ -10,6 +10,11 @@
 ### v1.1.0 - TBD
 
 ## All Changes:
+### v1.0.5 - Nov 1 2018
+* Updated score system, now based on kills and then multiplied by a factor of time spent playing.
+* Added support for "escape" key and clicking out of canvas to pause the game.
+* Fixed a bug where if user holds space key to shoot, it shoots multiple rockets and overheats.
+
 ### v1.0.4 - Nov 1 2018
 * Added score multiplication based on how long game was played.
 * Minor graphical update to health, shield and overheat display.
