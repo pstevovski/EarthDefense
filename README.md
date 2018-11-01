@@ -9,12 +9,13 @@ Earth Defense is a remake of the classic Space shooter type of games, with 8-bit
 * [ ] Add meteors flying by. (?)
 * [ ] Clean code
 * [ ] Refactoring
-* [ ] Add kill count.
 * [x] Add a new highscore notification
 * [x] Keep track of the time played, and then multiply score according to it.
 * [x] Add info how long the game was played and show the multiplication of the score.
-* [ ] Stop measuring time if game is paused - continue measuring when game is resumed
+* [x] Stop measuring time if game is paused - continue measuring when game is resumed.
+* [x] Update / change timer image.
 * [x] Add overheating bar to keep track.
+* [x] Change the way the health and shield are displayed. 
 * [ ] Clearer indication ship was hit
 * [ ] Settings
 -------------------
