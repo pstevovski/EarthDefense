@@ -19,6 +19,40 @@
         transform: translate(-50%, -50%) scale(1);
     }
 }
+
+@keyframes highscoreAnimation{
+    0%{
+        color: #f5f5f5;
+        text-shadow: 4px 4px #860905;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    20%{
+        color: gold;
+        text-shadow: 4px 4px purple;
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+    40%{
+        color: #b30d07;
+        text-shadow: 4px 4px #f5f5f5;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    60%{
+        color: purple;
+        text-shadow: 4px 4px gold;
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+    80%{
+        color: #b30d07;
+        text-shadow: 4px 4px #f5f5f5;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    100%{
+        color: #f5f5f5;
+        text-shadow: 4px 4px #860905;
+        transform: translate(-50%, -50%) scale(0.9);
+    }
+}
+
 @keyframes pauseTitle{
     0%{
         color: #f5f5f5;

@@ -1,13 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+	<!-- 
+		EarthDefense Game by pecko95 (https://github.com/pecko95/EarthDefense)
+		v1.0.0 - Oct 29 2018
+		Please comment and enjoy!
+	 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Earth Defence</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="fonts.css">
-    <link rel="stylesheet" href="animations.css">
+    <link rel="stylesheet" href="./static/styles/style.css">
+    <link rel="stylesheet" href="./static/styles/fonts.css">
+    <link rel="stylesheet" href="./static/styles/animations.css">
 </head>
 <body>
     <!-- MAIN MENU CONTAINER -->
@@ -21,10 +26,10 @@
             <button id="about" class="main-menu_buttons">about</button>
 
             <!-- Github link -->
-            <a href="https://github.com/pecko95/EarthDefence" target="_blank"><img src="images/github.png" alt="Github" width="32x" height="32px"></a>
+            <a href="https://github.com/pecko95/EarthDefence" target="_blank"><img src="./assets/images/github.png" alt="Github" width="32x" height="32px"></a>
 
             <!-- SOUND CONTROL -->
-            <img class="soundControl" src="images/soundOn.png" alt="" width="16px" height="16px">
+            <img class="soundControl" src="./assets/images/soundOn.png" alt="" width="16px" height="16px">
 
             <p id="copyright">&copy; 2018</p>
 
@@ -59,32 +64,58 @@
         <div class="menu">
             <p id="openMenu" class="main-menu_buttons">MENU</p>
             <div class="time"><p id="timerDisplay">0:30</p></div>
-            <p class="score">SCORE: <span id="score">0</span></p>
+            <div class="textContainer">
+                <p class="killCount">KILLS: <span id="killCount">0</span></p>
+                <p class="score">SCORE: <span id="score">0</span></p>
+            </div>
         </div>
 
         <!-- HEALTH CONTAINER -->
-        <div class="health-container"></div>
+        <div class="health-container">
+            <img src="assets/images/firstAid.png" alt="" width="32px" height="32px">
+            <div class="containerText">
+                <p id="healthText">100%</p>
+            </div>
+        </div>
 
         <!-- SHIP SHIELD CONTAINER -->
-        <div class="shield-container"></div>
-
-        <!-- OVERHEAT BAR CONTAINER -->
-        <div class="overheat-container">
-            <div class="overheat-progress"></div>
+        <div class="shield-container">
+            <img src="assets/images/shieldImage.png" alt="" width="32px" height="32px">
+            <div class="containerText">
+                <p id="shieldText">100%</p>
+            </div>
         </div>
 
         <!-- COUNTDOWN TEXT -->
         <div class="countdown">3</div>
 
-        <!-- OVERHEAT TEXT -->
+        <!-- WARNING / NEW HIGHSCORE TEXT -->
         <div class="emptyWarning-text"></div>
+
+        <!-- OVERHEATING BAR -->
+        <div class="overheat-container">
+            <p>Overheat: </p>
+            <div class="overheat-bar">
+                <div class="overheat-bar_block"></div>
+                <div class="overheat-bar_block"></div>
+                <div class="overheat-bar_block"></div>
+                <div class="overheat-bar_block"></div>
+                <div class="overheat-bar_block"></div>
+                <div class="overheat-bar_block"></div>
+                <div class="overheat-bar_block"></div>
+                <div class="overheat-bar_block"></div>
+                <div class="overheat-bar_block"></div>
+            </div>
+        </div>
 
         <!-- GAME FINISHED / GAME OVER MENU -->
         <div class="game--over">
-            <img id="displayImage" src="images/tombstone.png" alt="Tombstone" width="70px"  height="70px">
+            <img id="displayImage" src="./assets/images/tombstone.png" alt="Tombstone" width="70px"  height="70px">
             <p id="message">Thank you for your service.</p>
             <div class="scores">
-                <p>Score: <span id="finalScore"></span></p>
+                <p>Current score: <span id="currentScore"></span></p>
+                <p>Multiplier: <span id="multiplier"></span></p>
+                <p>Final score: <span id="finalScore"></span></p>
                 <p>Highscore: <span id="highscore"></span></p>
             </div>
             <button class="exitGame main-menu_buttons">EXIT</button>
@@ -95,7 +126,7 @@
             <h3>GAME PAUSED</h3>
             <p id="continueGame" class="main-menu_buttons">CONTINUE</p>
             <p class="exitGame main-menu_buttons">QUIT</p>
-            <img class="soundControl" src="images/soundOn.png" alt="" width="16px" height="16px">
+            <img class="soundControl" src="./assets/images/soundOn.png" alt="" width="16px" height="16px">
         </div>
 
         <!-- GAME WINDOW -->
@@ -108,7 +139,7 @@
     </div>
 
     <!-- Script link -->
-    <script src="main.js"></script>
+    <script src="./static/js/main.js"></script>
 
 </body>
 </html>

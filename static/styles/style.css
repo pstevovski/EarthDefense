@@ -213,31 +213,37 @@ button{
     left: 5px;
     z-index: 999;
 }
+.container .health-container img{
+    z-index: 2;
+}
+.containerText{
+    width: 70px;
+    height: 23px;
+    border: 2px solid #860905;
+    border-radius: 25px;
+    background-color: PeachPuff ;
+    color: #111;
+    padding: 5px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    position: absolute;
+    bottom: 7px;
+    left: 15px;
+    z-index: -1;
+    font-size: 12px;
+    font-family: "Press Start 2P";
+}
 .container .shield-container{
     display: none;
     position: absolute;
     bottom: 5px;
-    right: 5px;
+    left: 90px;
     z-index: 999;
 }
-
-.container .overheat-container {
-    display: none;
-    position: absolute;
-    bottom: 5px;
-    height: 30px;
-    border: 1px solid grey;
-    width: 250px;
-    z-index: 999;
+.shield-decreased {
+    color: #860905;
 }
-
-.container .overheat-container .overheat-progress {
-    width: 0%;
-    background: lawngreen;
-    height: 28px;
-    transition: 100ms all ease-in-out;
-}
-
 .score{
     text-align: center;
 }
@@ -258,6 +264,14 @@ button{
     display: block;
     animation: overheatAnimation 0.6s ease forwards infinite;
 }
+.emptyWarning-Highscore{
+    top: 15%;
+    z-index: 9999;
+    font-size: 25px;
+    display: block;
+    animation: highscoreAnimation 0.6s ease forwards infinite;
+}
+
 .countdown {
     display: none;
     font-family: "Press Start 2P";
@@ -278,6 +292,61 @@ canvas{
     top: 50%;
     transform: translate(-50%, -50%);  
 }
+.overheat-container{
+    display: none;
+    position: absolute;
+    left: 16%;
+    bottom: 3px;
+    transform: translate(-16%);
+    background-color: rgba(0,0,0,0.95);
+    padding: 5px;
+    z-index: 999;
+    transition: 0.5s ease;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.overheat-container p {
+    text-transform: uppercase;
+    text-align: center;
+    font-family: "Press Start 2P";
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: goldenrod;
+}
+.overheat-bar{
+    width: 140px;
+    height: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.overheat-bar > * {
+    margin: 0px 2px;
+}
+.overheat-bar_block:nth-child(1) {
+    margin-left: -5px;
+}
+.overheat-bar_block{
+    width: 10px;
+    height: 20px;
+    background-color: #fff;
+}
+.greenPhase{
+    width: 10px;
+    height: 20px;
+    background-color: #2ECC40;
+}
+.yellowPhase{
+    width: 10px;
+    height: 20px;
+    background-color: #FFDC00;
+}
+.redPhase{
+    width: 10px;
+    height: 20px;
+    background-color: #b30d07;
+}
 
 /* GAME OVER MENU */
 .game--over{
@@ -287,7 +356,7 @@ canvas{
     color: #f5f5f5;
     font-family: "Press Start 2P";
     font-size: 12px;
-    width: 250px;
+    width: 300px;
     height: auto;
     padding: 20px;
     border: 1px solid #f5f5f535;
@@ -298,7 +367,12 @@ canvas{
     z-index: 999;
 }
 .game--over .scores{
+    margin-top: 20px;
     text-align: left;
+}
+.game--over .scores span {
+    color: gold;
+    font-size: 15px;
 }
 .scores > * {
     margin: 10px 0;
@@ -438,14 +512,18 @@ canvas{
     overflow: hidden;
 }
 .notificationsContainer{
-    width: 100%;
+    /* width: 100%; */
     display: flex;
     justify-content: center;
     align-items: center;
+    position: absolute;
+    left: 50%;
+    bottom: 5px;
+    transform: translate(-50%, 5px);
 }
 .notification{
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
     padding: 5px;
     width: 300px;
