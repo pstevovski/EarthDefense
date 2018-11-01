@@ -213,12 +213,36 @@ button{
     left: 5px;
     z-index: 999;
 }
+.container .health-container img{
+    z-index: 2;
+}
+.containerText{
+    width: 70px;
+    height: 23px;
+    border: 2px solid #860905;
+    border-radius: 25px;
+    background-color: PeachPuff ;
+    color: #111;
+    padding: 5px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    position: absolute;
+    bottom: 7px;
+    left: 15px;
+    z-index: -1;
+    font-size: 12px;
+    font-family: "Press Start 2P";
+}
 .container .shield-container{
     display: none;
     position: absolute;
     bottom: 5px;
-    right: 5px;
+    left: 90px;
     z-index: 999;
+}
+.shield-decreased {
+    color: #860905;
 }
 .score{
     text-align: center;
@@ -241,6 +265,8 @@ button{
     animation: overheatAnimation 0.6s ease forwards infinite;
 }
 .emptyWarning-Highscore{
+    top: 15%;
+    z-index: 9999;
     font-size: 25px;
     display: block;
     animation: highscoreAnimation 0.6s ease forwards infinite;
@@ -269,17 +295,16 @@ canvas{
 .overheat-container{
     display: none;
     position: absolute;
-    left: 50%;
-    bottom: 5px;
-    transform: translate(-50%, 5px);
+    left: 16%;
+    bottom: 3px;
+    transform: translate(-16%);
+    background-color: rgba(0,0,0,0.95);
+    padding: 5px;
     z-index: 999;
     transition: 0.5s ease;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-}
-.goUp {
-    transform: translate(-50%, -25px)
 }
 .overheat-container p {
     text-transform: uppercase;
@@ -287,17 +312,20 @@ canvas{
     font-family: "Press Start 2P";
     font-size: 12px;
     letter-spacing: 2px;
-    color: gold;
+    color: goldenrod;
 }
 .overheat-bar{
     width: 140px;
-    height: 35px;
+    height: 25px;
     display: flex;
-    justify-content: flex-start;;
+    justify-content: center;
     align-items: center;
 }
 .overheat-bar > * {
     margin: 0px 2px;
+}
+.overheat-bar_block:nth-child(1) {
+    margin-left: -5px;
 }
 .overheat-bar_block{
     width: 10px;
@@ -307,17 +335,17 @@ canvas{
 .greenPhase{
     width: 10px;
     height: 20px;
-    background-color: #1aeb71
+    background-color: #2ECC40;
 }
 .yellowPhase{
     width: 10px;
     height: 20px;
-    background-color: gold
+    background-color: #FFDC00;
 }
 .redPhase{
     width: 10px;
     height: 20px;
-    background-color: #b30d07
+    background-color: #b30d07;
 }
 
 /* GAME OVER MENU */
