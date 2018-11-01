@@ -7,6 +7,7 @@ let enemySpeed = 1;
 let killCount = 0;
 let highscore = localStorage.getItem("highscore");
 let startingTime, endTime; // Measure time
+let pausedTime;
 
 const notificationText = document.querySelector(".notification");
 const menu = document.querySelector(".menu");
@@ -87,29 +88,7 @@ music.loop = true;
 
 // Play the theme music when page is loaded
 window.onload = function playMusic() {
-    // music.play();
-    
-    // Create 5 heart images
-    drawHealthAndShield();
-}
-
-// Create player health and shield images 
-function drawHealthAndShield() {
-    for(let i = 0; i < 5; i++) {
-        // Create 5 heart images
-        let dispalyHealthItem = document.createElement("img");
-        dispalyHealthItem.setAttribute('src', 'assets/images/firstAid.png');
-        dispalyHealthItem.setAttribute('width', '32px');
-        dispalyHealthItem.setAttribute('height', '32px');
-        healthContainer.appendChild(dispalyHealthItem);
-
-        // Create 5 shield images
-        const displayShieldItem = document.createElement("img");
-        displayShieldItem.setAttribute('src', 'assets/images/shieldImage.png');
-        displayShieldItem.setAttribute('width', '32px');
-        displayShieldItem.setAttribute('height', '32px');
-        shieldContainer.appendChild(displayShieldItem);
-    }
+    music.play();
 }
 
 // Spaceship starting coordinates
@@ -648,9 +627,9 @@ function draw(){
 
     // If spaceship hits the boundry, remove the direction
     if(player.x <= 0) {
-        player.x += 5;
+        player.x += player.speed;
     } else if (player.x >= 1300 - ship.width) {
-        player.x -= 5;
+        player.x -= player.speed;
     } else if (player.y <= 0) {
         player.y += 5;
     } else if (player.y >= 500 - ship.height) {
@@ -763,7 +742,7 @@ function playerHit(){
 
 // Display notification that the user has a new HIGHSCORE
 function newHighscore() {
-    emptyWarningText.textContent = "NEW HIGHSCORE !!";
+    emptyWarningText.textContent = "NEW HIGHSCORE !!!";
     emptyWarningText.classList.add("emptyWarning-Highscore");
 
     // Remove the notification
@@ -774,12 +753,6 @@ function newHighscore() {
 
 // Update the score and deal with difficulty
 function updateScore() {
-    // Display notification that you reached a new HIGHSCORE
-    if(score >= highscore && score <= highscore) {
-        highscore = score;
-        newHighscore();
-    }
-
     // Update score
     score += 100;
     displayScore.textContent = score;
@@ -805,8 +778,6 @@ function updateScore() {
 
 // Display notifications
 function displayNotification(secondsLeft){
-    overheatContainer.classList.add("goUp");
-
     notificationText.classList.add("activeNotification");
     if(score == 3000) {
         notificationText.innerHTML = `<i class="material-icons">warning</i> <p>Another Disturbance!</p>`
@@ -825,9 +796,32 @@ function displayNotification(secondsLeft){
     setTimeout(() => {
         notificationText.classList.remove('activeNotification');
     }, 4000);
-    setTimeout(() => {
-        overheatContainer.classList.remove("goUp");
-    }, 2000);
+}
+
+const shieldText = document.querySelector("#shieldText");
+const healthText = document.querySelector("#healthText");
+
+// SHIP HEALTH:
+function restoreShipHP() {
+    if(player.hp == 100) {
+        player.hp = player.hp;
+    } else{
+        // Restore ships HP and display a notification.
+        player.hp = player.hp + 20;
+        healthText.textContent = player.hp+"%";
+        notificationText.innerHTML = `<i class="material-icons health">local_hospital</i><p>Health renewed!</p>`;
+        displayNotification();
+    }
+}
+function decreaseShipHP() {
+    if(player.hp >= 20 && player.hp <= 100 && shieldDestroyed){
+        player.hp = player.hp - 20;
+        healthText.textContent = player.hp+"%";
+    } else if(player.hp == 0) {
+        endgame();
+        clearInterval(game);
+        clearInterval(enemiesShootingInterval);
+    }
 }
 
 // SHIP SHIELD
@@ -836,68 +830,27 @@ function restoreShield() {
         shieldDestroyed = false;
         player.shield = player.shield;
     } else if(player.shield <= 80){
-        // Create a new shield image and append it to the shield container
-        const displayShieldItem = document.createElement("img");
-        displayShieldItem.setAttribute('src', 'assets/images/shieldImage.png');
-        displayShieldItem.setAttribute('width', '32px');
-        displayShieldItem.setAttribute('height', '32px');
-        shieldContainer.appendChild(displayShieldItem);
-        
         // Enable shield on player's ship
         shieldDestroyed = false;
 
         // Restore shield points and display a notification
         player.shield = player.shield + 20;
+        shieldText.textContent = player.shield+"%";
         notificationText.innerHTML = `<i class="material-icons shield">security</i><p>Shield restored!</p>`;
         displayNotification();
     }
 }
-
 function decreaseShield() {
     // Decrease shield
     if(player.shield >= 20 && player.shield <= 100) {
         player.shield = player.shield - 20;
-        shieldContainer.removeChild(shieldContainer.children[0]);
+        shieldText.textContent = player.shield+"%";
     }
     // If shield is at 0, mark it as destroyed
     if(player.shield == 0) {
         shieldDestroyed = true;
     }
 }
-
-// SHIP HEALTH:
-function restoreShipHP() {
-    if(player.hp == 100) {
-        player.hp = player.hp;
-    } else{
-        // Draw a heart element when user picks up first aid
-        let dispalyHealthItem = document.createElement("img");
-        dispalyHealthItem.setAttribute('src', 'assets/images/firstAid.png');
-        dispalyHealthItem.setAttribute('width', '32px');
-        dispalyHealthItem.setAttribute('height', '32px');
-
-        // Append the newly created heart element to the health container
-        healthContainer.appendChild(dispalyHealthItem);
-
-        // Restore ships HP and display a notification.
-        player.hp = player.hp + 20;
-        notificationText.innerHTML = `<i class="material-icons health">local_hospital</i><p>Health renewed!</p>`;
-        displayNotification();
-    }
-}
-function decreaseShipHP() {
-    if(shieldDestroyed) {
-        if(player.hp >= 20 && player.hp <= 100){
-            player.hp = player.hp - 20;
-            healthContainer.removeChild(healthContainer.children[0]);
-        } else if(player.hp == 0) {
-            endgame();
-            clearInterval(game);
-            clearInterval(enemiesShootingInterval);
-        }
-    }
-}
-
 // When the game has ended / been completed.
 function endgame(secondsLeft){
     // Disable intervals
@@ -907,10 +860,10 @@ function endgame(secondsLeft){
 
     // End measuring time
     endTime = new Date();
-    let timeDifference = endTime - startingTime;
 
     // Divide the difference to get milliseconds.
-    timeDifference /= 1000;
+    let timeDifference = (endTime - startingTime) / 1000;
+
     let timePlayed = Math.round(timeDifference);
     // Multiplie the ending score by the time played divided by 100, which will result in a multiplier
     // in the form of, for example x0.5 - x3, based on time played
@@ -947,6 +900,7 @@ function endgame(secondsLeft){
     if(finalScore > highscore) {
         localStorage.setItem("highscore", finalScore);
         document.querySelector("#highscore").textContent = localStorage.getItem("highscore");
+        newHighscore();
     }
 }
 
@@ -1023,11 +977,14 @@ function pauseGame(){
     gameStarted = false;
     // Enemies shoot every 2 seconds
     enemiesSpawned = false;
+
+    // Divide the difference to get milliseconds.
+    pausedTime = (new Date() - startingTime) / 1000;
+    Math.floor(pausedTime);
 }
 
 // Continue game
 function continueGame(){
-    console.log({secondsLeft})
     // Hide the menu
     pauseMenu.style.display = "none";
 
@@ -1041,6 +998,9 @@ function continueGame(){
     gameStarted = true;
     // Enemies shoot every 2 seconds
     enemiesSpawned = true;
+
+    // Continue measuring time after game was paused
+    pausedTime *= 1000;
 }
 
 // Exit game
