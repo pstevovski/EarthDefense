@@ -150,10 +150,10 @@ const time = 30;
 function toggleMusic() {
     soundOff = !soundOff;
     if(soundOff) {
-        this.src = "/assets/images/soundOff.png";
+        this.src = "assets/images/soundOff.png";
         music.volume = 0;
     } else {
-        this.src = "/assets/images/soundOn.png";
+        this.src = "assets/images/soundOn.png";
         music.volume = 0.2;
     }
 }
@@ -161,7 +161,7 @@ function toggleMusic() {
 // Load game
 function loadGame() {
     // Play loading music
-    music.src = "/assets/audio/loading.wav";
+    music.src = "assets/audio/loading.wav";
     music.play();
 
     const mainMenu = document.querySelector(".main-menu");
@@ -219,7 +219,7 @@ function startGame(){
         }, 1000)
 
         // Play the theme music again
-        music.src = "/assets/audio/Mecha Collection.mp3";
+        music.src = "assets/audio/Mecha Collection.mp3";
         music.volume = 0.2;
         music.play();
 
@@ -251,12 +251,12 @@ function movement(e){
             d = "LEFT"
         } else if (key == 38) {
             d = "UP"
-            ship.src = "/assets/images/playerUp.png";
+            ship.src = "assets/images/playerUp.png";
         } else if (key == 39) {
             d = "RIGHT"
         } else if (key == 40) {
             d = "DOWN"
-            ship.src = "/assets/images/playerDown.png";
+            ship.src = "assets/images/playerDown.png";
         }
 
         // Player spaceship speed boost
@@ -266,7 +266,7 @@ function movement(e){
                 player.speed = 15;
                 // Empty out the speed booster
                 player.boost = player.boost - 2;
-                engineFlames.src = "/assets/images/engineFlameBooster.png";
+                engineFlames.src = "assets/images/engineFlameBooster.png";
             }
             // Disable speed boost if it reaches 0
             if(player.boost <= 0) {
@@ -286,8 +286,8 @@ function movement(e){
 function clearShipCommands() {
     player.speed = 5;
     speedBooster = false;
-    ship.src = "/assets/images/player.png";
-    engineFlames.src = "/assets/images/engineFlameNormal.png";
+    ship.src = "assets/images/player.png";
+    engineFlames.src = "assets/images/engineFlameNormal.png";
 }
 
 // Player shoots
@@ -886,7 +886,7 @@ function endgame(secondsLeft){
         message.textContent = "Time's up !"
     }
     
-    music.src = "/assets/audio/Fallen in Battle.mp3";
+    music.src = "assets/audio/Fallen in Battle.mp3";
     music.volume = 0.2;
     music.play();
     music.loop = false;
@@ -1022,9 +1022,9 @@ const mainMenuButtons = document.querySelectorAll(".main-menu_buttons");
 const menuMove = new Audio();
 const menuSelect = new Audio();
 menuMove.volume = 0.35;
-menuMove.src = "/assets/audio/menu hover.wav"
+menuMove.src = "assets/audio/menu hover.wav"
 menuSelect.volume = 0.35;
-menuSelect.src = "/assets/audio/menu select.wav";
+menuSelect.src = "assets/audio/menu select.wav";
 mainMenuButtons.forEach(btn => btn.addEventListener("mouseover", ()=>{
     menuMove.currentTime = 0;
     menuMove.play();
