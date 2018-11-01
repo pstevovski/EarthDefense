@@ -328,7 +328,7 @@ canvas{
     color: #f5f5f5;
     font-family: "Press Start 2P";
     font-size: 12px;
-    width: 250px;
+    width: 300px;
     height: auto;
     padding: 20px;
     border: 1px solid #f5f5f535;
@@ -339,7 +339,12 @@ canvas{
     z-index: 999;
 }
 .game--over .scores{
+    margin-top: 20px;
     text-align: left;
+}
+.game--over .scores span {
+    color: gold;
+    font-size: 15px;
 }
 .scores > * {
     margin: 10px 0;
