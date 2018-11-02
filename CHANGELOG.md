@@ -35,10 +35,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### v1.0.5 - Nov 1 2018
 #### Added
-* Added support for "escape" key and clicking out of canvas to pause the game.
+* Added support for "escape" key and clicking out of canvas to pause the game. ([#10])
 #### Changed
-* Updated score system, now based on kills and then multiplied by a factor of time spent playing.
-* Fixed a bug where if user holds space key to shoot, it shoots multiple rockets and overheats.
+* Updated score system, now based on kills and then multiplied by a factor of time spent playing. ([#8])
+* Fixed a bug where if user holds space key to shoot, it shoots multiple rockets and overheats. ([#7])
 
 ### [v1.0.4] - Nov 1 2018 - HOTFIX
 #### Added
@@ -76,5 +76,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * It does things!
 * Pewpewpew!
 
+<!-- LINKS -->
+<!-- RELEASES -->
 [Unreleased]: https://github.com/karnthis/EarthDefense/compare/release-v1.0.4...HEAD
 [1.0.4]: https://github.com/karnthis/EarthDefense/compare/release-v1.0.0...release-v1.0.4
+
+<!-- ISSUES -->
+[#10]: https://github.com/pecko95/EarthDefense/pull/10
+[#8]: https://github.com/pecko95/EarthDefense/pull/8
+[#7]: https://github.com/pecko95/EarthDefense/pull/7
