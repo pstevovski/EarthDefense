@@ -263,8 +263,6 @@ function startGame(){
         game = setInterval(draw, 1000 / 60);
     }, 500);
 }
-
-
 // Default ship controls
 let left = 37 // Left arrow key
 let up = 38; // Up arrow key
@@ -274,24 +272,24 @@ let shooting = 32; // Space
 let useBooster = 16; // Shift
 
 // Move the spaceship
-function movement(e){
-    const key = e.keyCode;
-    // If game has started, enable ship movement.
-    if(gameStarted) { 
-        if(key == left) {
-            d = "LEFT"
-        } else if (key == up) {
-            d = "UP"
-            ship.src = `${endPath}/assets/images/playerUp.png`;
-        } else if (key == right) {
-            d = "RIGHT"
-        } else if (key == down) {
-            d = "DOWN"
-            ship.src = `${endPath}/assets/images/playerDown.png`;
+const map = {}
+onkeydown = onkeyup = function (e) {
+    e = e || event;
+    if(gameStarted) {
+        map[e.keyCode] = e.type == "keydown";
+        if(map[left] || map[left] && map[shooting]) {
+            d = "LEFT";
+        } else if(map[right] || map[right] && map[shooting]) {
+            d = "RIGHT";
+        } else if(map[down] || map[down] && map[shooting]) {
+            d = "DOWN";
+        } else if(map[up] || map[up] && map[shooting]) {
+            d = "UP";
         }
 
         // Player spaceship speed boost
-        if(key == useBooster && d == "LEFT" || key == useBooster && d == "RIGHT") {
+        if(map[useBooster] && map[left] || map[useBooster] && map[right]) {
+        // if(key == useBooster && d == "LEFT" || key == useBooster && d == "RIGHT") {
             if(player.boost > 0 && player.boost <= 100) {
                 speedBooster = true;
                 player.speed = 15;
@@ -318,6 +316,7 @@ function clearShipCommands() {
     player.speed = 5;
     speedBooster = false;
     isSpaceDown = false;
+    d = "";
     ship.src = `${endPath}/assets/images/player.png`;
     engineFlames.src = `${endPath}/assets/images/engineFlameNormal.png`;
 }
@@ -1148,7 +1147,6 @@ function changeControls(e) {
 }
 
 // Event listeners
-document.addEventListener("keydown", movement);
 document.addEventListener("keyup", clearShipCommands);
 document.querySelector("#startGame").addEventListener("click", loadGame);
 document.addEventListener("keyup", shoot);
