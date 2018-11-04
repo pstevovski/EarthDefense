@@ -28,16 +28,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Fixed bug where player runs out of screen while using booster.
 
 ## All Changes:
-### v1.0.6 - Nov 4 2018
-#### By pecko95
+### v1.0.7 - Nov 4 2018
+#### Added
 * Added settings menu where player can set custom controls and adjust music / sfx volume.
-* Fixed minor bug with timer.
 * Added option to mute all volume.
+#### Changed
+* Fixed minor bug with timer.
+
+### v1.0.6 - Nov 1 2018
+#### Changed
+* Updated CHANGELOG to comply with Semantic Versioning standards
 
 ### v1.0.5 - Nov 1 2018
-#### By pecko95
+#### Added
 * Updated score system, now based on kills and then multiplied by a factor of time spent playing.
 * Added support for "escape" key and clicking out of canvas to pause the game.
+#### Changed
 * Fixed a bug where if user holds space key to shoot, it shoots multiple rockets and overheats.
 
 ### [v1.0.4] - Nov 1 2018 - HOTFIX
@@ -45,7 +51,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Added logic to handle non-root installations of game (a la github.io)
 
 ### v1.0.4 - Nov 1 2018
-#### By pecko95
+#### Added
 * Added score multiplication based on how long game was played.
 #### Changed
 * Minor graphical update to health, shield and overheat display.
