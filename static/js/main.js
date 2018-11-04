@@ -30,6 +30,7 @@ const overheatProgress = document.querySelector(".overheat-progress");
 const shieldContainer = document.querySelector(".shield-container");
 const healthContainer = document.querySelector(".health-container");
 const soundControl = document.querySelectorAll(".soundControl");
+const gameOver = document.querySelector(".game--over");
 
 // Flag variables
 let isSpaceDown = false;
@@ -103,7 +104,7 @@ window.onload = function playMusic() {
     // music.play();
 }
 
-// Spaceship starting coordinates
+// Player spaceship properties
 let player = {
     x: 50,
     y: 250,
@@ -220,6 +221,8 @@ function startGame(){
         // Display the MENU/SCORE panel
         menu.style.display = "flex";
         const preGameCountdown = document.querySelector(".countdown");
+        preGameCountdown.textContent = "3";
+        let preGame = 3;
         setTimeout(() => {
             menu.classList.add("menuActive");
             healthContainer.style.display = "block";
@@ -229,7 +232,6 @@ function startGame(){
         }, 500);
 
         // Pre-start countdown - 3 seconds then GO !
-        let preGame = 3;
         const preGameCountdownInterval = setInterval(()=>{
             preGame--;
             preGameCountdown.textContent = preGame;
@@ -289,7 +291,6 @@ onkeydown = onkeyup = function (e) {
 
         // Player spaceship speed boost
         if(map[useBooster] && map[left] || map[useBooster] && map[right]) {
-        // if(key == useBooster && d == "LEFT" || key == useBooster && d == "RIGHT") {
             if(player.boost > 0 && player.boost <= 100) {
                 speedBooster = true;
                 player.speed = 15;
@@ -901,7 +902,6 @@ function endgame(secondsLeft){
     gameStarted = false;
 
     // Game Over / Game finished menu
-    const gameOver = document.querySelector(".game--over");
     gameOver.style.display = "block";
 
     // If player was killed.
@@ -929,6 +929,73 @@ function endgame(secondsLeft){
         document.querySelector("#highscore").textContent = localStorage.getItem("highscore");
         newHighscore();
     }
+}
+
+// RESTART GAME
+function restartGame() {
+    // Clear the intervals
+    clearInterval(countdown);
+    clearInterval(game);
+    clearInterval(graduallyRestoreInterval);
+    clearInterval(enemiesShootingInterval);
+
+    // Reset the flag variables
+    gameStarted = false;
+    enemiesSpawned = false;
+    initialHealthPushed = false;
+    initialShieldRenewPushed = false;
+    initialTimeRenewPushed = false;
+    shieldDestroyed = false;
+
+    // Reset timer
+    timerDisplay.classList.remove("timeLow"); // In case user died while time was low.
+    timerDisplay.textContent = "0:30";
+
+    // Reset the colored blocks
+    blocks.forEach(block => {
+        block.classList.remove("greenPhase")
+        block.classList.remove("yellowPhase")
+        block.classList.remove("redPhase")
+    });
+
+    // Destroy all enemies, healths, timers, shields and reset them to 0.
+    enemies.splice(0, enemies.length);
+    healthRenew.splice(0, healthRenew.length);
+    timeRenew.splice(0, timeRenew.length);
+    shieldRenew.splice(0, shieldRenew.length);
+    enemyAmmo.splice(0, enemyAmmo.length);
+
+    // Run startGame again
+    startGame();
+
+    // Reset the kill count text.
+    killCount = 0;
+    displayKills.textContent = killCount;
+
+    // Reset pregame countdown and hide game over menu
+    preGame = 3;
+    gameOver.style.display = "none";
+
+    // Reset ship's direction
+    d = "";
+
+    // Reset player's ship stats
+    player.hp = 100;
+    player.shield = 100;
+    player.overheat = 0;
+    player.boost = 100
+    player.x = 50;
+    player.y = 250;
+    player.speed = 5;
+    heat = -1;
+
+    // Reset health and shield text display
+    healthText.textContent = player.hp+"%";
+    shieldText.textContent = player.shield+"%";
+
+    // Set restoration and enemy shooting intervals again.
+    graduallyRestoreInterval = setInterval(graduallyRestore, 300);
+    enemiesShootingInterval = setInterval(enemiesShoot, 700);
 }
 
 // Spawn health renew every 30 seconds.
@@ -1018,7 +1085,7 @@ function continueGame(){
     // Run the interval
     game = setInterval(draw, 1000 / 60);
     enemiesShootingInterval = setInterval(enemiesShoot, 700);
-    graduallyRestoreInterval = setInterval(graduallyRestore, 800);
+    graduallyRestoreInterval = setInterval(graduallyRestore, 300);
     timer(secondsLeft);
 
     // Enable enemies and ship movement
@@ -1148,10 +1215,11 @@ function changeControls(e) {
 
 // Event listeners
 document.addEventListener("keyup", clearShipCommands);
-document.querySelector("#startGame").addEventListener("click", loadGame);
 document.addEventListener("keyup", shoot);
-document.querySelector("#openMenu").addEventListener("click", pauseGame);
+document.querySelector("#startGame").addEventListener("click", loadGame);
+document.querySelector("#pauseGame").addEventListener("click", pauseGame);
 document.querySelector("#continueGame").addEventListener("click", continueGame);
+document.querySelector("#restartGame").addEventListener("click", restartGame);
 document.querySelector("#settings").addEventListener("click", ()=>{
     document.querySelector(".settings-menu").style.display = "flex";
 })
