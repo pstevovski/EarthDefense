@@ -377,7 +377,7 @@ canvas{
 .scores > * {
     margin: 10px 0;
 }
-.exitGame{
+.gameOverBtn{
     display: inline-block;
     margin-top: 10px;  
     background: none;
@@ -389,9 +389,10 @@ canvas{
     cursor: pointer;
     border-radius: 1px;
 }
-.exitGame:hover{
+.gameOverBtn:hover{
     text-shadow: 3px 3px rgb(161, 9, 9);
 }
+
 #message{
     margin: 10px 0;
     font-family: "Press Start 2P";
