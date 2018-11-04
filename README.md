@@ -21,6 +21,8 @@ Earth Defense is a remake of the classic Space shooter type of games, with 8-bit
 * [x] Re-define the score system.
 * [x] Add settings menu
 * [x] Add options in settings menu to adjust music / sfx volume and set custom controls
+* [x] Add support for multiple keys.
+* [x] Change the way the ship is moving.
 
 * [ ] Clearer indication ship was hit
 * [ ] Settings

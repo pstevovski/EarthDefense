@@ -28,6 +28,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Fixed bug where player runs out of screen while using booster.
 
 ## All Changes:
+### v1.0.8 - Nov 4 2018
+#### Added
+* Added support for multiple keys pressed at once.
+#### Changed
+* Changed ship movement (from moving all the time to moving only on key press & hold).
+
 ### v1.0.7 - Nov 4 2018
 #### Added
 * Added settings menu where player can set custom controls and adjust music / sfx volume.
