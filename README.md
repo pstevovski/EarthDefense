@@ -19,6 +19,8 @@ Earth Defense is a remake of the classic Space shooter type of games, with 8-bit
 * [x] Add support for ESC key and mouse click outside canvas to PAUSE game.
 * [x] Fix bug that causes holding space key to shoot more rockets and overheat instantly.
 * [x] Re-define the score system.
+* [x] Add settings menu
+* [x] Add options in settings menu to adjust music / sfx volume and set custom controls
 
 * [ ] Clearer indication ship was hit
 * [ ] Settings
