@@ -63,7 +63,7 @@
     <div class="container">
         <!-- INFO MENU - SCORE, TIMER, HP... -->
         <div class="menu">
-            <p id="openMenu" class="main-menu_buttons">MENU</p>
+            <p id="pauseGame" class="main-menu_buttons">MENU</p>
             <div class="time"><p id="timerDisplay">0:30</p></div>
             <div class="textContainer">
                 <p class="killCount">KILLS: <span id="killCount">0</span></p>
@@ -87,7 +87,7 @@
         </div>
 
         <!-- COUNTDOWN TEXT -->
-        <div class="countdown">3</div>
+        <div class="countdown"></div>
 
         <!-- WARNING / NEW HIGHSCORE TEXT -->
         <div class="emptyWarning-text"></div>
@@ -118,6 +118,7 @@
                 <p>Final score: <span id="finalScore"></span></p>
                 <p>Highscore: <span id="highscore"></span></p>
             </div>
+            <button class="main-menu_buttons" id="restartGame">RESTART</button>
             <button class="exitGame main-menu_buttons">EXIT</button>
         </div>
     
