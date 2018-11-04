@@ -28,6 +28,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Fixed bug where player runs out of screen while using booster.
 
 ## All Changes:
+### v1.0.9 - Nov 5 2018
+#### Added
+* Added option to restart game right away when the game has ended.
+#### Changed
+* Fixed interval values for booster / overheating restoration after the game was paused & then continued.
+
 ### v1.0.8 - Nov 4 2018
 #### Added
 * Added support for multiple keys pressed at once.
