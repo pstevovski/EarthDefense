@@ -28,6 +28,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Fixed bug where player runs out of screen while using booster.
 
 ## All Changes:
+### v1.0.7 - Nov 4 2018
+#### Added
+* Added settings menu where the user can adjust music / sfx volume and change controls.
+* Mute all sounds.
+#### Changed
+* Fixed a minor bug regarding the timer.
 
 ### v1.0.6 - Nov 1 2018
 #### Changed
