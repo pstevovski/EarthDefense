@@ -266,33 +266,32 @@ function startGame(){
 
 
 // Default ship controls
-let left = "ArrowLeft";
-let up = "ArrowUp";
-let right = "ArrowRight";
-let down = "ArrowDown";
-let shooting = "Space";
-let useBooster = "Shift";
+let left = 37 // Left arrow key
+let up = 38; // Up arrow key
+let right = 39; // Right arrow key
+let down = 40; // Down arrow key
+let shooting = 32; // Space
+let useBooster = 16; // Shift
 
 // Move the spaceship
 function movement(e){
-    const key = e.key;
-    const code = e.code;
+    const key = e.keyCode;
     // If game has started, enable ship movement.
     if(gameStarted) { 
-        if(key == left || code == left) {
+        if(key == left) {
             d = "LEFT"
-        } else if (key == up || code == up) {
+        } else if (key == up) {
             d = "UP"
             ship.src = `${endPath}/assets/images/playerUp.png`;
-        } else if (key == right || code == right) {
+        } else if (key == right) {
             d = "RIGHT"
-        } else if (key == down || code == down) {
+        } else if (key == down) {
             d = "DOWN"
             ship.src = `${endPath}/assets/images/playerDown.png`;
         }
 
         // Player spaceship speed boost
-        if(key == useBooster && d == "LEFT" || key == useBooster && d == "RIGHT" || code == useBooster && d == "LEFT" || code == useBooster && d == "RIGHT") {
+        if(key == useBooster && d == "LEFT" || key == useBooster && d == "RIGHT") {
             if(player.boost > 0 && player.boost <= 100) {
                 speedBooster = true;
                 player.speed = 15;
@@ -325,11 +324,10 @@ function clearShipCommands() {
 
 // Player shoots
 function shoot(e){
-    const key = e.key;
-    const code = e.code;
+    const key = e.keyCode;
     if(gameStarted && !isOverheated) { 
         if(isSpaceDown) return;
-        if(key == shooting || code == shooting) {
+        if(key == shooting) {
             isSpaceDown = true;
             // Display the rocket WHEN the user shoots.
             ammo.push({
@@ -1122,7 +1120,7 @@ shipControls.forEach(control => control.addEventListener("click", function(){
 function changeControls(e) {
     const key = e.key;
     const code = e.code;
-
+    console.log(e.keyCode);
     if(code == "Space") {
         this.value = code;
     } else if (code !== key) {
@@ -1134,21 +1132,20 @@ function changeControls(e) {
         }
 
         if(this.name == "left") {
-            left = this.value || key;
+            left = e.keyCode;
         } else if(this.name == "up") {
-            up = this.value || key;
+            up = e.keyCode;
         } else if(this.name == "right") {
-            right = this.value || key;
+            right = e.keyCode;
         } else if(this.name == "down") {
-            down = this.value || key;
+            down = e.keyCode;
         } else if(this.name == "shooting") {
-            shooting = this.value || key;
+            shooting = e.keyCode;
         } else if(this.name == "useBooster") {
-            useBooster = this.value || key;
+            useBooster = e.keyCode;
         }
     })
 }
-
 
 // Event listeners
 document.addEventListener("keydown", movement);
