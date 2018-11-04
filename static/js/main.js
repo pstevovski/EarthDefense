@@ -86,12 +86,14 @@ restoreSoundEffect.src = `${endPath}/assets/audio/powerUp11.ogg`;
 alarm.src = `${endPath}/assets/audio/alarm.wav`;
 
 // Set the volume of the sound assets
-missileSound.volume = 0.05;
-explosionSound.volume = 0.1;
-enemyShootingSound.volume = 0.05;
-music.volume = 0.3;
-restoreSoundEffect.volume = 0.5;
-alarm.volume = 0.1;
+let sfx = 0.3;
+let musicVolume = 0.4;
+missileSound.volume = sfx;
+explosionSound.volume = sfx;
+enemyShootingSound.volume = sfx;
+music.volume = musicVolume;
+restoreSoundEffect.volume = sfx;
+alarm.volume = sfx;
 
 // Enable looping of the background music
 music.loop = true;
@@ -162,9 +164,19 @@ function toggleMusic() {
     if(soundOff) {
         this.src = `${endPath}/assets/images/soundOff.png`;
         music.volume = 0;
+        missileSound.volume = 0;
+        explosionSound.volume = 0;
+        enemyShootingSound.volume = 0;
+        restoreSoundEffect.volume = 0;
+        alarm.volume = 0;
     } else {
         this.src = `${endPath}/assets/images/soundOn.png`;
-        music.volume = 0.2;
+        missileSound.volume = sfx;
+        explosionSound.volume = sfx;
+        enemyShootingSound.volume = sfx;
+        music.volume = musicVolume;
+        restoreSoundEffect.volume = sfx;
+        alarm.volume = sfx;
     }
 }
 
@@ -252,25 +264,35 @@ function startGame(){
     }, 500);
 }
 
+
+// Default ship controls
+let left = "ArrowLeft";
+let up = "ArrowUp";
+let right = "ArrowRight";
+let down = "ArrowDown";
+let shooting = "Space";
+let useBooster = "Shift";
+
 // Move the spaceship
 function movement(e){
-    let key = e.keyCode;
+    const key = e.key;
+    const code = e.code;
     // If game has started, enable ship movement.
     if(gameStarted) { 
-        if(key == 37) {
+        if(key == left || code == left) {
             d = "LEFT"
-        } else if (key == 38) {
+        } else if (key == up || code == up) {
             d = "UP"
             ship.src = `${endPath}/assets/images/playerUp.png`;
-        } else if (key == 39) {
+        } else if (key == right || code == right) {
             d = "RIGHT"
-        } else if (key == 40) {
+        } else if (key == down || code == down) {
             d = "DOWN"
             ship.src = `${endPath}/assets/images/playerDown.png`;
         }
 
         // Player spaceship speed boost
-        if(key == 16 && d == "LEFT" || key == 16 && d == "RIGHT") {
+        if(key == useBooster && d == "LEFT" || key == useBooster && d == "RIGHT" || code == useBooster && d == "LEFT" || code == useBooster && d == "RIGHT") {
             if(player.boost > 0 && player.boost <= 100) {
                 speedBooster = true;
                 player.speed = 15;
@@ -303,10 +325,11 @@ function clearShipCommands() {
 
 // Player shoots
 function shoot(e){
-    let key = e.keyCode;
+    const key = e.key;
+    const code = e.code;
     if(gameStarted && !isOverheated) { 
         if(isSpaceDown) return;
-        if(key == 32) {
+        if(key == shooting || code == shooting) {
             isSpaceDown = true;
             // Display the rocket WHEN the user shoots.
             ammo.push({
@@ -318,8 +341,9 @@ function shoot(e){
             overheated();
         }
     }
+    // In case user sets shooting control to be alt/ctrl etc.
+    e.preventDefault();
 }
-
 // Overheat the spaceship's guns.
 const emptyWarningText = document.querySelector(".emptyWarning-text");
 const blocks = document.querySelectorAll(".overheat-bar_block");
@@ -380,7 +404,6 @@ function graduallyRestore(){
         player.boost = player.boost + 2;
     }
 }
-// let graduallyRestoreInterval = setInterval(graduallyRestore, 300)
 let graduallyRestoreInterval = setInterval(graduallyRestore, 300)
 
 // When gun overheats, wait 1 second, then cool it out and enable shooting.
@@ -669,8 +692,6 @@ function timer(seconds) {
         if(secondsLeft === 10) {
             timerDisplay.classList.add("timeLow");
             displayNotification(secondsLeft);
-        } else if (secondsLeft > 10) {
-            timerDisplay.classList.remove("timeLow");
         } else if (secondsLeft < 0) {
             // If the timer ran out, end the game
             clearInterval(countdown);
@@ -698,6 +719,10 @@ function addPlaytime() {
     secondsLeft = secondsLeft + spawnTime;
     timer(secondsLeft);
     document.querySelector(".time").classList.add("timeShake");
+    // When time is added and timer is higher than 10 seconds, remove classt (remove red color).
+    if (secondsLeft > 10) {
+        timerDisplay.classList.remove("timeLow");
+    }
     notificationText.innerHTML = `<i class="material-icons timer">timer</i><p>Added playtime!</p>`;
     displayNotification();
  }
@@ -1051,6 +1076,79 @@ window.addEventListener("click", e =>{
     }
 })
 
+// SETTINGS MENU
+const volumeControls = document.querySelectorAll(`.settings-menu input[type="range"]`);
+const displayChange = document.querySelectorAll(".displayChange");
+let controllingVolume = false;
+volumeControls.forEach(control => control.addEventListener("mousedown", ()=>{
+    controllingVolume = true;
+}))
+volumeControls.forEach(control => control.addEventListener("mouseup", ()=>{
+    controllingVolume = false;
+}))
+volumeControls.forEach(control => control.addEventListener("change", controlVolume));
+volumeControls.forEach(control => control.addEventListener("mousemove", controlVolume));
+
+// Control the volume
+function controlVolume() {
+    if(controllingVolume) {
+    displayChange.forEach(change => {
+        if(this.name == change.id) {
+            change.textContent = this.value+"%";
+        }
+        // If input name is SFX, edit SFX volume. If input name is bgMusic, edit music volume.
+        if(this.name == "sfx") {
+            sfx = this.value / 100;
+            missileSound.volume = sfx;
+            explosionSound.volume = sfx;
+            enemyShootingSound.volume = sfx;
+            restoreSoundEffect.volume = sfx;
+            alarm.volume = sfx;
+        } else if(this.name =="bgMusic") {
+            musicVolume = this.value / 100;
+            music.volume = musicVolume;
+        }
+    })
+    }
+}
+// Set custom controls for the ship
+const shipControls = document.querySelectorAll(`.settings-menu input[type="text"]`);
+const displayCommand = document.querySelectorAll(".displayCommand");
+shipControls.forEach(control => control.addEventListener("keyup", changeControls));
+shipControls.forEach(control => control.addEventListener("click", function(){
+    this.value = "";
+}));
+
+function changeControls(e) {
+    const key = e.key;
+    const code = e.code;
+
+    if(code == "Space") {
+        this.value = code;
+    } else if (code !== key) {
+        this.value = key;
+    }
+    displayCommand.forEach(command => {
+        if(this.name == command.id) {
+            command.textContent = this.value || key;
+        }
+
+        if(this.name == "left") {
+            left = this.value || key;
+        } else if(this.name == "up") {
+            up = this.value || key;
+        } else if(this.name == "right") {
+            right = this.value || key;
+        } else if(this.name == "down") {
+            down = this.value || key;
+        } else if(this.name == "shooting") {
+            shooting = this.value || key;
+        } else if(this.name == "useBooster") {
+            useBooster = this.value || key;
+        }
+    })
+}
+
 
 // Event listeners
 document.addEventListener("keydown", movement);
@@ -1059,4 +1157,10 @@ document.querySelector("#startGame").addEventListener("click", loadGame);
 document.addEventListener("keyup", shoot);
 document.querySelector("#openMenu").addEventListener("click", pauseGame);
 document.querySelector("#continueGame").addEventListener("click", continueGame);
+document.querySelector("#settings").addEventListener("click", ()=>{
+    document.querySelector(".settings-menu").style.display = "flex";
+})
+document.querySelector("#goBack").addEventListener("click", ()=>{
+    document.querySelector(".settings-menu").style.display = "none";
+})
 soundControl.forEach(control => control.addEventListener("click", toggleMusic));
