@@ -869,12 +869,12 @@ function restoreShield() {
 }
 function decreaseShield() {
     // Decrease shield
+    console.log(player.shield)
     if(player.shield >= 20 && player.shield <= 100) {
         player.shield = player.shield - 20;
         shieldText.textContent = player.shield+"%";
-    }
-    // If shield is at 0, mark it as destroyed
-    if(player.shield == 0) {
+    } else if(player.shield < 20) {
+        // If shield is at 0 (at 20% shield gets deducted 20, so it goes straight to 0), mark it as destroyed
         shieldDestroyed = true;
     }
 }
@@ -964,7 +964,8 @@ function restartGame() {
     timeRenew.splice(0, timeRenew.length);
     shieldRenew.splice(0, shieldRenew.length);
     enemyAmmo.splice(0, enemyAmmo.length);
-
+    ammo.splice(0, ammo.length);
+    
     // Run startGame again
     startGame();
 

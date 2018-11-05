@@ -20,19 +20,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Pewpewpew!
 
 ## Minor Releases:
+### [v1.0.9] - Nov 5 2018
+#### Added
+* Added option to restart game right away when the game has ended.
+* Added support for multiple keys pressed at once
+* Added settings menu where player can set custom controls and adjust music / sfx volume.
+* Added option to mute all volume.
+* Added support for "escape" key and clicking out of canvas to pause the game.
+* Updated score system, now based on kills and then multiplied by a factor of time spent playing.
+#### Changed
+* Fixed interval values issue for booster / overheating restoration after the game was paused & then continued.
+* Changed ship movement (from moving all the time to moving only on key press & hold).
+* Fixed minor bug with timer.
+* Fixed a bug where if user holds space key to shoot, it shoots multiple rockets and overheats.
+
 ### [v1.0.4] - Nov 1 2018
 #### Added
 * Added score multiplication based on how long game was played.
 #### Changed
 * Minor graphical update to health, shield and overheat display.
 * Fixed bug where player runs out of screen while using booster.
-
+---------------------
 ## All Changes:
 ### v1.0.9 - Nov 5 2018
 #### Added
 * Added option to restart game right away when the game has ended.
 #### Changed
-* Fixed interval values for booster / overheating restoration after the game was paused & then continued.
+* Fixed interval values issue for booster / overheating restoration after the game was paused & then continued.
+* Fixed issue with marking shield as destroyed and THEN enabling the game to decrease ship HP on next hit.
 
 ### v1.0.8 - Nov 4 2018
 #### Added
