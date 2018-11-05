@@ -21,7 +21,7 @@ let pausedTime;
 
 const notificationText = document.querySelector(".notification");
 const menu = document.querySelector(".menu");
-const displayScore = document.querySelector("#score");
+const displayKills = document.querySelector("#killCount");
 const displayImage = document.querySelector("#displayImage");
 const message = document.querySelector("#message");
 const pauseMenu = document.querySelector(".pause--menu");
@@ -30,6 +30,7 @@ const overheatProgress = document.querySelector(".overheat-progress");
 const shieldContainer = document.querySelector(".shield-container");
 const healthContainer = document.querySelector(".health-container");
 const soundControl = document.querySelectorAll(".soundControl");
+const gameOver = document.querySelector(".game--over");
 
 // Flag variables
 let isSpaceDown = false;
@@ -86,22 +87,24 @@ restoreSoundEffect.src = `${endPath}/assets/audio/powerUp11.ogg`;
 alarm.src = `${endPath}/assets/audio/alarm.wav`;
 
 // Set the volume of the sound assets
-missileSound.volume = 0.05;
-explosionSound.volume = 0.1;
-enemyShootingSound.volume = 0.05;
-music.volume = 0.3;
-restoreSoundEffect.volume = 0.5;
-alarm.volume = 0.1;
+let sfx = 0.3;
+let musicVolume = 0.4;
+missileSound.volume = sfx;
+explosionSound.volume = sfx;
+enemyShootingSound.volume = sfx;
+music.volume = musicVolume;
+restoreSoundEffect.volume = sfx;
+alarm.volume = sfx;
 
 // Enable looping of the background music
 music.loop = true;
 
 // Play the theme music when page is loaded
 window.onload = function playMusic() {
-    music.play();
+    // music.play();
 }
 
-// Spaceship starting coordinates
+// Player spaceship properties
 let player = {
     x: 50,
     y: 250,
@@ -162,9 +165,19 @@ function toggleMusic() {
     if(soundOff) {
         this.src = `${endPath}/assets/images/soundOff.png`;
         music.volume = 0;
+        missileSound.volume = 0;
+        explosionSound.volume = 0;
+        enemyShootingSound.volume = 0;
+        restoreSoundEffect.volume = 0;
+        alarm.volume = 0;
     } else {
         this.src = `${endPath}/assets/images/soundOn.png`;
-        music.volume = 0.2;
+        missileSound.volume = sfx;
+        explosionSound.volume = sfx;
+        enemyShootingSound.volume = sfx;
+        music.volume = musicVolume;
+        restoreSoundEffect.volume = sfx;
+        alarm.volume = sfx;
     }
 }
 
@@ -208,6 +221,8 @@ function startGame(){
         // Display the MENU/SCORE panel
         menu.style.display = "flex";
         const preGameCountdown = document.querySelector(".countdown");
+        preGameCountdown.textContent = "3";
+        let preGame = 3;
         setTimeout(() => {
             menu.classList.add("menuActive");
             healthContainer.style.display = "block";
@@ -217,7 +232,6 @@ function startGame(){
         }, 500);
 
         // Pre-start countdown - 3 seconds then GO !
-        let preGame = 3;
         const preGameCountdownInterval = setInterval(()=>{
             preGame--;
             preGameCountdown.textContent = preGame;
@@ -251,26 +265,32 @@ function startGame(){
         game = setInterval(draw, 1000 / 60);
     }, 500);
 }
+// Default ship controls
+let left = 37 // Left arrow key
+let up = 38; // Up arrow key
+let right = 39; // Right arrow key
+let down = 40; // Down arrow key
+let shooting = 32; // Space
+let useBooster = 16; // Shift
 
 // Move the spaceship
-function movement(e){
-    let key = e.keyCode;
-    // If game has started, enable ship movement.
-    if(gameStarted) { 
-        if(key == 37) {
-            d = "LEFT"
-        } else if (key == 38) {
-            d = "UP"
-            ship.src = `${endPath}/assets/images/playerUp.png`;
-        } else if (key == 39) {
-            d = "RIGHT"
-        } else if (key == 40) {
-            d = "DOWN"
-            ship.src = `${endPath}/assets/images/playerDown.png`;
+const map = {}
+onkeydown = onkeyup = function (e) {
+    e = e || event;
+    if(gameStarted) {
+        map[e.keyCode] = e.type == "keydown";
+        if(map[left] || map[left] && map[shooting]) {
+            d = "LEFT";
+        } else if(map[right] || map[right] && map[shooting]) {
+            d = "RIGHT";
+        } else if(map[down] || map[down] && map[shooting]) {
+            d = "DOWN";
+        } else if(map[up] || map[up] && map[shooting]) {
+            d = "UP";
         }
 
         // Player spaceship speed boost
-        if(key == 16 && d == "LEFT" || key == 16 && d == "RIGHT") {
+        if(map[useBooster] && map[left] || map[useBooster] && map[right]) {
             if(player.boost > 0 && player.boost <= 100) {
                 speedBooster = true;
                 player.speed = 15;
@@ -296,15 +316,18 @@ function movement(e){
 function clearShipCommands() {
     player.speed = 5;
     speedBooster = false;
+    isSpaceDown = false;
+    d = "";
     ship.src = `${endPath}/assets/images/player.png`;
     engineFlames.src = `${endPath}/assets/images/engineFlameNormal.png`;
 }
 
 // Player shoots
 function shoot(e){
-    let key = e.keyCode;
-    if(gameStarted && isOverheated == false) { 
-        if(key == 32) {
+    const key = e.keyCode;
+    if(gameStarted && !isOverheated) { 
+        if(isSpaceDown) return;
+        if(key == shooting) {
             isSpaceDown = true;
             // Display the rocket WHEN the user shoots.
             ammo.push({
@@ -314,12 +337,11 @@ function shoot(e){
             missileSound.play();
             missileSound.currentTime = 0;
             overheated();
-        } else {
-            isSpaceDown = false;
         }
     }
+    // In case user sets shooting control to be alt/ctrl etc.
+    e.preventDefault();
 }
-
 // Overheat the spaceship's guns.
 const emptyWarningText = document.querySelector(".emptyWarning-text");
 const blocks = document.querySelectorAll(".overheat-bar_block");
@@ -380,7 +402,6 @@ function graduallyRestore(){
         player.boost = player.boost + 2;
     }
 }
-// let graduallyRestoreInterval = setInterval(graduallyRestore, 300)
 let graduallyRestoreInterval = setInterval(graduallyRestore, 300)
 
 // When gun overheats, wait 1 second, then cool it out and enable shooting.
@@ -431,9 +452,6 @@ function draw(){
                 && player.x <= enemies[i].x + enemy.width 
                 && player.y + ship.height >= enemies[i].y 
                 && player.y <= enemies[i].y + enemy.height) {
-                // Increase kill count
-                killCount++;
-
                 // Draw explosion at those coords.
                 ctx.drawImage(explosion, enemies[i].x - enemy.width, enemies[i].y - enemy.height);
                 
@@ -446,8 +464,8 @@ function draw(){
                 // Deduct HP on hit.
                 decreaseShipHP();
                 
-                // Update the score
-                updateScore();
+                // Update the kill count, thus upating the score
+                updateKillCount();
 
                 explosionSound.currentTime = 0;
                 explosionSound.play();
@@ -487,9 +505,6 @@ function draw(){
             // Ammo colides enemy
             if (hitEnemy) {
                 ctx.drawImage(explosion, hitEnemy.x - enemy.width, hitEnemy.y - enemy.height);
-                // Increase kill count
-                killCount++;
-
                 // Remove the missiles
                 ammo.splice(j, 1);
 
@@ -500,7 +515,9 @@ function draw(){
                 }
                 explosionSound.play();
                 explosionSound.currentTime = 0;
-                updateScore();
+
+                // Update the kill count, thus updating the score
+                updateKillCount();
             } else if (ammo[j].x > cWidth) { // If player's ammo goes past canvas width
                 ammo.splice(j, 1);                
             }
@@ -651,7 +668,6 @@ function draw(){
     engineFlameX = player.x - (ship.width - 42);
     engineFlameY = player.y + (ship.height / 2 - 6);
     ctx.drawImage(engineFlames, engineFlameX, engineFlameY);
-    document.querySelector("#killCount").textContent = killCount;
 }
 // Restore sound effect (shield, health, time)
 function restoreSound() {
@@ -674,8 +690,6 @@ function timer(seconds) {
         if(secondsLeft === 10) {
             timerDisplay.classList.add("timeLow");
             displayNotification(secondsLeft);
-        } else if (secondsLeft > 10) {
-            timerDisplay.classList.remove("timeLow");
         } else if (secondsLeft < 0) {
             // If the timer ran out, end the game
             clearInterval(countdown);
@@ -703,6 +717,10 @@ function addPlaytime() {
     secondsLeft = secondsLeft + spawnTime;
     timer(secondsLeft);
     document.querySelector(".time").classList.add("timeShake");
+    // When time is added and timer is higher than 10 seconds, remove classt (remove red color).
+    if (secondsLeft > 10) {
+        timerDisplay.classList.remove("timeLow");
+    }
     notificationText.innerHTML = `<i class="material-icons timer">timer</i><p>Added playtime!</p>`;
     displayNotification();
  }
@@ -762,26 +780,23 @@ function newHighscore() {
 }
 
 // Update the score and deal with difficulty
-function updateScore() {
+function updateKillCount() {
     // Update score
-    score += 100;
-    displayScore.textContent = score;
+    killCount++;
+    displayKills.textContent = killCount;
 
     // Increase difficulty when user reaches a certain score point.
-    if(score == 3000) {
+    if(killCount === 30) {
         enemySpeed = 2;
         enemiesShootingSpeed = 400;
         displayNotification();
-    }
-    if (score == 5000) {
+    } else if (killCount === 50) {
         enemySpeed = 5;
         enemiesShootingSpeed = 300;
         displayNotification();
-    }
-    if(score == 8000) {
+    } else if(killCount == 80) {
         enemiesShootingSpeed = 150;
-    }
-    if(score == 10000) {
+    } else if(killCount == 100) {
         enemiesShootingSpeed = 60;
     }
 }
@@ -789,12 +804,14 @@ function updateScore() {
 // Display notifications
 function displayNotification(secondsLeft){
     notificationText.classList.add("activeNotification");
-    if(score == 3000) {
+    if(killCount === 30) {
         notificationText.innerHTML = `<i class="material-icons">warning</i> <p>Another Disturbance!</p>`
-    } else if (score == 6000) {
+    } else if (killCount === 50) {
         notificationText.innerHTML= `<i class="material-icons">warning</i> <p>Another Disturbance!</p>`
-    } else if (score == 10000) {
-        notificationText.innerHTML = `<i class="material-icons">warning</i> <p>Watch out for the alien spaceship!!</p>`
+    } else if (killCount === 80) {
+        notificationText.innerHTML= `<i class="material-icons">warning</i> <p>Another Disturbance!</p>`
+    } else if (killCount === 100) {
+        notificationText.innerHTML= `<i class="material-icons">warning</i> <p>Another Disturbance, you're doing great!</p>`
     }
 
     // If there are 10 seconds left, show a warning
@@ -852,12 +869,12 @@ function restoreShield() {
 }
 function decreaseShield() {
     // Decrease shield
+    console.log(player.shield)
     if(player.shield >= 20 && player.shield <= 100) {
         player.shield = player.shield - 20;
         shieldText.textContent = player.shield+"%";
-    }
-    // If shield is at 0, mark it as destroyed
-    if(player.shield == 0) {
+    } else if(player.shield < 20) {
+        // If shield is at 0 (at 20% shield gets deducted 20, so it goes straight to 0), mark it as destroyed
         shieldDestroyed = true;
     }
 }
@@ -878,13 +895,13 @@ function endgame(secondsLeft){
     // Multiplie the ending score by the time played divided by 100, which will result in a multiplier
     // in the form of, for example x0.5 - x3, based on time played
     let multiplier = timePlayed / 100;
+    score = killCount * 100;
     let finalScore = score + (score * multiplier);
 
     // Stop movements
     gameStarted = false;
 
     // Game Over / Game finished menu
-    const gameOver = document.querySelector(".game--over");
     gameOver.style.display = "block";
 
     // If player was killed.
@@ -902,7 +919,7 @@ function endgame(secondsLeft){
     music.loop = false;
 
     // Score and Highscore
-    document.querySelector("#currentScore").textContent = score;
+    document.querySelector("#totalKills").textContent = killCount;
     document.querySelector("#multiplier").textContent = "x"+multiplier;
     document.querySelector("#finalScore").textContent = finalScore;
     document.querySelector("#highscore").textContent = highscore;
@@ -912,6 +929,74 @@ function endgame(secondsLeft){
         document.querySelector("#highscore").textContent = localStorage.getItem("highscore");
         newHighscore();
     }
+}
+
+// RESTART GAME
+function restartGame() {
+    // Clear the intervals
+    clearInterval(countdown);
+    clearInterval(game);
+    clearInterval(graduallyRestoreInterval);
+    clearInterval(enemiesShootingInterval);
+
+    // Reset the flag variables
+    gameStarted = false;
+    enemiesSpawned = false;
+    initialHealthPushed = false;
+    initialShieldRenewPushed = false;
+    initialTimeRenewPushed = false;
+    shieldDestroyed = false;
+
+    // Reset timer
+    timerDisplay.classList.remove("timeLow"); // In case user died while time was low.
+    timerDisplay.textContent = "0:30";
+
+    // Reset the colored blocks
+    blocks.forEach(block => {
+        block.classList.remove("greenPhase")
+        block.classList.remove("yellowPhase")
+        block.classList.remove("redPhase")
+    });
+
+    // Destroy all enemies, healths, timers, shields and reset them to 0.
+    enemies.splice(0, enemies.length);
+    healthRenew.splice(0, healthRenew.length);
+    timeRenew.splice(0, timeRenew.length);
+    shieldRenew.splice(0, shieldRenew.length);
+    enemyAmmo.splice(0, enemyAmmo.length);
+    ammo.splice(0, ammo.length);
+    
+    // Run startGame again
+    startGame();
+
+    // Reset the kill count text.
+    killCount = 0;
+    displayKills.textContent = killCount;
+
+    // Reset pregame countdown and hide game over menu
+    preGame = 3;
+    gameOver.style.display = "none";
+
+    // Reset ship's direction
+    d = "";
+
+    // Reset player's ship stats
+    player.hp = 100;
+    player.shield = 100;
+    player.overheat = 0;
+    player.boost = 100
+    player.x = 50;
+    player.y = 250;
+    player.speed = 5;
+    heat = -1;
+
+    // Reset health and shield text display
+    healthText.textContent = player.hp+"%";
+    shieldText.textContent = player.shield+"%";
+
+    // Set restoration and enemy shooting intervals again.
+    graduallyRestoreInterval = setInterval(graduallyRestore, 300);
+    enemiesShootingInterval = setInterval(enemiesShoot, 700);
 }
 
 // Spawn health renew every 30 seconds.
@@ -1001,7 +1086,7 @@ function continueGame(){
     // Run the interval
     game = setInterval(draw, 1000 / 60);
     enemiesShootingInterval = setInterval(enemiesShoot, 700);
-    graduallyRestoreInterval = setInterval(graduallyRestore, 800);
+    graduallyRestoreInterval = setInterval(graduallyRestore, 300);
     timer(secondsLeft);
 
     // Enable enemies and ship movement
@@ -1044,11 +1129,102 @@ mainMenuButtons.forEach(btn => btn.addEventListener("click", ()=>{
     menuSelect.play();
 }))
 
+// Pause game on ESCAPE and if clicked outside of canvas
+window.addEventListener("keydown", e => {
+    if(e.keyCode === 27 && gameStarted) {
+        pauseGame();
+    }
+})
+window.addEventListener("click", e =>{
+    if(e.target.id !== "canvas" && e.target.id !== "continueGame" && gameStarted) {
+        pauseGame();
+    }
+})
+
+// SETTINGS MENU
+const volumeControls = document.querySelectorAll(`.settings-menu input[type="range"]`);
+const displayChange = document.querySelectorAll(".displayChange");
+let controllingVolume = false;
+volumeControls.forEach(control => control.addEventListener("mousedown", ()=>{
+    controllingVolume = true;
+}))
+volumeControls.forEach(control => control.addEventListener("mouseup", ()=>{
+    controllingVolume = false;
+}))
+volumeControls.forEach(control => control.addEventListener("change", controlVolume));
+volumeControls.forEach(control => control.addEventListener("mousemove", controlVolume));
+
+// Control the volume
+function controlVolume() {
+    if(controllingVolume) {
+    displayChange.forEach(change => {
+        if(this.name == change.id) {
+            change.textContent = this.value+"%";
+        }
+        // If input name is SFX, edit SFX volume. If input name is bgMusic, edit music volume.
+        if(this.name == "sfx") {
+            sfx = this.value / 100;
+            missileSound.volume = sfx;
+            explosionSound.volume = sfx;
+            enemyShootingSound.volume = sfx;
+            restoreSoundEffect.volume = sfx;
+            alarm.volume = sfx;
+        } else if(this.name =="bgMusic") {
+            musicVolume = this.value / 100;
+            music.volume = musicVolume;
+        }
+    })
+    }
+}
+// Set custom controls for the ship
+const shipControls = document.querySelectorAll(`.settings-menu input[type="text"]`);
+const displayCommand = document.querySelectorAll(".displayCommand");
+shipControls.forEach(control => control.addEventListener("keyup", changeControls));
+shipControls.forEach(control => control.addEventListener("click", function(){
+    this.value = "";
+}));
+
+function changeControls(e) {
+    const key = e.key;
+    const code = e.code;
+    console.log(e.keyCode);
+    if(code == "Space") {
+        this.value = code;
+    } else if (code !== key) {
+        this.value = key;
+    }
+    displayCommand.forEach(command => {
+        if(this.name == command.id) {
+            command.textContent = this.value || key;
+        }
+
+        if(this.name == "left") {
+            left = e.keyCode;
+        } else if(this.name == "up") {
+            up = e.keyCode;
+        } else if(this.name == "right") {
+            right = e.keyCode;
+        } else if(this.name == "down") {
+            down = e.keyCode;
+        } else if(this.name == "shooting") {
+            shooting = e.keyCode;
+        } else if(this.name == "useBooster") {
+            useBooster = e.keyCode;
+        }
+    })
+}
+
 // Event listeners
-document.addEventListener("keydown", movement);
 document.addEventListener("keyup", clearShipCommands);
+document.addEventListener("keyup", shoot);
 document.querySelector("#startGame").addEventListener("click", loadGame);
-document.addEventListener("keydown", shoot);
-document.querySelector("#openMenu").addEventListener("click", pauseGame);
+document.querySelector("#pauseGame").addEventListener("click", pauseGame);
 document.querySelector("#continueGame").addEventListener("click", continueGame);
+document.querySelector("#restartGame").addEventListener("click", restartGame);
+document.querySelector("#settings").addEventListener("click", ()=>{
+    document.querySelector(".settings-menu").style.display = "flex";
+})
+document.querySelector("#goBack").addEventListener("click", ()=>{
+    document.querySelector(".settings-menu").style.display = "none";
+})
 soundControl.forEach(control => control.addEventListener("click", toggleMusic));

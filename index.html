@@ -36,9 +36,10 @@
             <!-- About menu -->
             <div class="aboutMenu">
                 <h3>ABOUT</h3>
-                <p>Remake of the classic Space Shooter type of games, with minor additions. All the assets used to create this game were free, provided by: <a href="https://jonathan-so.itch.io/" target="_blank">Jonathan So</a>, <a href="https://kenney.nl/" target="_blank">Kenny</a>, and some are randomly googled (still free !). This was a learning project, hope you like it. Have fun !</p>
+                <p>Remake of the classic Space Shooter type of games, with minor additions. All the assets used to create this game were free, provided by: <a href="https://jonathan-so.itch.io/" target="_blank">Jonathan So</a>, <a href="https://kenney.nl/" target="_blank">Kenny</a>, and Google(still free !). This was a learning project, hope you like it. Have fun !</p>
                 <button id="closeAbout" class="main-menu_buttons">Close</button>
             </div>
+            
         </div>
     </div>
 
@@ -62,11 +63,10 @@
     <div class="container">
         <!-- INFO MENU - SCORE, TIMER, HP... -->
         <div class="menu">
-            <p id="openMenu" class="main-menu_buttons">MENU</p>
+            <p id="pauseGame" class="main-menu_buttons">MENU</p>
             <div class="time"><p id="timerDisplay">0:30</p></div>
             <div class="textContainer">
                 <p class="killCount">KILLS: <span id="killCount">0</span></p>
-                <p class="score">SCORE: <span id="score">0</span></p>
             </div>
         </div>
 
@@ -87,7 +87,7 @@
         </div>
 
         <!-- COUNTDOWN TEXT -->
-        <div class="countdown">3</div>
+        <div class="countdown"></div>
 
         <!-- WARNING / NEW HIGHSCORE TEXT -->
         <div class="emptyWarning-text"></div>
@@ -113,20 +113,75 @@
             <img id="displayImage" src="./assets/images/tombstone.png" alt="Tombstone" width="70px"  height="70px">
             <p id="message">Thank you for your service.</p>
             <div class="scores">
-                <p>Current score: <span id="currentScore"></span></p>
-                <p>Multiplier: <span id="multiplier"></span></p>
+                <p>Total kills: <span id="totalKills"></span></p>
+                <p>Time played multiplier: <span id="multiplier"></span></p>
                 <p>Final score: <span id="finalScore"></span></p>
                 <p>Highscore: <span id="highscore"></span></p>
             </div>
-            <button class="exitGame main-menu_buttons">EXIT</button>
+            <button class="main-menu_buttons gameOverBtn" id="restartGame">RESTART</button>
+            <button class="exitGame gameOverBtn main-menu_buttons">EXIT</button>
         </div>
     
         <!-- PAUSE MENU -->
         <div class="pause--menu">
             <h3>GAME PAUSED</h3>
             <p id="continueGame" class="main-menu_buttons">CONTINUE</p>
+            <p id="settings" class="main-menu_buttons">SETTINGS</p>
             <p class="exitGame main-menu_buttons">QUIT</p>
+        </div>
+
+        <!-- SETTINGS MENU(WINDOW) -->
+        <div class="settings-menu">
+            <h2>SETTINGS</h2>
+            <div class="settings-volumeControls">
+                <h3>VOLUME CONTROLS:</h3>
+                <!-- CONTROL BACKGROUND MUSIC VOLUME -->
+                <div class="settings-music">
+                    <label for="musicVolume">Music volume: <span class="displayChange" id="bgMusic">100%</span></label>
+                    <input type="range" id="musicVolume" min="0" max="100" value="20" step="1" name="bgMusic">
+                </div>
+                <!-- CONTROL SFX VOLUME -->
+                <div class="settings-sfx">
+                    <label for="sfxVolume">SFX volume: <span class="displayChange" id="sfx">100%</span></label>
+                    <input type="range" id="sfxVolume" min="0" max="100" value="30" step="1" name="sfx">
+                </div>
+            </div>
+            <!-- SHIP COMMANDS -->
+            <div class="ship-commands">
+                <h3>SHIP COMMANDS:</h3>
+                <div class="directionControl">
+                    <!-- LEFT -->
+                    <label for="shipLeft">Left: <span class="displayCommand" id="left">ArrowLeft</span></label>
+                    <input type="text" id="shipLeft" name="left" maxlength="1" value="ArrowLeft" spellcheck="false">
+                </div>
+                <div class="directionControl">
+                    <!-- RIGHT -->
+                    <label for="shipRight">Right: <span class="displayCommand" id="right">ArrowRight</span></label>
+                    <input type="text" id="shipRight" name="right" maxlength="1" value="ArrowRight" spellcheck="false">
+                </div>
+                <div class="directionControl">
+                    <!-- UP -->
+                    <label for="shipUp">Up: <span class="displayCommand" id="up">ArrowUp</span></label>
+                    <input type="text" id="shipUp" name="up" maxlength="1" value="ArrowUp" spellcheck="false">
+                </div>
+                <div class="directionControl">
+                    <!-- DOWN -->
+                    <label for="shipDown">Down: <span class="displayCommand" id="down">ArrowDown</span></label>
+                    <input type="text" id="shipDown" name="down" maxlength="1" value="ArrowDown" spellcheck="false">
+                </div>
+                <div class="directionControl">
+                    <!-- SHOOTING -->
+                    <label for="playerShooting">Shoot: <span class="displayCommand"  id="shooting">Space</span></label>
+                    <input type="text" id="playerShooting" name="shooting" maxlength="1" value="Space" spellcheck="false">
+                </div>
+                <div class="directionControl">
+                    <!-- BOOSTER -->
+                    <label for="booster">Boost: <span class="displayCommand" id="useBooster">Shift</span></label>
+                    <input type="text" id="booster" name="useBooster" maxlength="1" value="Shift" spellcheck="false">
+                </div>
+            </div>
             <img class="soundControl" src="./assets/images/soundOn.png" alt="" width="16px" height="16px">
+            <button id="goBack">BACK</button>
         </div>
 
         <!-- GAME WINDOW -->
