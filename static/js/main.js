@@ -78,6 +78,7 @@ const explosionSound = new Audio();
 const music = new Audio();
 const restoreSoundEffect = new Audio();
 const alarm = new Audio();
+const goVoice = new Audio();
 
 missileSound.src = `${endPath}/assets/audio/weapon_player.wav`;
 explosionSound.src = `${endPath}/assets/audio/explosion_enemy.wav`;
@@ -85,6 +86,7 @@ enemyShootingSound.src = `${endPath}/assets/audio/laser1.ogg`;
 music.src = `${endPath}/assets/audio/music_background.wav`;
 restoreSoundEffect.src = `${endPath}/assets/audio/powerUp11.ogg`;
 alarm.src = `${endPath}/assets/audio/alarm.wav`;
+goVoice.src =`../assets/audio/go.ogg`;
 
 // Set the volume of the sound assets
 let sfx = 0.3;
@@ -95,6 +97,7 @@ enemyShootingSound.volume = sfx;
 music.volume = musicVolume;
 restoreSoundEffect.volume = sfx;
 alarm.volume = sfx;
+goVoice.volume = 0.1;
 
 // Enable looping of the background music
 music.loop = true;
@@ -236,6 +239,7 @@ function startGame(){
             preGame--;
             preGameCountdown.textContent = preGame;
             if(preGame == 0) {
+                goVoice.play();
                 preGameCountdown.textContent = "GO !";
                 setTimeout(()=> preGameCountdown.style.display = "none", 250)
                 clearInterval(preGameCountdownInterval);
@@ -274,13 +278,21 @@ let shooting = 32; // Space
 let useBooster = 16; // Shift
 
 // Move the spaceship
-const map = {}
+let map = {}
 onkeydown = onkeyup = function (e) {
     e = e || event;
     if(gameStarted) {
         map[e.keyCode] = e.type == "keydown";
-        if(map[left] || map[left] && map[shooting]) {
+        if(map[left] && map[up] || map[left] && map[up] && map[shooting]) {
+            d = "UP_LEFT"
+        } else if(map[left] && map[down] || map[left] && map[down] && map[shooting]) {
+            d = "DOWN_LEFT"
+        } else if(map[left] || map[left] && map[shooting]) {
             d = "LEFT";
+        } else if(map[right] && map[up] || map[right] && map[up] && map[shooting]) {
+            d = "UP_RIGHT";
+        } else if(map[right] && map[down] || map[right] && map[down] && map[shooting]) {
+            d = "DOWN_RIGHT"
         } else if(map[right] || map[right] && map[shooting]) {
             d = "RIGHT";
         } else if(map[down] || map[down] && map[shooting]) {
@@ -288,9 +300,8 @@ onkeydown = onkeyup = function (e) {
         } else if(map[up] || map[up] && map[shooting]) {
             d = "UP";
         }
-
         // Player spaceship speed boost
-        if(map[useBooster] && map[left] || map[useBooster] && map[right]) {
+        if(map[useBooster] && d =="LEFT" || map[useBooster] && d == "RIGHT") {
             if(player.boost > 0 && player.boost <= 100) {
                 speedBooster = true;
                 player.speed = 15;
@@ -625,6 +636,22 @@ function draw(){
         player.y -= player.speed;
     }
     if(d == "DOWN") {
+        player.y += player.speed;
+    }
+    if(d == "UP_LEFT") {
+        player.x -= player.speed;
+        player.y -= player.speed;
+    }
+    if(d == "DOWN_LEFT") {
+        player.x -= player.speed;
+        player.y += player.speed;
+    }
+    if(d == "UP_RIGHT") {
+        player.x += player.speed;
+        player.y -= player.speed;
+    }
+    if(d == "DOWN_RIGHT") {
+        player.x += player.speed;
         player.y += player.speed;
     }
 
@@ -965,6 +992,7 @@ function restartGame() {
     shieldRenew.splice(0, shieldRenew.length);
     enemyAmmo.splice(0, enemyAmmo.length);
     ammo.splice(0, ammo.length);
+    map = {};
     
     // Run startGame again
     startGame();
