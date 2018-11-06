@@ -833,11 +833,33 @@ function updateKillCount() {
         currentExp.textContent = exp;
         requiredExpText.textContent = requiredExp + "XP";
         level++;
-        currentLevel.textContent = level;    
+        currentLevel.textContent = level;
+        levelUp(); 
     }
     // Fill the bar to display xp progress
     let testExp = (exp / requiredExp) * 100;
     levelBar.style.width = `${testExp}%`;
+}
+
+let basePlayerHP = player.hp;
+let basePlayerShield = player.shield;
+function levelUp() {
+    shieldDestroyed = false;
+    basePlayerHP = basePlayerHP;
+    basePlayerShield = basePlayerShield;
+
+    player.speed = player.speed + 2;
+    
+    // Restore health and shield to the ship
+    if(player.hp <= 60) {
+        player.hp = player.hp + 40;
+    }
+    if(player.shield <= 80) {
+        player.shield = player.shield + 20;
+    }
+
+    healthText.textContent = player.hp + "%";
+    shieldText.textContent = player.shield + "%";
 }
 
 // As played time goes by, increase difficulty.
