@@ -337,7 +337,7 @@ function clearShipCommands() {
 function shoot(e){
     const key = e.keyCode;
     if(gameStarted && !isOverheated) { 
-        if(isSpaceDown) return;
+        if(isSpaceDown) return; // If space is already pressed and hold, end the function.
         if(key == shooting) {
             isSpaceDown = true;
             // Display the rocket WHEN the user shoots.
@@ -695,6 +695,9 @@ function draw(){
     engineFlameX = player.x - (ship.width - 42);
     engineFlameY = player.y + (ship.height / 2 - 6);
     ctx.drawImage(engineFlames, engineFlameX, engineFlameY);
+
+    // Check how much time has passed and increase difficulty accordingly.
+    increaseDifficulty();
 }
 // Restore sound effect (shield, health, time)
 function restoreSound() {
@@ -806,25 +809,59 @@ function newHighscore() {
     }, 2000);
 }
 
-// Update the score and deal with difficulty
+// Update the score
+let exp = 0;
+let requiredExp = 100;
+let currentExp = document.querySelector("#currentExp");
+let requiredExpText = document.querySelector("#requiredExp");
+let levelBar = document.querySelector(".level-bar_fill");
+const currentLevel = document.querySelector("#currentLevel");
+let level = 1;
 function updateKillCount() {
     // Update score
     killCount++;
     displayKills.textContent = killCount;
 
-    // Increase difficulty when user reaches a certain score point.
-    if(killCount === 30) {
+    // Increase EXPERIENCE.
+    exp += 20;
+    currentExp.textContent = exp;
+
+    // When required exp per level is met, increase level
+    if(exp == requiredExp) {
+        exp = 0;
+        requiredExp = requiredExp * 2;
+        currentExp.textContent = exp;
+        requiredExpText.textContent = requiredExp + "XP";
+        level++;
+        currentLevel.textContent = level;    
+    }
+    // Fill the bar to display xp progress
+    let testExp = (exp / requiredExp) * 100;
+    levelBar.style.width = `${testExp}%`;
+}
+
+// As played time goes by, increase difficulty.
+function increaseDifficulty() {
+    endTime = new Date();
+    let timeCurrent = (endTime - startingTime) / 1000;
+    timeCurrent = Math.floor(timeCurrent)
+
+    if(timeCurrent === 30) { // After 30 seconds
         enemySpeed = 2;
         enemiesShootingSpeed = 400;
         displayNotification();
-    } else if (killCount === 50) {
+    } else if(timeCurrent === 60) { // After 60 seconds
         enemySpeed = 5;
         enemiesShootingSpeed = 300;
         displayNotification();
-    } else if(killCount == 80) {
-        enemiesShootingSpeed = 150;
-    } else if(killCount == 100) {
-        enemiesShootingSpeed = 60;
+    } else if(timeCurrent === 90) { // After 90 seconds
+        enemySpeed = 8;
+        enemiesShootingSpeed = 200;
+        displayNotification();
+    } else if(timeCurrent === 120) { // After 120 seconds
+        enemySpeed = 10;
+        enemiesShootingSpeed = 100;
+        displayNotification();
     }
 }
 

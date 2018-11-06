@@ -206,6 +206,40 @@ button{
 .menuActive{
     opacity: 1;
 }
+.menu .level-container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    padding: 3px;
+    width: 350px;
+}
+.level-bar{
+    width: 200px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #f5f5f535;
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+}
+.level-bar p{
+    color: #f5f5f5;
+    z-index: 9999;
+}
+.level-bar_fill{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 100%;
+    transition: 0.3s ease;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    background-color: #2ECC40
+}
 .container .health-container{
     display: none;
     position: absolute;
