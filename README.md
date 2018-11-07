@@ -6,11 +6,18 @@ Earth Defense is a remake of the classic Space shooter type of games, with 8-bit
 
 ------------------------------------------------
 ###### To do:
-* [ ] Add meteors flying by. (?)
 * [ ] Clean code
 * [ ] Refactoring
-* [ ] Fix movement issues
 * [ ] Clearer indication ship was hit
+
+* [ ] Add a small intro text before game begins
+* [x] Enemies speed based on how long the user has actually played
+* [x] Add exp bar that fills on enemy killed
+* [x] When user reaches certain level, upgrade weapons.
+* [x] Add option to teleport from top to bottom and bottom to top, as an escape posibilities.
+* [ ] Highscores table at main menu (?)
+* [ ] Add meteors flying by. (?)
+* [x] Fix movement issues
 -------------------
 ###### Bugs:
 * None found as of update v1.0.9 - Nov 5 2018. If found any, feel free to contact me.
