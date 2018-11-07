@@ -121,7 +121,8 @@ let engineFlameX;
 let engineFlameY;
 
 // Player ammo
-let ammo = [];
+const ammo = [];
+
 
 // Enemies
 let enemies = [];
@@ -312,7 +313,7 @@ onkeydown = onkeyup = function (e) {
             // Disable speed boost if it reaches 0
             if(player.boost <= 0) {
                 speedBooster = false;
-                player.speed = 5;
+                player.speed = player.speed;
                 emptyWarningText.textContent = "BOOSTER EMPTY !";
                 emptyWarningText.classList.add("emptyWarning-textActive");
                 alarm.currentSrc = 0;
@@ -325,7 +326,7 @@ onkeydown = onkeyup = function (e) {
 
 // Clear spaceship's commands when key is released
 function clearShipCommands() {
-    player.speed = 5;
+    player.speed = player.speed;
     speedBooster = false;
     isSpaceDown = false;
     d = "";
@@ -341,10 +342,34 @@ function shoot(e){
         if(key == shooting) {
             isSpaceDown = true;
             // Display the rocket WHEN the user shoots.
-            ammo.push({
-                x: player.x + ship.width,
-                y: player.y + (ship.height / 2)
-            })
+            if(level < 3) {
+                ammo.push({
+                    x: player.x + ship.width,
+                    y: player.y + (ship.height / 2)
+                })
+            } else if(level >= 3 && level <= 5) {
+                ammo.push({
+                    x: player.x + ship.width,
+                    y: player.y + (ship.height / 2)
+                })
+                ammo.push({
+                    x: player.x + ship.width,
+                    y: player.y - 10
+                })
+            } else if(level > 6) {
+                ammo.push({
+                    x: player.x + ship.width,
+                    y: player.y + (ship.height / 2)
+                })
+                ammo.push({
+                    x: player.x + ship.width,
+                    y: player.y - (ship.height / 2 - 10)
+                })
+                ammo.push({
+                    x: player.x + ship.width,
+                    y: player.y + (ship.height / 2 + 30)
+                })
+            } // NOT THE BEST ammo upgrade system, will need to rework this later on.
             missileSound.play();
             missileSound.currentTime = 0;
             overheated();
@@ -353,6 +378,7 @@ function shoot(e){
     // In case user sets shooting control to be alt/ctrl etc.
     e.preventDefault();
 }
+
 // Overheat the spaceship's guns.
 const emptyWarningText = document.querySelector(".emptyWarning-text");
 const blocks = document.querySelectorAll(".overheat-bar_block");
@@ -638,7 +664,9 @@ function draw(){
     if(d == "DOWN") {
         player.y += player.speed;
     }
-    if(d == "UP_LEFT") {
+
+    // DIAGONAL MOVEMENT
+    if(d == "UP_LEFT") { 
         player.x -= player.speed;
         player.y -= player.speed;
     }
@@ -684,11 +712,12 @@ function draw(){
         player.x += player.speed;
     } else if (player.x >= 1300 - ship.width) {
         player.x -= player.speed;
-    } else if (player.y <= 0) {
-        player.y += 5;
-    } else if (player.y >= 500 - ship.height) {
-        player.y -= 5;
+    } else if (player.y <= -20) {
+        player.y = 500 - player.speed;
+    } else if (player.y >= 520) {
+        player.y = -10 + player.speed;
     }
+    console.log(player.y)
 
     // Draw the ship
     ctx.drawImage(ship, player.x, player.y);
@@ -811,7 +840,7 @@ function newHighscore() {
 
 // Update the score
 let exp = 0;
-let requiredExp = 100;
+let requiredExp = 80;
 let currentExp = document.querySelector("#currentExp");
 let requiredExpText = document.querySelector("#requiredExp");
 let levelBar = document.querySelector(".level-bar_fill");
@@ -832,23 +861,23 @@ function updateKillCount() {
         requiredExp = requiredExp * 2;
         currentExp.textContent = exp;
         requiredExpText.textContent = requiredExp + "XP";
-        level++;
-        currentLevel.textContent = level;
         levelUp(); 
     }
     // Fill the bar to display xp progress
-    let testExp = (exp / requiredExp) * 100;
-    levelBar.style.width = `${testExp}%`;
+    let levelExp = (exp / requiredExp) * 100;
+    levelBar.style.width = `${levelExp}%`;
 }
 
-let basePlayerHP = player.hp;
-let basePlayerShield = player.shield;
+// Player levels up
 function levelUp() {
-    shieldDestroyed = false;
-    basePlayerHP = basePlayerHP;
-    basePlayerShield = basePlayerShield;
+    // Increase the level and update the text
+    level++;
+    currentLevel.textContent = level;
 
-    player.speed = player.speed + 2;
+    shieldDestroyed = false;
+
+    // Increase player's ship speed each time player levels up
+    player.speed += 1;
     
     // Restore health and shield to the ship
     if(player.hp <= 60) {
