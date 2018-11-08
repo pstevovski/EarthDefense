@@ -42,6 +42,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Fixed bug where player runs out of screen while using booster.
 ---------------------
 ## All Changes:
+### v1.1.1 - Nov 9 2018
+### Added
+* Added a highscore list to the main menu
+* Option to save your name in a highscores list, if you beat the previously set highscore
+### Changed
+* Corrected ship "teleportation" from top to bottom, and bottom to top, now its more smoothly.
+
 ### v1.1.0 - Nov 8 2018
 ### Added
 * Level system for the ship

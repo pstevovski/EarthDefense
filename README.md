@@ -15,7 +15,12 @@ Earth Defense is a remake of the classic Space shooter type of games, with 8-bit
 * [x] Add exp bar that fills on enemy killed
 * [x] When user reaches certain level, upgrade weapons.
 * [x] Add option to teleport from top to bottom and bottom to top, as an escape posibilities.
-* [ ] Highscores table at main menu (?)
+* [x] Highscores table at main menu (?)
+  * [x] Add option for player to enter his name and save it with the score
+  * [x] Create an array of objects, with key-value pair of name:score.
+  * [ ] Max highscores showed is 10.
+* [x] Fix ship teleportation from top to bottom and vice versa
+* [ ] Correct player level up speed upgrade
 * [ ] Add meteors flying by. (?)
 * [x] Fix movement issues
 -------------------
