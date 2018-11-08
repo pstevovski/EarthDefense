@@ -707,15 +707,15 @@ function draw(){
         }
     }
 
-    // If spaceship hits the boundry, remove the direction
+    // If spaceship hits the boundry, remove the direction or teleport him top-bottom / bottom-top
     if(player.x <= 0) {
         player.x += player.speed;
     } else if (player.x >= 1300 - ship.width) {
         player.x -= player.speed;
-    } else if (player.y <= -20) {
-        player.y = 500 - player.speed;
+    } else if (player.y <= -40) {
+        player.y = 520 - player.speed;
     } else if (player.y >= 520) {
-        player.y = -10 + player.speed;
+        player.y = -30 + player.speed;
     }
     console.log(player.y)
 
@@ -825,17 +825,6 @@ function playerHit(){
         endgame();
         clearInterval(game);
     }
-}
-
-// Display notification that the user has a new HIGHSCORE
-function newHighscore() {
-    emptyWarningText.textContent = "NEW HIGHSCORE !!!";
-    emptyWarningText.classList.add("emptyWarning-Highscore");
-
-    // Remove the notification
-    setTimeout(() => {
-        emptyWarningText.classList.remove("emptyWarning-Highscore");
-    }, 2000);
 }
 
 // Update the score
@@ -993,6 +982,7 @@ function decreaseShield() {
         shieldDestroyed = true;
     }
 }
+
 // When the game has ended / been completed.
 function endgame(secondsLeft){
     // Disable intervals
@@ -1042,9 +1032,84 @@ function endgame(secondsLeft){
     if(finalScore > highscore) {
         localStorage.setItem("highscore", finalScore);
         document.querySelector("#highscore").textContent = localStorage.getItem("highscore");
-        newHighscore();
+        newHighscore(finalScore);
     }
 }
+
+// Display notification that the user has a new HIGHSCORE
+function newHighscore(finalScore) {
+    const inputMenu =  document.querySelector(".newHighscore-input");
+    emptyWarningText.textContent = "NEW HIGHSCORE !!!";
+    emptyWarningText.classList.add("emptyWarning-Highscore");
+
+    // Remove the notification
+    setTimeout(() => {
+        emptyWarningText.classList.remove("emptyWarning-Highscore");
+    }, 2000);
+
+    // NEW HIGHSCORES MENU
+    inputMenu.style.display = "flex";
+    saveBtn.addEventListener("click", () => {
+        const value = inputField.value;
+        const results = {
+            name: value,
+            score: finalScore
+        }
+        let highscoresArray =  JSON.parse(localStorage.getItem("highscoresList")) || [];
+        highscoresArray.push(results);
+        localStorage.setItem("highscoresList", JSON.stringify(highscoresArray));
+
+        // Hide the menu
+        inputMenu.style.display = "none";
+    })
+}
+let inputField = document.querySelector("#playerName-input");
+let saveBtn = document.querySelector("#savePlayer");
+
+// HIGHSCORES LIST 
+const highscoresListMenu = document.querySelector(".highscoresList-menu");
+const highscoreList = document.querySelector("#highscoreList");
+const orderedList = document.querySelector("#theList");
+highscoreList.addEventListener("click", function(){
+    highscoresListMenu.style.display = "block";
+    let getHighscores = JSON.parse(localStorage.getItem("highscoresList"));
+
+    // Sort the items by highest score from top to bottom.
+    getHighscores.sort((a,b) => (a.score > b.score) ? -1 : 1);
+
+    // Create a new list element for each saved highscore. MAX 10 SCORES SHOWN
+    getHighscores.forEach(highscore => {
+        const li = document.createElement("li");
+        li.classList.add("highscoreList-items");
+        li.innerHTML = `<span id="theName">${highscore.name}</span><span>${highscore.score}</span>`;
+        orderedList.appendChild(li);
+
+    })
+    if(orderedList.childNodes.length > 0){
+        clearListBtn.style.display = "inline-block";
+    }
+})
+// Close highscores menu
+const clearListBtn = document.querySelector("#clearList");
+document.querySelector("#closeHighscores").addEventListener("click", () => {
+    highscoresListMenu.style.display = "none";
+
+    // As long as there is a first child in the orderedList element, remove that child.
+    while (orderedList.firstChild) {
+        orderedList.removeChild(orderedList.firstChild);
+    }
+})
+
+// Clear highscores list
+clearListBtn.addEventListener("click", () => {
+    localStorage.removeItem("highscoresList");
+    localStorage.removeItem("highscore");
+    while (orderedList.firstChild) {
+        orderedList.removeChild(orderedList.firstChild);
+    }
+})
+
+
 
 // RESTART GAME
 function restartGame() {
