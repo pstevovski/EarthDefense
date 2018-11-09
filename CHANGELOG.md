@@ -42,6 +42,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Fixed bug where player runs out of screen while using booster.
 ---------------------
 ## All Changes:
+### v1.1.2 - Nov 9 2018 [MINOR UPDATE]
+### Changed
+* Corrected player speed issues on leveling, colliding with using booster.
+* Corrected highscore / score saving system.
+* Fixed minor bugs and other minor corrections.
+* Added level and XP reset on restarting the game.
+
 ### v1.1.1 - Nov 9 2018
 ### Added
 * Added a highscore list to the main menu
