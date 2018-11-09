@@ -305,7 +305,7 @@ onkeydown = onkeyup = function (e) {
         if(map[useBooster] && d =="LEFT" || map[useBooster] && d == "RIGHT") {
             if(player.boost > 0 && player.boost <= 100) {
                 speedBooster = true;
-                player.speed = 15;
+                player.speed += 10;
                 // Empty out the speed booster
                 player.boost = player.boost - 2;
                 engineFlames.src = `${endPath}/assets/images/engineFlameBooster.png`;
@@ -326,7 +326,7 @@ onkeydown = onkeyup = function (e) {
 
 // Clear spaceship's commands when key is released
 function clearShipCommands() {
-    player.speed = player.speed;
+    player.speed = speedIncreased;
     speedBooster = false;
     isSpaceDown = false;
     d = "";
@@ -356,7 +356,7 @@ function shoot(e){
                     x: player.x + ship.width,
                     y: player.y - 10
                 })
-            } else if(level > 6) {
+            } else if(level >= 6) {
                 ammo.push({
                     x: player.x + ship.width,
                     y: player.y + (ship.height / 2)
@@ -858,6 +858,7 @@ function updateKillCount() {
 }
 
 // Player levels up
+let speedIncreased = 5;
 function levelUp() {
     // Increase the level and update the text
     level++;
@@ -866,8 +867,9 @@ function levelUp() {
     shieldDestroyed = false;
 
     // Increase player's ship speed each time player levels up
-    player.speed += 1;
-    
+    speedIncreased++;
+    player.speed = speedIncreased;
+
     // Restore health and shield to the ship
     if(player.hp <= 60) {
         player.hp = player.hp + 40;
@@ -879,12 +881,10 @@ function levelUp() {
     healthText.textContent = player.hp + "%";
     shieldText.textContent = player.shield + "%";
 }
-
 // As played time goes by, increase difficulty.
 function increaseDifficulty() {
     endTime = new Date();
-    let timeCurrent = (endTime - startingTime) / 1000;
-    timeCurrent = Math.floor(timeCurrent)
+    let timeCurrent = Math.floor( (endTime - startingTime) / 1000);
 
     if(timeCurrent === 30) { // After 30 seconds
         enemySpeed = 2;
@@ -1029,26 +1029,29 @@ function endgame(secondsLeft){
     document.querySelector("#finalScore").textContent = finalScore;
     document.querySelector("#highscore").textContent = highscore;
 
+    // Display the menu with an input to enter player's name
+    newScore(finalScore);
+
     if(finalScore > highscore) {
         localStorage.setItem("highscore", finalScore);
         document.querySelector("#highscore").textContent = localStorage.getItem("highscore");
         newHighscore(finalScore);
     }
 }
-
-// Display notification that the user has a new HIGHSCORE
-function newHighscore(finalScore) {
+function newScore(finalScore) {
+    // NEW PLAYER'S SCORE MENU
     const inputMenu =  document.querySelector(".newHighscore-input");
-    emptyWarningText.textContent = "NEW HIGHSCORE !!!";
-    emptyWarningText.classList.add("emptyWarning-Highscore");
-
-    // Remove the notification
-    setTimeout(() => {
-        emptyWarningText.classList.remove("emptyWarning-Highscore");
-    }, 2000);
-
-    // NEW HIGHSCORES MENU
+    const scoreText = document.querySelector("#scoreText");
     inputMenu.style.display = "flex";
+
+    // Display different message according to the score
+    if(finalScore > highscore) {
+        scoreText.innerHTML = `<h2 class="newHighscore-notification">NEW HIGHSCORE !!!</h2>`
+    } else {
+        scoreText.innerHTML = `<h2>NOT BAD</h2>`;
+    }
+
+    // Save player's name and score
     saveBtn.addEventListener("click", () => {
         const value = inputField.value;
         const results = {
@@ -1063,6 +1066,17 @@ function newHighscore(finalScore) {
         inputMenu.style.display = "none";
     })
 }
+
+// Display notification that the user has a new HIGHSCORE
+function newHighscore() {
+    emptyWarningText.textContent = "NEW HIGHSCORE !!!";
+    emptyWarningText.classList.add("emptyWarning-Highscore");
+
+    // Remove the notification
+    setTimeout(() => {
+        emptyWarningText.classList.remove("emptyWarning-Highscore");
+    }, 2000);
+}
 let inputField = document.querySelector("#playerName-input");
 let saveBtn = document.querySelector("#savePlayer");
 
@@ -1072,7 +1086,14 @@ const highscoreList = document.querySelector("#highscoreList");
 const orderedList = document.querySelector("#theList");
 highscoreList.addEventListener("click", function(){
     highscoresListMenu.style.display = "block";
-    let getHighscores = JSON.parse(localStorage.getItem("highscoresList"));
+    const getHighscores = JSON.parse(localStorage.getItem("highscoresList"));
+    const noHighscoresNote = document.querySelector("#noHighscores");
+
+    if(getHighscores.length === 0) {
+        noHighscoresNote.style.display = "block";
+    } else {
+        noHighscoresNote.style.display = "none";
+    }
 
     // Sort the items by highest score from top to bottom.
     getHighscores.sort((a,b) => (a.score > b.score) ? -1 : 1);
@@ -1171,9 +1192,30 @@ function restartGame() {
     player.speed = 5;
     heat = -1;
 
+    // Reset level and experience
+    exp = 0;
+    requiredExp = 80;
+    level = 1;
+    currentLevel.textContent = level;
+    currentExp.textContent = exp;
+    requiredExpText.textContent = requiredExp + "XP";
+    let levelExp = (exp / requiredExp) * 100;
+    levelBar.style.width = `${levelExp}%`;
+
+    // Restart current time which affets difficulty
+    startingTime = new Date();
+    increaseDifficulty();
+
+    // Reset enemies data
+    enemySpeed = 1;
+    enemiesShootingSpeed = 700;
+
     // Reset health and shield text display
     healthText.textContent = player.hp+"%";
     shieldText.textContent = player.shield+"%";
+
+    // Clear input field at game over menu
+    inputField.value = "";
 
     // Set restoration and enemy shooting intervals again.
     graduallyRestoreInterval = setInterval(graduallyRestore, 300);
