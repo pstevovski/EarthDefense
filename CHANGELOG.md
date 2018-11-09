@@ -42,6 +42,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Fixed bug where player runs out of screen while using booster.
 ---------------------
 ## All Changes:
+### v1.1.2 - Nov 9 2018 [MINOR UPDATE]
+### Changed
+* Corrected player speed issues on leveling, colliding with using booster.
+* Corrected highscore / score saving system.
+* Fixed minor bugs and other minor corrections.
+* Added level and XP reset on restarting the game.
+
+### v1.1.1 - Nov 9 2018
+### Added
+* Added a highscore list to the main menu
+* Option to save your name in a highscores list, if you beat the previously set highscore
+### Changed
+* Corrected ship "teleportation" from top to bottom, and bottom to top, now its more smoothly.
+
+### v1.1.0 - Nov 8 2018
+### Added
+* Level system for the ship
+* Upgrades of weapons based on level system (needs polishing and rework)
+* Option to teleport from top to bottom, and bottom to top, as escape posibilities to dodge enemies.
+### Changed
+* Changed required experience to level up the ship from 100 XP to 80 XP on the first level, after which levels follow: requiredXP * 2 for each following level.
+
 ### v.1.0.9 [HOTFIX] - Nov 6 2018
 #### Changed
 * Corrected ship movement, now supporting diagonal movement.

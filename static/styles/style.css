@@ -49,7 +49,7 @@ button{
     margin: 0 auto;
     margin-bottom: 40px;
 }
-#startGame{
+.mainButtons{
     border: none;
     background: none;
     font-size: 14px;
@@ -57,30 +57,11 @@ button{
     color: #f5f5f5;
     letter-spacing: 1px;
     cursor: pointer;
-    /* animation: startGameText 2s ease forwards infinite; */
-    display: inline-block;
     transition: 0.3s ease;
     z-index: 9;
     outline: none;
 }
-#startGame:hover{
-    color: gold;
-}
-#about{
-    border: none;
-    background: none;
-    font-size: 14px;
-    font-family: "Press Start 2P";
-    color: #f5f5f5;
-    letter-spacing: 1px;
-    cursor: pointer;
-    /* animation: startGameText 2s ease forwards infinite; */
-    display: inline-block;
-    transition: 0.3s ease;
-    z-index: 9;
-    outline: none;
-}
-#about:hover{
+.mainButtons:hover{
     color: gold;
 }
 #copyright{
@@ -93,6 +74,8 @@ button{
 .soundControl{
     cursor: pointer;
 }
+
+
 
 .loading{
     position: absolute;
@@ -170,15 +153,63 @@ button{
     color: gold;
     text-decoration: none;
 }
-#closeAbout{
+.highscoresList-menu {
+    display: none;
+    color: #f5f5f5;
+    width: 400px;
+    height: auto;
+    padding: 20px;
+    border: 1px solid #f5f5f535;
+    background-color: #000016;
+    z-index: 9;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: "Press Start 2P";
+}
+.highscoresList-menu h3{
+    font-size: 20px;
+    letter-spacing: 2px;
+    color: gold;
+    margin-bottom: 20px;
+}
+.highscoresList-menu #theName{
+    color: gold;
+}
+.highscoresList-menu p {
+    font-size: 12px;
+    margin: 10px 0;
+}
+.highscoreList-items {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 5px;
+    list-style-type: none;
+    font-size: 12px;
+
+}
+.highscoreList-items > * {
+    margin: 3px 0;
+}
+
+.closeMenu{
     background: none;
     border: none;
     color: #f5f5f5;
     font-family: "Press Start 2P";
     cursor: pointer;
 }
-#closeAbout:hover{
+.closeMenu:hover{
     color: gold;
+}
+#clearList{
+    display: none;
+}
+#clearList:hover{
+    color: #bd0e08;
 }
 
 /*////////////////////////////////////////////*/
@@ -205,6 +236,40 @@ button{
 }
 .menuActive{
     opacity: 1;
+}
+.menu .level-container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    padding: 3px;
+    width: 350px;
+}
+.level-bar{
+    width: 200px;
+    height: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #f5f5f520;
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+}
+.level-bar p{
+    color: #f5f5f5;
+    z-index: 9999;
+}
+.level-bar_fill{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 100%;
+    transition: 0.3s ease;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    background-color: #b30d07;
 }
 .container .health-container{
     display: none;
@@ -264,13 +329,7 @@ button{
     display: block;
     animation: overheatAnimation 0.6s ease forwards infinite;
 }
-.emptyWarning-Highscore{
-    top: 15%;
-    z-index: 9999;
-    font-size: 25px;
-    display: block;
-    animation: highscoreAnimation 0.6s ease forwards infinite;
-}
+
 
 .countdown {
     display: none;
@@ -366,8 +425,40 @@ canvas{
     transform: translate(-50%, -50%);
     z-index: 999;
 }
+.game--over .newHighscore-input{
+    width: 340px;
+    height: auto;
+    padding: 15px;
+    margin: 0 auto;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 9999;
+}
+.game--over .newHighscore-input > * {
+    margin: 5px 0;
+}
+.game--over .newHighscore-input input{
+    background-color: #010120;
+    border: 1px solid #f5f5f535;
+    padding: 5px;
+    color: #f5f5f5;
+    outline: none;
+
+    font-family: "Press Start 2P";
+    font-size: 10px;
+}
+.game--over .newHighscore-input .newHighscore-notification{
+    color: #f5f5f5;
+    text-shadow: 4px 4px #860905;
+    animation: highscoreAnimation 1.25s ease forwards infinite;
+}
+.game--over .newHighscore-input #scoreText{
+    font-size: 12px;
+}
 .game--over .scores{
-    margin-top: 20px;
+    margin-top: 5px;
     text-align: left;
 }
 .game--over .scores span {

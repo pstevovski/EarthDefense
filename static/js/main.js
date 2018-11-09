@@ -121,7 +121,8 @@ let engineFlameX;
 let engineFlameY;
 
 // Player ammo
-let ammo = [];
+const ammo = [];
+
 
 // Enemies
 let enemies = [];
@@ -304,7 +305,7 @@ onkeydown = onkeyup = function (e) {
         if(map[useBooster] && d =="LEFT" || map[useBooster] && d == "RIGHT") {
             if(player.boost > 0 && player.boost <= 100) {
                 speedBooster = true;
-                player.speed = 15;
+                player.speed += 10;
                 // Empty out the speed booster
                 player.boost = player.boost - 2;
                 engineFlames.src = `${endPath}/assets/images/engineFlameBooster.png`;
@@ -312,7 +313,7 @@ onkeydown = onkeyup = function (e) {
             // Disable speed boost if it reaches 0
             if(player.boost <= 0) {
                 speedBooster = false;
-                player.speed = 5;
+                player.speed = player.speed;
                 emptyWarningText.textContent = "BOOSTER EMPTY !";
                 emptyWarningText.classList.add("emptyWarning-textActive");
                 alarm.currentSrc = 0;
@@ -325,7 +326,7 @@ onkeydown = onkeyup = function (e) {
 
 // Clear spaceship's commands when key is released
 function clearShipCommands() {
-    player.speed = 5;
+    player.speed = speedIncreased;
     speedBooster = false;
     isSpaceDown = false;
     d = "";
@@ -337,14 +338,38 @@ function clearShipCommands() {
 function shoot(e){
     const key = e.keyCode;
     if(gameStarted && !isOverheated) { 
-        if(isSpaceDown) return;
+        if(isSpaceDown) return; // If space is already pressed and hold, end the function.
         if(key == shooting) {
             isSpaceDown = true;
             // Display the rocket WHEN the user shoots.
-            ammo.push({
-                x: player.x + ship.width,
-                y: player.y + (ship.height / 2)
-            })
+            if(level < 3) {
+                ammo.push({
+                    x: player.x + ship.width,
+                    y: player.y + (ship.height / 2)
+                })
+            } else if(level >= 3 && level <= 5) {
+                ammo.push({
+                    x: player.x + ship.width,
+                    y: player.y + (ship.height / 2)
+                })
+                ammo.push({
+                    x: player.x + ship.width,
+                    y: player.y - 10
+                })
+            } else if(level >= 6) {
+                ammo.push({
+                    x: player.x + ship.width,
+                    y: player.y + (ship.height / 2)
+                })
+                ammo.push({
+                    x: player.x + ship.width,
+                    y: player.y - (ship.height / 2 - 10)
+                })
+                ammo.push({
+                    x: player.x + ship.width,
+                    y: player.y + (ship.height / 2 + 30)
+                })
+            } // NOT THE BEST ammo upgrade system, will need to rework this later on.
             missileSound.play();
             missileSound.currentTime = 0;
             overheated();
@@ -353,6 +378,7 @@ function shoot(e){
     // In case user sets shooting control to be alt/ctrl etc.
     e.preventDefault();
 }
+
 // Overheat the spaceship's guns.
 const emptyWarningText = document.querySelector(".emptyWarning-text");
 const blocks = document.querySelectorAll(".overheat-bar_block");
@@ -638,7 +664,9 @@ function draw(){
     if(d == "DOWN") {
         player.y += player.speed;
     }
-    if(d == "UP_LEFT") {
+
+    // DIAGONAL MOVEMENT
+    if(d == "UP_LEFT") { 
         player.x -= player.speed;
         player.y -= player.speed;
     }
@@ -679,22 +707,26 @@ function draw(){
         }
     }
 
-    // If spaceship hits the boundry, remove the direction
+    // If spaceship hits the boundry, remove the direction or teleport him top-bottom / bottom-top
     if(player.x <= 0) {
         player.x += player.speed;
     } else if (player.x >= 1300 - ship.width) {
         player.x -= player.speed;
-    } else if (player.y <= 0) {
-        player.y += 5;
-    } else if (player.y >= 500 - ship.height) {
-        player.y -= 5;
+    } else if (player.y <= -40) {
+        player.y = 520 - player.speed;
+    } else if (player.y >= 520) {
+        player.y = -30 + player.speed;
     }
+    console.log(player.y)
 
     // Draw the ship
     ctx.drawImage(ship, player.x, player.y);
     engineFlameX = player.x - (ship.width - 42);
     engineFlameY = player.y + (ship.height / 2 - 6);
     ctx.drawImage(engineFlames, engineFlameX, engineFlameY);
+
+    // Check how much time has passed and increase difficulty accordingly.
+    increaseDifficulty();
 }
 // Restore sound effect (shield, health, time)
 function restoreSound() {
@@ -795,36 +827,81 @@ function playerHit(){
     }
 }
 
-// Display notification that the user has a new HIGHSCORE
-function newHighscore() {
-    emptyWarningText.textContent = "NEW HIGHSCORE !!!";
-    emptyWarningText.classList.add("emptyWarning-Highscore");
-
-    // Remove the notification
-    setTimeout(() => {
-        emptyWarningText.classList.remove("emptyWarning-Highscore");
-    }, 2000);
-}
-
-// Update the score and deal with difficulty
+// Update the score
+let exp = 0;
+let requiredExp = 80;
+let currentExp = document.querySelector("#currentExp");
+let requiredExpText = document.querySelector("#requiredExp");
+let levelBar = document.querySelector(".level-bar_fill");
+const currentLevel = document.querySelector("#currentLevel");
+let level = 1;
 function updateKillCount() {
     // Update score
     killCount++;
     displayKills.textContent = killCount;
 
-    // Increase difficulty when user reaches a certain score point.
-    if(killCount === 30) {
+    // Increase EXPERIENCE.
+    exp += 20;
+    currentExp.textContent = exp;
+
+    // When required exp per level is met, increase level
+    if(exp == requiredExp) {
+        exp = 0;
+        requiredExp = requiredExp * 2;
+        currentExp.textContent = exp;
+        requiredExpText.textContent = requiredExp + "XP";
+        levelUp(); 
+    }
+    // Fill the bar to display xp progress
+    let levelExp = (exp / requiredExp) * 100;
+    levelBar.style.width = `${levelExp}%`;
+}
+
+// Player levels up
+let speedIncreased = 5;
+function levelUp() {
+    // Increase the level and update the text
+    level++;
+    currentLevel.textContent = level;
+
+    shieldDestroyed = false;
+
+    // Increase player's ship speed each time player levels up
+    speedIncreased++;
+    player.speed = speedIncreased;
+
+    // Restore health and shield to the ship
+    if(player.hp <= 60) {
+        player.hp = player.hp + 40;
+    }
+    if(player.shield <= 80) {
+        player.shield = player.shield + 20;
+    }
+
+    healthText.textContent = player.hp + "%";
+    shieldText.textContent = player.shield + "%";
+}
+// As played time goes by, increase difficulty.
+function increaseDifficulty() {
+    endTime = new Date();
+    let timeCurrent = Math.floor( (endTime - startingTime) / 1000);
+
+    if(timeCurrent === 30) { // After 30 seconds
         enemySpeed = 2;
         enemiesShootingSpeed = 400;
         displayNotification();
-    } else if (killCount === 50) {
+    } else if(timeCurrent === 60) { // After 60 seconds
         enemySpeed = 5;
         enemiesShootingSpeed = 300;
         displayNotification();
-    } else if(killCount == 80) {
-        enemiesShootingSpeed = 150;
-    } else if(killCount == 100) {
-        enemiesShootingSpeed = 60;
+    } else if(timeCurrent === 90) { // After 90 seconds
+        enemySpeed = 8;
+        enemiesShootingSpeed = 200;
+        displayNotification();
+    } else if(timeCurrent === 120) { // After 120 seconds
+        enemySpeed = 10;
+        enemiesShootingSpeed = 100;
+        displayNotification();
     }
 }
 
@@ -905,6 +982,7 @@ function decreaseShield() {
         shieldDestroyed = true;
     }
 }
+
 // When the game has ended / been completed.
 function endgame(secondsLeft){
     // Disable intervals
@@ -951,12 +1029,108 @@ function endgame(secondsLeft){
     document.querySelector("#finalScore").textContent = finalScore;
     document.querySelector("#highscore").textContent = highscore;
 
+    // Display the menu with an input to enter player's name
+    newScore(finalScore);
+
     if(finalScore > highscore) {
         localStorage.setItem("highscore", finalScore);
         document.querySelector("#highscore").textContent = localStorage.getItem("highscore");
-        newHighscore();
+        newHighscore(finalScore);
     }
 }
+function newScore(finalScore) {
+    // NEW PLAYER'S SCORE MENU
+    const inputMenu =  document.querySelector(".newHighscore-input");
+    const scoreText = document.querySelector("#scoreText");
+    inputMenu.style.display = "flex";
+
+    // Display different message according to the score
+    if(finalScore > highscore) {
+        scoreText.innerHTML = `<h2 class="newHighscore-notification">NEW HIGHSCORE !!!</h2>`
+    } else {
+        scoreText.innerHTML = `<h2>NOT BAD</h2>`;
+    }
+
+    // Save player's name and score
+    saveBtn.addEventListener("click", () => {
+        const value = inputField.value;
+        const results = {
+            name: value,
+            score: finalScore
+        }
+        let highscoresArray =  JSON.parse(localStorage.getItem("highscoresList")) || [];
+        highscoresArray.push(results);
+        localStorage.setItem("highscoresList", JSON.stringify(highscoresArray));
+
+        // Hide the menu
+        inputMenu.style.display = "none";
+    })
+}
+
+// Display notification that the user has a new HIGHSCORE
+function newHighscore() {
+    emptyWarningText.textContent = "NEW HIGHSCORE !!!";
+    emptyWarningText.classList.add("emptyWarning-Highscore");
+
+    // Remove the notification
+    setTimeout(() => {
+        emptyWarningText.classList.remove("emptyWarning-Highscore");
+    }, 2000);
+}
+let inputField = document.querySelector("#playerName-input");
+let saveBtn = document.querySelector("#savePlayer");
+
+// HIGHSCORES LIST 
+const highscoresListMenu = document.querySelector(".highscoresList-menu");
+const highscoreList = document.querySelector("#highscoreList");
+const orderedList = document.querySelector("#theList");
+highscoreList.addEventListener("click", function(){
+    highscoresListMenu.style.display = "block";
+    const getHighscores = JSON.parse(localStorage.getItem("highscoresList"));
+    const noHighscoresNote = document.querySelector("#noHighscores");
+
+    if(getHighscores.length === 0) {
+        noHighscoresNote.style.display = "block";
+    } else {
+        noHighscoresNote.style.display = "none";
+    }
+
+    // Sort the items by highest score from top to bottom.
+    getHighscores.sort((a,b) => (a.score > b.score) ? -1 : 1);
+
+    // Create a new list element for each saved highscore. MAX 10 SCORES SHOWN
+    getHighscores.forEach(highscore => {
+        const li = document.createElement("li");
+        li.classList.add("highscoreList-items");
+        li.innerHTML = `<span id="theName">${highscore.name}</span><span>${highscore.score}</span>`;
+        orderedList.appendChild(li);
+
+    })
+    if(orderedList.childNodes.length > 0){
+        clearListBtn.style.display = "inline-block";
+    }
+})
+// Close highscores menu
+const clearListBtn = document.querySelector("#clearList");
+document.querySelector("#closeHighscores").addEventListener("click", () => {
+    highscoresListMenu.style.display = "none";
+
+    // As long as there is a first child in the orderedList element, remove that child.
+    while (orderedList.firstChild) {
+        orderedList.removeChild(orderedList.firstChild);
+    }
+})
+
+// Clear highscores list
+clearListBtn.addEventListener("click", () => {
+    localStorage.removeItem("highscoresList");
+    localStorage.removeItem("highscore");
+    while (orderedList.firstChild) {
+        orderedList.removeChild(orderedList.firstChild);
+    }
+})
+
+
 
 // RESTART GAME
 function restartGame() {
@@ -1018,9 +1192,30 @@ function restartGame() {
     player.speed = 5;
     heat = -1;
 
+    // Reset level and experience
+    exp = 0;
+    requiredExp = 80;
+    level = 1;
+    currentLevel.textContent = level;
+    currentExp.textContent = exp;
+    requiredExpText.textContent = requiredExp + "XP";
+    let levelExp = (exp / requiredExp) * 100;
+    levelBar.style.width = `${levelExp}%`;
+
+    // Restart current time which affets difficulty
+    startingTime = new Date();
+    increaseDifficulty();
+
+    // Reset enemies data
+    enemySpeed = 1;
+    enemiesShootingSpeed = 700;
+
     // Reset health and shield text display
     healthText.textContent = player.hp+"%";
     shieldText.textContent = player.shield+"%";
+
+    // Clear input field at game over menu
+    inputField.value = "";
 
     // Set restoration and enemy shooting intervals again.
     graduallyRestoreInterval = setInterval(graduallyRestore, 300);

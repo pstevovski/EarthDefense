@@ -9,7 +9,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Earth Defence</title>
+    <title>Earth Defense</title>
     <link rel="stylesheet" href="./static/styles/style.css">
     <link rel="stylesheet" href="./static/styles/fonts.css">
     <link rel="stylesheet" href="./static/styles/animations.css">
@@ -22,8 +22,9 @@
             <h1 id="title">EARTH DEFENSE</h1>
     
             <!-- Start game button -->
-            <button id="startGame" class="main-menu_buttons">start game</button>
-            <button id="about" class="main-menu_buttons">about</button>
+            <button id="startGame" class="mainButtons main-menu_buttons">start game</button>
+            <button id="highscoreList" class="mainButtons main-menu_buttons">highscores</button>
+            <button id="about" class="mainButtons main-menu_buttons">about</button>
 
             <!-- Github link -->
             <a href="https://github.com/pecko95/EarthDefence" target="_blank"><img src="./assets/images/github.png" alt="Github" width="32x" height="32px"></a>
@@ -37,7 +38,16 @@
             <div class="aboutMenu">
                 <h3>ABOUT</h3>
                 <p>Remake of the classic Space Shooter type of games, with minor additions. All the assets used to create this game were free, provided by: <a href="https://jonathan-so.itch.io/" target="_blank">Jonathan So</a>, <a href="https://kenney.nl/" target="_blank">Kenny</a>, and Google(still free !). This was a learning project, hope you like it. Have fun !</p>
-                <button id="closeAbout" class="main-menu_buttons">Close</button>
+                <button id="closeAbout" class="main-menu_buttons closeMenu">Close</button>
+            </div>
+
+            <!-- Highscores menu -->
+            <div class="highscoresList-menu">
+                <h3>HIGHSCORES</h3>
+                <p id="noHighscores">No highscores... go set one!</p>
+                <button id="clearList" class="main-menu_buttons closeMenu">Clear</button>
+                <ol id="theList"></ol>
+                <button id="closeHighscores" class="main-menu_buttons closeMenu">Close</button>
             </div>
             
         </div>
@@ -58,13 +68,19 @@
         </div>
     </div>
 
-
     <!-- CANVAS -->
     <div class="container">
         <!-- INFO MENU - SCORE, TIMER, HP... -->
         <div class="menu">
             <p id="pauseGame" class="main-menu_buttons">MENU</p>
             <div class="time"><p id="timerDisplay">0:30</p></div>
+            <div class="level-container">
+                <p>Level: <span id="currentLevel">1</span></p>
+                <div class="level-bar">
+                    <p><span id="currentExp">0</span>/<span id="requiredExp">80 XP</span></p>
+                    <div class="level-bar_fill"></div>
+                </div>
+            </div>
             <div class="textContainer">
                 <p class="killCount">KILLS: <span id="killCount">0</span></p>
             </div>
@@ -108,10 +124,21 @@
             </div>
         </div>
 
+        
+
         <!-- GAME FINISHED / GAME OVER MENU -->
         <div class="game--over">
             <img id="displayImage" src="./assets/images/tombstone.png" alt="Tombstone" width="70px"  height="70px">
             <p id="message">Thank you for your service.</p>
+
+            <!-- NEW HIGHSCORE PLAYER NAME ENTER -->
+            <div class="newHighscore-input">
+                <h2 id="scoreText"></h2>
+                <input type="text" id="playerName-input" placeholder="Enter your name..." required>
+                <button id="savePlayer" class="main-menu_buttons gameOverBtn">SAVE</button>
+            </div>
+
+
             <div class="scores">
                 <p>Total kills: <span id="totalKills"></span></p>
                 <p>Time played multiplier: <span id="multiplier"></span></p>
