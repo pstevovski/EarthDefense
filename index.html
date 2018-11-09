@@ -44,6 +44,7 @@
             <!-- Highscores menu -->
             <div class="highscoresList-menu">
                 <h3>HIGHSCORES</h3>
+                <p id="noHighscores">No highscores... go set one!</p>
                 <button id="clearList" class="main-menu_buttons closeMenu">Clear</button>
                 <ol id="theList"></ol>
                 <button id="closeHighscores" class="main-menu_buttons closeMenu">Close</button>
@@ -132,7 +133,7 @@
 
             <!-- NEW HIGHSCORE PLAYER NAME ENTER -->
             <div class="newHighscore-input">
-                <h2>NEW HIGHSCORE !!!</h2>
+                <h2 id="scoreText"></h2>
                 <input type="text" id="playerName-input" placeholder="Enter your name..." required>
                 <button id="savePlayer" class="main-menu_buttons gameOverBtn">SAVE</button>
             </div>
