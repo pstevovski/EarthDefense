@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Earth Defense</title>
-    <link rel="stylesheet" href="./static/styles/style.css">
+    <link rel="stylesheet" href="./static/styles/main.css">
     <link rel="stylesheet" href="./static/styles/fonts.css">
     <link rel="stylesheet" href="./static/styles/animations.css">
 </head>
@@ -38,16 +38,16 @@
             <div class="aboutMenu">
                 <h3>ABOUT</h3>
                 <p>Remake of the classic Space Shooter type of games, with minor additions. All the assets used to create this game were free, provided by: <a href="https://jonathan-so.itch.io/" target="_blank">Jonathan So</a>, <a href="https://kenney.nl/" target="_blank">Kenny</a>, and Google(still free !). This was a learning project, hope you like it. Have fun !</p>
-                <button id="closeAbout" class="main-menu_buttons closeMenu">Close</button>
+                <button id="closeAbout" class="main-menu_buttons mainButtons">Close</button>
             </div>
 
             <!-- Highscores menu -->
             <div class="highscoresList-menu">
                 <h3>HIGHSCORES</h3>
                 <p id="noHighscores">No highscores... go set one!</p>
-                <button id="clearList" class="main-menu_buttons closeMenu">Clear</button>
+                <button id="clearList" class="main-menu_buttons mainButtons">Clear</button>
                 <ol id="theList"></ol>
-                <button id="closeHighscores" class="main-menu_buttons closeMenu">Close</button>
+                <button id="closeHighscores" class="main-menu_buttons mainButtons">Close</button>
             </div>
             
         </div>
@@ -110,7 +110,7 @@
 
         <!-- OVERHEATING BAR -->
         <div class="overheat-container">
-            <p>Overheat: </p>
+            <p>OVERHEAT: </p>
             <div class="overheat-bar">
                 <div class="overheat-bar_block"></div>
                 <div class="overheat-bar_block"></div>
@@ -164,12 +164,12 @@
                 <h3>VOLUME CONTROLS:</h3>
                 <!-- CONTROL BACKGROUND MUSIC VOLUME -->
                 <div class="settings-music">
-                    <label for="musicVolume">Music volume: <span class="displayChange" id="bgMusic">100%</span></label>
+                    <label for="musicVolume">Music volume: <span class="displayChange" id="bgMusic">20%</span></label>
                     <input type="range" id="musicVolume" min="0" max="100" value="20" step="1" name="bgMusic">
                 </div>
                 <!-- CONTROL SFX VOLUME -->
                 <div class="settings-sfx">
-                    <label for="sfxVolume">SFX volume: <span class="displayChange" id="sfx">100%</span></label>
+                    <label for="sfxVolume">SFX volume: <span class="displayChange" id="sfx">30%</span></label>
                     <input type="range" id="sfxVolume" min="0" max="100" value="30" step="1" name="sfx">
                 </div>
             </div>
@@ -207,7 +207,7 @@
                     <input type="text" id="booster" name="useBooster" maxlength="1" value="Shift" spellcheck="false">
                 </div>
             </div>
-            <img class="soundControl" src="./assets/images/soundOn.png" alt="" width="16px" height="16px">
+            <span class="muteContainer">MUTE: <img class="soundControl" src="./assets/images/soundOn.png" title="Mute / Unmute all sounds." alt="" width="16px" height="16px"></span>
             <button id="goBack">BACK</button>
         </div>
 
