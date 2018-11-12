@@ -1,13 +1,10 @@
 // Globals
 const fullPath = window.location.pathname;
-// console.log(fullPath)
 const splitPath = fullPath.split('/');
-// console.log(splitPath.length)
 if (splitPath[splitPath.length - 1] == 'index.html') {
 	splitPath.pop();
 }
 const endPath = splitPath.length > 2 ? splitPath.join('/') : '';
-// console.log(endPath);
 
 let d; // Player ship direction
 let game;
@@ -115,7 +112,8 @@ let player = {
     hp: 100,
     shield: 100,
     overheat: 0,
-    boost: 100
+    boost: 100,
+    missileSpeed: 15,
 }
 let engineFlameX;
 let engineFlameY;
@@ -530,7 +528,7 @@ function draw(){
     if(gameStarted){
         for(let j = 0; j < ammo.length; j++) {
             ctx.drawImage(missile, ammo[j].x, ammo[j].y);
-            ammo[j].x += 15;
+            ammo[j].x += player.missileSpeed;
 
             const hitEnemy = enemies.find(e => {
                 return ammo[j].x >= e.x 
@@ -869,6 +867,7 @@ function levelUp() {
     // Increase player's ship speed each time player levels up
     speedIncreased++;
     player.speed = speedIncreased;
+    player.missileSpeed += 1;
 
     // Restore health and shield to the ship
     if(player.hp <= 60) {
