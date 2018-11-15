@@ -31,8 +31,8 @@ class Player {
         this.map = {};
 
         // Ship's coordinates
-        this.shipX = this.x + this.ship.width;
-        this.shipY = this.y + (this.ship.height / 2);
+        // this.shipX = this.x + this.ship.width;
+        // this.shipY = this.y + (this.ship.height / 2);
 
     };
     
@@ -245,6 +245,8 @@ class Player {
             notificationText.innerHTML = `<i class="material-icons health">local_hospital</i><p>Health renewed!</p>`;
             game.displayNotification();
         }
+
+        game.height;
     }
 
     // Decrease the ship's HP on hit

@@ -1,3 +1,5 @@
+import Game from "./game.js";
+
 const fullPath = window.location.pathname;
 const splitPath = fullPath.split('/');
 if (splitPath[splitPath.length - 1] == 'index.html') {
@@ -6,7 +8,6 @@ if (splitPath[splitPath.length - 1] == 'index.html') {
 const endPath = splitPath.length > 2 ? splitPath.join('/') : '';
 let minHeight = 0;
 let maxHeight = 500;
-
 class Enemies {
     constructor() {
         this.speed = 1;
@@ -20,7 +21,8 @@ class Enemies {
         this.enemyMissile = new Image(); 
         this.enemyShooting = new Audio();
 
-        // this.x = game.width;
+
+        this.x = Game.width;
         // this.y = Math.floor(Math.random() * ( (Game.maxHeight - this.enemyShip.height) - Game.minHeight) + Game.minHeight);
 
         this.enemyShip.src = `${endPath}/assets/images/enemy.png`; // moved to enemies

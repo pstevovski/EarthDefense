@@ -5,7 +5,7 @@ const cHeight = canvas.height;
 const minHeight = 0;
 const maxHeight = 500;
 
-export class Game {
+export default class Game {
     constructor() {
         this.width = cWidth;
         this.height = cHeight;

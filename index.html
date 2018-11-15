@@ -5,7 +5,7 @@
 		EarthDefense Game by pecko95 (https://github.com/pecko95/EarthDefense)
 		v1.0.0 - Oct 29 2018
 		Please comment and enjoy!
-	 -->
+    -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -20,18 +20,18 @@
         <!-- Title -->
         <div class="title">
             <h1 id="title">EARTH DEFENSE</h1>
-    
+            
             <!-- Start game button -->
             <button id="startGame" class="mainButtons main-menu_buttons">start game</button>
             <button id="highscoreList" class="mainButtons main-menu_buttons">highscores</button>
             <button id="about" class="mainButtons main-menu_buttons">about</button>
-
+            
             <!-- Github link -->
             <a href="https://github.com/pecko95/EarthDefence" target="_blank"><img src="./assets/images/github.png" alt="Github" width="32x" height="32px"></a>
-
+            
             <!-- SOUND CONTROL -->
             <img class="soundControl" src="./assets/images/soundOn.png" alt="" width="16px" height="16px">
-
+            
             <p id="copyright">&copy; 2018</p>
 
             <!-- About menu -->
@@ -40,7 +40,7 @@
                 <p>Remake of the classic Space Shooter type of games, with minor additions. All the assets used to create this game were free, provided by: <a href="https://jonathan-so.itch.io/" target="_blank">Jonathan So</a>, <a href="https://kenney.nl/" target="_blank">Kenny</a>, and Google(still free !). This was a learning project, hope you like it. Have fun !</p>
                 <button id="closeAbout" class="main-menu_buttons mainButtons">Close</button>
             </div>
-
+            
             <!-- Highscores menu -->
             <div class="highscoresList-menu">
                 <h3>HIGHSCORES</h3>
@@ -67,7 +67,7 @@
             <p>Hold shift key to use booster!</p>
         </div>
     </div>
-
+    
     <!-- CANVAS -->
     <div class="container">
         <!-- INFO MENU - SCORE, TIMER, HP... -->
@@ -85,7 +85,7 @@
                 <p class="killCount">KILLS: <span id="killCount">0</span></p>
             </div>
         </div>
-
+        
         <!-- HEALTH CONTAINER -->
         <div class="health-container">
             <img src="assets/images/firstAid.png" alt="" width="32px" height="32px">
@@ -93,7 +93,7 @@
                 <p id="healthText">100%</p>
             </div>
         </div>
-
+        
         <!-- SHIP SHIELD CONTAINER -->
         <div class="shield-container">
             <img src="assets/images/shieldImage.png" alt="" width="32px" height="32px">
@@ -107,7 +107,7 @@
 
         <!-- WARNING / NEW HIGHSCORE TEXT -->
         <div class="emptyWarning-text"></div>
-
+        
         <!-- OVERHEATING BAR -->
         <div class="overheat-container">
             <p>OVERHEAT: </p>
@@ -123,9 +123,9 @@
                 <div class="overheat-bar_block"></div>
             </div>
         </div>
-
         
-
+        
+        
         <!-- GAME FINISHED / GAME OVER MENU -->
         <div class="game--over">
             <img id="displayImage" src="./assets/images/tombstone.png" alt="Tombstone" width="70px"  height="70px">
@@ -137,8 +137,8 @@
                 <input type="text" id="playerName-input" placeholder="Enter your name..." required>
                 <button id="savePlayer" class="main-menu_buttons gameOverBtn">SAVE</button>
             </div>
-
-
+            
+            
             <div class="scores">
                 <p>Total kills: <span id="totalKills"></span></p>
                 <p>Time played multiplier: <span id="multiplier"></span></p>
@@ -213,7 +213,7 @@
 
         <!-- GAME WINDOW -->
         <canvas id="canvas" width="1280px" height="500px"></canvas>
-
+        
         <!-- NOTIFICATIONS -->
         <div class="notificationsContainer">
             <div class="notification"></div>
@@ -221,7 +221,10 @@
     </div>
 
     <!-- Script link -->
-    <script src="./static/js/main.js"></script>
-
+    <script type="module" src="./static/js/enemies.js"></script>
+    <!-- <script src="./static/js/main.js"></script> -->
+    <!-- <script src="./static/js/player.js"></script> -->
+    <!-- <script src="./static/js/graphics.js"></script>  -->
+    <!-- <script type="module" src="./static/js/game.js"></script> -->
 </body>
 </html>
