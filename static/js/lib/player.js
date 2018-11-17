@@ -1,14 +1,10 @@
-import {Game} from "./game.js";
+import {game} from "./game.js";
 import {Graphics, Sfx} from "./assets.js";
 
 const emptyWarningText = document.querySelector(".emptyWarning-text");
-const blocks = document.querySelectorAll(".overheat-bar_block");
-const shieldText = document.querySelector("#shieldText");
-const healthText = document.querySelector("#healthText");
-
 
 export class Player {
-    constructor() {
+    constructor(game) {
         this.d = null; // Direction
         this.x = 50;
         this.y = 250;
@@ -24,6 +20,13 @@ export class Player {
         this.isSpaceDown = false;
         this.shieldDestroyed = false;
         this.currentLevel = document.querySelector("#currentLevel");
+        this.shieldText = document.querySelector("#shieldText");
+        this.healthText = document.querySelector("#healthText");
+
+        // Overheat blocks
+        this.blocks = document.querySelectorAll(".overheat-bar_block");
+
+        this.graduallyRestoreInterval = setInterval(this.graduallyRestore, 300);
 
         // Player's level
         this.level = 1;
@@ -57,8 +60,8 @@ export class Player {
             this.shield += 20;
         }
 
-        healthText.textContent = this.hp + "%";
-        shieldText.textContent = this.shield + "%";
+        this.healthText.textContent = this.hp + "%";
+        this.shieldText.textContent = this.shield + "%";
     }
     
     // Player movement
@@ -176,11 +179,11 @@ export class Player {
 
          // Cycle trough the blocks and add according classes.
          if(this.heat >= 0 && this.heat <= 3) {
-             blocks[this.heat].classList.add("greenPhase");
+             this.blocks[this.heat].classList.add("greenPhase");
          } else if(this.heat >= 4 && this.heat <= 6) {
-             blocks[this.heat].classList.add("yellowPhase");
+             this.blocks[this.heat].classList.add("yellowPhase");
          } else if(this.heat >= 7 && this.heat <= 10) {
-             blocks[this.heat].classList.add("redPhase");
+             this.blocks[this.heat].classList.add("redPhase");
          }
      }
 
@@ -191,13 +194,13 @@ export class Player {
 
             // Re-color the blocks (remove classes)
             if(this.heat >= 0 && this.heat <= 3) {
-                blocks[this.heat].classList.remove("greenPhase");
+                this.blocks[this.heat].classList.remove("greenPhase");
                 this.heat--;
             } else if (this.heat >= 4 && this.heat <= 6) {
-                blocks[this.heat].classList.remove("yellowPhase");
+                this.blocks[this.heat].classList.remove("yellowPhase");
                 this.heat--;
             } else if(this.heat >= 7 && this.heat <= 10) {
-                blocks[this.heat].classList.remove("redPhase");
+                this.blocks[this.heat].classList.remove("redPhase");
                 this.heat--;
             }
         }
@@ -214,7 +217,7 @@ export class Player {
             this.overheat = 0;
             this.isOverheated = false;
             emptyWarningText.classList.remove("emptyWarning-textActive");
-            blocks.forEach(block => {
+            this.blocks.forEach(block => {
                 block.classList.remove("greenPhase")
                 block.classList.remove("yellowPhase")
                 block.classList.remove("redPhase")
@@ -260,13 +263,12 @@ export class Player {
 
     // Restore the ship's HP
     restoreShipHP() {
-        const healthText = document.querySelector("#healthText"); 
         if(this.hp === 100) {
             this.hp = this.hp;
         } else{
             // Restore ships HP and display a notification.
             this.hp = this.hp + 20;
-            healthText.textContent = this.hp+"%";
+            this.healthText.textContent = this.hp+"%";
             notificationText.innerHTML = `<i class="material-icons health">local_hospital</i><p>Health renewed!</p>`;
             game.displayNotification();
         }
@@ -278,7 +280,7 @@ export class Player {
     decreaseShipHP() {
         if(this.hp >= 20 && this.hp <= 100 && this.shieldDestroyed){
             this.hp = this.hp - 20;
-            healthText.textContent = this.hp+"%";
+            this.healthText.textContent = this.hp+"%";
         } else if(this.hp === 0) {
             game.endgame();
             clearInterval(game);
@@ -297,7 +299,7 @@ export class Player {
 
             // Restore shield points and display a notification
             this.shield = this.shield + 20;
-            shieldText.textContent = this.shield+"%";
+            this.shieldText.textContent = this.shield+"%";
             notificationText.innerHTML = `<i class="material-icons shield">security</i><p>Shield restored!</p>`;
             game.displayNotification();
         }
@@ -308,7 +310,7 @@ export class Player {
         // Decrease shield
         if(this.shield >= 20 && this.shield <= 100) {
             this.shield = this.shield - 20;
-            shieldText.textContent = this.shield+"%";
+            this.shieldText.textContent = this.shield+"%";
         } else if(this.shield < 20) {
             // If shield is at 0 (at 20% shield gets deducted 20, so it goes straight to 0), mark it as destroyed
             this.shieldDestroyed = true;
@@ -327,7 +329,7 @@ class Ammo {
 }
 
 export const player = new Player();
-const game = new Game();
+// const game = new Game();
 const graphics = new Graphics();
 const sfx = new Sfx();
 

@@ -1,6 +1,6 @@
 import {Sfx} from "./assets.js";
-import { Player } from "./player.js";
-import {Game} from "./game.js";
+import {player} from "./player.js";
+import {game} from "./game.js";
 
 const menu = document.querySelector(".menu");
 const pauseMenu = document.querySelector(".pause--menu");
@@ -15,64 +15,6 @@ const shipControls = document.querySelectorAll(`.settings-menu input[type="text"
 const displayCommand = document.querySelectorAll(".displayCommand");
 const mainMenuButtons = document.querySelectorAll(".main-menu_buttons");
 const soundControl = document.querySelectorAll(".soundControl");
-
-
-
-let startingTime, endTime; // Measure time
-let pausedTime;
-
-function pauseGame() {
-    // Display the pause menu
-    pauseMenu.style.display = "flex";
-
-    // Clear the interval for the game
-    clearInterval(game);
-    clearInterval(enemiesShootingInterval);
-    clearInterval(graduallyRestoreInterval);
-    clearInterval(countdown);
-
-    // Stop enemies and ship from moving
-    game.isStarted = false;
-
-    // Stop enemies from spawning
-    enemies.spawned = false;
-
-    // Save the time when game was paused
-    pausedTime = Math.floor((new Date() - startingTime) / 1000);
-}
-
-// Pause game on ESCAPE and if clicked outside of canvas
-window.addEventListener("keydown", e => {
-    if(e.keyCode === 27) pauseGame();
-})
-// window.addEventListener("click", e => {
-//     if(e.target.id !== "canvas" && e.target.id !== "continueGame" && game.isStarted) pauseGame();
-// })
-
-function continueGame() {
-    // Hide the pause menu
-    pauseMenu.style.display = "none";
-
-    // Restore intervals
-    game = setInterval(draw, 1000 / 60);
-    enemiesShootingInterval = setInterval(enemiesShoot, 700);
-    graduallyRestoreInterval = setInterval(graduallyRestore, 300);
-    timer(secondsLeft);
-
-    // Enable enemies and ship movement
-    game.isStarted = true;
-
-    // Enable enemies to spawn
-    enemies.spawned = true;
-
-    // Continue measuring time
-    pausedTime *= 1000;
-}
-
-// Exit the game - reload page.
-function exitGame() {
-    location.reload();
-}
 
 // About menu
 const aboutMenu = document.querySelector(".aboutMenu");
@@ -221,7 +163,6 @@ soundControl.forEach(control => control.addEventListener("click", ()=>{
     }
 }));
 
-
 // Volume control event listeners
 volumeControls.forEach(control => control.addEventListener("mousedown",()=> controllingVolume = true));
 volumeControls.forEach(control => control.addEventListener("mouseup",()=> controllingVolume = false));
@@ -229,13 +170,8 @@ volumeControls.forEach(control => control.addEventListener("change", controlVolu
 volumeControls.forEach(control => control.addEventListener("mousemove", controlVolume));
 
 // Menus event listeners
-// document.querySelector("#startGame").addEventListener("click", loadGame);
-document.querySelector("#pauseGame").addEventListener("click", pauseGame);
-document.querySelector("#continueGame").addEventListener("click", continueGame);
-document.querySelector("#restartGame").addEventListener("click", restartGame);
 clearListBtn.addEventListener("click", clearHighscores);
 closeHighscores.addEventListener("click", closeHighscoresMenu);
-exitGameBtn.forEach(exit => exit.addEventListener("click", exitGame));
 highscoreList.addEventListener("click", displayHighscores);
 document.getElementById("about").addEventListener("click", displayAbout);
 document.getElementById("closeAbout").addEventListener("click", displayAbout);
@@ -246,5 +182,5 @@ shipControls.forEach(control => control.addEventListener("click", ()=>this.value
 
 // Initialize the imported classes
 const sfx = new Sfx();
-const player = new Player();
+// const player = new Player();
 // const game = new Game();

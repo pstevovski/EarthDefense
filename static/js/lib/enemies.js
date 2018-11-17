@@ -9,6 +9,7 @@ export class Enemies {
         this.ammo = [];
         this.spawned = true;
         this.shootingSpeed = 700;
+        this.enemiesShootingInterval = setInterval(this.shoot, this.shootingSpeed);
 
         // Enemies starting point
         // this.x = game.cWidth;
@@ -36,7 +37,6 @@ export class Enemies {
             sfx.enemyShooting.currentTime = 0;
             sfx.enemyShooting.play();
         }
-        console.log(this.ammo);
     }
 }
 export const enemies = new Enemies();
@@ -44,7 +44,7 @@ const graphics = new Graphics();
 const sfx = new Sfx();
 // const game = new Game();
 
-// let enemiesShootingInterval = setInterval(enemies.shoot.bind(enemies), enemies.shootingSpeed);
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
