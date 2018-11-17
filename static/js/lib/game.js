@@ -1,21 +1,104 @@
-export default class Game {
+import {player} from "./player.js";
+import {enemies} from "./enemies.js";
+
+export class Game {
     constructor() {
         this.canvas = document.querySelector("#canvas");
+        this.displayKills = document.querySelector("#killCount");
+        this.currentExp = document.querySelector("#currentExp");
+        this.requiredExpText = document.querySelector("#requiredExp");
+        this.levelBar = document.querySelector(".level-bar_fill");
+        this.notificationText = document.querySelector(".notification");
         this.ctx = this.canvas.getContext("2d");
         this.cWidth = this.canvas.width;
         this.cHeight = this.canvas.height;
         this.minHeight = 0;
         this.maxHeight = 500;
         this.isStarted = true;
+        this.requiredExp = 80;
+        this.endTime;
+        this.startingTime;
+    }
+    
+    // Update kills and experience when user kills an enemy
+    updateKillcount() {
+        player.killCount++;
+        this.displayKills.textContent = player.killCount;
+
+        player.exp += 20;
+        this.currentExp.textContent = player.exp;
+
+        // When required exp is met, level up
+        if(player.exp === this.requiredExp) {
+            player.exp = 0;
+            this.requiredExp = this.requiredExp * 2;
+            this.currentExp.textContent = player.exp;
+            this.requiredExpText.textContent = this.requiredExp + "XP";
+            player.levelUp();
+        }
+        let levelExp = (player.exp / this.requiredExp) * 100;
+        this.levelBar.style.width = `${levelExp}%`;
+        console.log(this.requiredExp, player.exp, player.killCount);
+    }
+
+    // Increase game's difficulty as time goes by
+    increaseDifficulty() {
+        this.endTime = new Date();
+
+        let timeCurrent = Math.floor((this.endTime - this.startingTime) / 1000);
+
+        if(timeCurrent === 30) {
+            enemies.speed = 2;
+            enemies.shootingSpeed = 400;
+            this.displayNotification();
+        } else if (timeCurrent === 60) {
+            enemies.speed = 4;
+            enemies.shootingSpeed = 300;
+            this.displayNotification();
+        } else if (timeCurrent === 90) {
+            enemies.speed = 8;
+            enemies.shootingSpeed = 200;
+            this.displayNotification();
+        } else if (timeCurrent === 200) {
+            enemies.speed = 10;
+            enemies.shootingSpeed = 100;
+            this.displayNotification();
+        }
+    }
+
+    // Display notifications
+    displayNotification(secondsLeft) {
+        this.notificationText.classList.add("activeNotification");
+
+        if(player.killCount === 30) {
+            this.notificationText.innerHTML = `<i class="material-icons">warning</i> <p>Another Disturbance!</p>`
+        } else if (player.killCount === 50) {
+            this.notificationText.innerHTML= `<i class="material-icons">warning</i> <p>Another Disturbance!</p>`
+        } else if (player.killCount === 80) {
+            this.notificationText.innerHTML= `<i class="material-icons">warning</i> <p>Another Disturbance!</p>`
+        } else if (player.killCount === 100) {
+            this.notificationText.innerHTML= `<i class="material-icons">warning</i> <p>Another Disturbance, you're doing great!</p>`
+        }
+
+        // If there are 10 seconds left, show a warning for low time
+        if(secondsLeft === 10) {
+            this.notificationText.innerHTML = `<i class="material-icons">warning</i><p>Few seconds left!</p>`
+        }
+
+        // Remove the notification active class after 4 seconds
+        setTimeout(() => {
+            this.notificationText.classList.remove("activeNotification");
+        }, 4000);
     }
 }
+export const game = new Game();
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 // let game;
 // let highscore = localStorage.getItem("highscore");
 // // let startingTime, endTime; // Measure time
 // // let pausedTime;
-// const notificationText = document.querySelector(".notification");
 // let gameStarted = false;
 // const canvas = document.querySelector("#canvas");
 // // const ctx = canvas.getContext("2d");

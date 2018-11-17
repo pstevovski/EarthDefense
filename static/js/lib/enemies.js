@@ -1,5 +1,5 @@
 import {Graphics, Sfx} from "./assets.js";
-import Game from "./game.js";
+import {game} from "./game.js";
 
 export class Enemies {
     constructor() {
@@ -39,10 +39,10 @@ export class Enemies {
         console.log(this.ammo);
     }
 }
-// const enemies = new Enemies();
+export const enemies = new Enemies();
 const graphics = new Graphics();
 const sfx = new Sfx();
-const game = new Game();
+// const game = new Game();
 
 // let enemiesShootingInterval = setInterval(enemies.shoot.bind(enemies), enemies.shootingSpeed);
 

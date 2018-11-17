@@ -1,5 +1,6 @@
 import {Sfx} from "./assets.js";
-import {Player} from "./player.js";
+import { Player } from "./player.js";
+import {Game} from "./game.js";
 
 const menu = document.querySelector(".menu");
 const pauseMenu = document.querySelector(".pause--menu");
@@ -39,6 +40,14 @@ function pauseGame() {
     // Save the time when game was paused
     pausedTime = Math.floor((new Date() - startingTime) / 1000);
 }
+
+// Pause game on ESCAPE and if clicked outside of canvas
+window.addEventListener("keydown", e => {
+    if(e.keyCode === 27) pauseGame();
+})
+// window.addEventListener("click", e => {
+//     if(e.target.id !== "canvas" && e.target.id !== "continueGame" && game.isStarted) pauseGame();
+// })
 
 function continueGame() {
     // Hide the pause menu
@@ -238,3 +247,4 @@ shipControls.forEach(control => control.addEventListener("click", ()=>this.value
 // Initialize the imported classes
 const sfx = new Sfx();
 const player = new Player();
+// const game = new Game();

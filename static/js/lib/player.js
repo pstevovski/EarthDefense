@@ -1,10 +1,11 @@
-import Game from "./game.js";
+import {Game} from "./game.js";
 import {Graphics, Sfx} from "./assets.js";
 
 const emptyWarningText = document.querySelector(".emptyWarning-text");
 const blocks = document.querySelectorAll(".overheat-bar_block");
 const shieldText = document.querySelector("#shieldText");
 const healthText = document.querySelector("#healthText");
+
 
 export class Player {
     constructor() {
@@ -22,11 +23,11 @@ export class Player {
         this.isOverheated = false;
         this.isSpaceDown = false;
         this.shieldDestroyed = false;
+        this.currentLevel = document.querySelector("#currentLevel");
 
         // Player's level
         this.level = 1;
         this.exp = 0;
-        this.requiredExp = 80;
         this.killCount = 0;
 
         // Ship's default commands
@@ -39,15 +40,25 @@ export class Player {
         this.map = {};
     };
 
-    updateKillCount() {
-        this.killCount++;
-        this.exp += 20;
+    // Level up
+    levelUp() {
+        this.level++;
+        this.currentLevel.textContent = this.level;
+        this.shieldDestroyed = false;
 
-        if(this.exp === this.requiredExp) {
-            this.exp = 0;
-            this.requiredExp = this.requiredExp * 2;
+        this.missileSpeed += 1;
 
+        // Restore health and shield to the ship
+        if(this.hp <= 60) {
+            this.hp += 40;
         }
+
+        if(this.shield <= 80) {
+            this.shield += 20;
+        }
+
+        healthText.textContent = this.hp + "%";
+        shieldText.textContent = this.shield + "%";
     }
     
     // Player movement
@@ -315,7 +326,7 @@ class Ammo {
     }
 }
 
-const player = new Player();
+export const player = new Player();
 const game = new Game();
 const graphics = new Graphics();
 const sfx = new Sfx();
