@@ -1,5 +1,6 @@
 import {game} from "./game.js";
 import {Graphics, Sfx} from "./assets.js";
+import {enemies} from "./enemies.js";
 
 const emptyWarningText = document.querySelector(".emptyWarning-text");
 
@@ -15,6 +16,7 @@ export class Player {
         this.booster = 100;
         this.missileSpeed = 15;
         this.ammo = [];
+        this.heat = -1;
         this.speedBooster = false;
         this.isOverheated = false;
         this.isSpaceDown = false;
@@ -26,7 +28,7 @@ export class Player {
         // Overheat blocks
         this.blocks = document.querySelectorAll(".overheat-bar_block");
 
-        this.graduallyRestoreInterval = setInterval(this.graduallyRestore, 300);
+        this.graduallyRestoreInterval;
 
         // Player's level
         this.level = 1;
@@ -147,7 +149,7 @@ export class Player {
             e.preventDefault();
         }
      }
-    }
+    };
 
     // Overheating
     overheating() {
@@ -155,19 +157,20 @@ export class Player {
 
         // If player.overheat meter reaches max(100), stop the ship from shooting, when it starts cooling off enable shooting.
         if(this.overheat === 100) {
+            console.log("test");
             this.isOverheated = true;
             emptyWarningText.textContent = "OVERHEATED !";
             emptyWarningText.classList.add("emptyWarning-textActive");
 
             // Play alarm sound
-            sfx.alarmSound.currentSrc = 0;
+            sfx.alarmSound.currentTime = 0;
             sfx.alarmSound.play();
-            coolOut(); // BUG ?
+            this.coolOut();
         } else if (this.overheat > 0 && this.overheat < 100) {
             this.isOverheated = false;
             this.displayOverheating();
         }
-     }
+     };
 
      // Display overheating by painting the blocks
      displayOverheating() {
@@ -183,7 +186,7 @@ export class Player {
          } else if(this.heat >= 7 && this.heat <= 10) {
              this.blocks[this.heat].classList.add("redPhase");
          }
-     }
+     };
 
     // Gradually restore guns heat and booster
     graduallyRestore() {
@@ -207,11 +210,10 @@ export class Player {
         if(this.booster >= 0 && this.booster <= 98) {
             this.booster = this.booster + 2;
         }
-    }
+    };
 
     // When guns overheat (reach 100), wait 3 seconds and restore to 0.
     coolOut() {
-        console.log(this);
         setTimeout(() => {
             this.overheat = 0;
             this.isOverheated = false;
@@ -241,11 +243,11 @@ export class Player {
         sfx.explosionSound.play(); // ASSETS
 
         // Destroy the alien ammo upon hit
-        for(let i = 0; i < enemy.ammo.length; i++) {
-            let enemyRockets = enemy.ammo[i];
-            let enemyRocketsIndex = enemy.ammo.indexOf(enemyRockets);
+        for(let i = 0; i < enemies.ammo.length; i++) {
+            let enemyRockets = enemies.ammo[i];
+            let enemyRocketsIndex = enemies.ammo.indexOf(enemyRockets);
             if(enemyRocketsIndex > -1) {
-                enemy.ammo.splice(enemyRocketsIndex, 1);
+                enemies.ammo.splice(enemyRocketsIndex, 1);
             } 
         }
         // Decrease shield
@@ -315,7 +317,6 @@ export class Player {
             this.shieldDestroyed = true;
         }
     }
-
 }
 
 class Ammo {
@@ -330,6 +331,8 @@ class Ammo {
 
 export const player = new Player();
 const sfx = new Sfx();
+
+player.graduallyRestoreInterval = setInterval(player.graduallyRestore.bind(player), 300);
 
 onkeydown = onkeyup = player.playerMovement.bind(player);
 document.addEventListener("keydown", player.shoot.bind(player));

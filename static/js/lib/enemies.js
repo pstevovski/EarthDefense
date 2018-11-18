@@ -7,9 +7,9 @@ export class Enemies {
         this.spawnDistance = 1200;
         this.enemiesArray = [];
         this.ammo = [];
-        this.spawned = true;
+        this.spawned = false;
         this.shootingSpeed = 700;
-        this.enemiesShootingInterval = setInterval(this.shoot, this.shootingSpeed);
+        this.enemiesShootingInterval;
 
         // Enemies starting point
         // this.x = game.cWidth;
@@ -29,9 +29,10 @@ export class Enemies {
             let maxShip = this.enemiesArray.length - 1;
             let randomShip = Math.floor(Math.random() * (maxShip - minShip + 1)) + minShip;
             // Randomize
+            console.log(this.enemiesArray[randomShip]);
             this.ammo.push({
-                x: this.enemiesArray[randomShip].x - this.enemyShip.width,
-                y: this.enemiesArray[randomShip].y + (this.enemyShip.height / 2)
+                x: this.enemiesArray[randomShip].x - graphics.enemy.width,
+                y: this.enemiesArray[randomShip].y + (graphics.enemy.height / 2)
             })
 
             sfx.enemyShooting.currentTime = 0;
@@ -40,10 +41,11 @@ export class Enemies {
     }
 }
 export const enemies = new Enemies();
+enemies.enemiesShootingInterval = setInterval(enemies.shoot.bind(enemies), enemies.shootingSpeed);
+
 const graphics = new Graphics();
 const sfx = new Sfx();
 // const game = new Game();
-
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
