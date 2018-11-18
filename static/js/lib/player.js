@@ -149,8 +149,8 @@ export class Player {
      }
     }
 
-     // Overheating
-     overheating() {
+    // Overheating
+    overheating() {
         this.overheat = this.overheat + 10;
 
         // If player.overheat meter reaches max(100), stop the ship from shooting, when it starts cooling off enable shooting.
@@ -162,9 +162,7 @@ export class Player {
             // Play alarm sound
             sfx.alarmSound.currentSrc = 0;
             sfx.alarmSound.play();
-
-
-            this.coolOut();
+            coolOut(); // BUG ?
         } else if (this.overheat > 0 && this.overheat < 100) {
             this.isOverheated = false;
             this.displayOverheating();
@@ -213,6 +211,7 @@ export class Player {
 
     // When guns overheat (reach 100), wait 3 seconds and restore to 0.
     coolOut() {
+        console.log(this);
         setTimeout(() => {
             this.overheat = 0;
             this.isOverheated = false;
@@ -290,7 +289,7 @@ export class Player {
 
     // Restoring the ship's shield
     restoreShield() {
-        if(this.shield == 100) {
+        if(this.shield === 100) {
             this.shieldDestroyed = false;
             this.shield = this.shield;
         } else if(this.shield <= 80){
@@ -325,12 +324,11 @@ class Ammo {
             x: player.x,
             y: player.y + ammoY
         })
+        console.log(this, player.ammo);
     }
 }
 
 export const player = new Player();
-// const game = new Game();
-const graphics = new Graphics();
 const sfx = new Sfx();
 
 onkeydown = onkeyup = player.playerMovement.bind(player);

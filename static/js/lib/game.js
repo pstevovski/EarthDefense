@@ -30,6 +30,8 @@ export class Game {
         this.startingTime;
         this.score = 0;
         this.init;
+        this.isStarted = false;
+
 
         // Time
         this.time = 30;

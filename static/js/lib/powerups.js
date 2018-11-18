@@ -1,85 +1,91 @@
-///////////////////////////////////////////////////////////////////////////////////////////
+import {game} from "./game.js";
+import {graphics} from "./assets.js";
+
+export class Powerups{
+    constructor() {
+        this.healthRenew = [];
+        this.healthRenew[0] = {
+            x: game.cWidth,
+            y: Math.floor(Math.random() * ( (game.maxHeight - graphics.healthImage) - game.minHeight) + game.minHeight)
+        }
+        this.shieldRenew = [];
+        this.shieldRenew[0] = {
+            x: game.cWidth,
+            y: Math.floor(Math.random() * ( (game.maxHeight - graphics.shieldImage) - game.minHeight) + game.minHeight)
+        }
+        this.timeRenew = [];
+        this.timeRenew[0] = {
+            x: game.cWidth,
+            y: Math.floor(Math.random() * ( (game.maxHeight - graphics.timerImage) - game.minHeight) + game.minHeight)
+        }
+
+        // If initial ones were pushed
+        this.initialHealthPushed = false;
+        this.initialShieldPushed = false;
+        this.initialTimeRenewPushed = false;
+    }
+
+    // Spawn health restoration every 30 seconds
+    healthRenewFunction() {
+        if(this.initialHealthPushed) {
+            setTimeout(() => {
+                this.healthRenew.push({
+                    x: game.cWidth,
+                    y: Math.floor(Math.random() * ( (game.maxHeight - graphics.healthImage) - game.minHeight) + game.minHeight)
+                })
+                this.healthRenewFunction();
+            }, 30 * 1000);
+        } else {
+            setTimeout(() => {
+                this.healthRenewFunction();
+            }, 30 * 1000);
+        }
+    }
+
+    // Spawn shield restoration every 60 seconds
+    shieldRenewFunction() {
+        if(this.initialShieldPushed) {
+            setTimeout(() => {
+                this.shieldRenew.push({
+                    x: game.cWidth,
+                    y: Math.floor(Math.random() * ( (game.maxHeight - graphics.shieldImage) - game.minHeight) + game.minHeight)
+                })
+                this.shieldRenewFunction();
+            }, 60 * 1000);
+        } else {
+            setTimeout(() => {
+                this.shieldRenewFunction();
+            }, 60 * 1000);
+        }
+    }
+
+    // Spawn a timer to add more playing time every 10 to 15 seconds
+    timeRenewFunction() {
+        console.log("test");
+        let min = 10;
+        let max = 15;
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        let randomTime = Math.floor(Math.random() * (max - min + 1)) + min;
+        if(this.initialTimeRenewPushed) {
+            setTimeout(() => {
+                this.timeRenew.push({
+                    x: game.cWidth,
+                    y: Math.floor(Math.random() * (game.maxHeight - graphics.timerImage.height) - game.minHeight) + game.minHeight
+                })
+            }, randomTime);
+        } else {
+            setTimeout(() => {
+                this.timeRenewFunction();
+            }, 20 * 1000);
+        }
+    }
+
+}
+const powerups = new Powerups(); 
+
+
 // POWERUPS CLASS (OBJECT):
-/* Health renew
-let healthRenew = [];
-healthRenew[0] = {
-    x: cWidth,
-    y: Math.floor(Math.random() * ( (maxHeight - firstAid.height) - minHeight) + minHeight)
-}
-let initialHealthPushed = false;
-
-// Shield - player ship shield renewal
-let shieldRenew = [];
-shieldRenew[0] = {
-    x: cWidth,
-    y: Math.floor(Math.random() * ( (maxHeight - shieldImage.height) - minHeight) + minHeight)
-}
-let initialShieldRenewPushed = false;
-
-// Timer(s) array
-let timeRenew = [];
-timeRenew[0] = {
-    x: cWidth,
-    y: Math.floor(Math.random() * ( (maxHeight - timerImage.height) - minHeight) + minHeight)
-}
-let initialTimeRenewPushed = false; */
-
-// ------------------------------------------------
-
-// // Spawn health renew every 30 seconds.
-// function healthRenewFunction() {
-//     if(initialHealthPushed) {
-//         setTimeout(() => {
-//             healthRenew.push({
-//                 x: cWidth,
-//                 y: Math.floor(Math.random() * ( (maxHeight - firstAid.height) - minHeight) + minHeight)
-//             })
-        
-//             healthRenewFunction();
-//         }, 30 * 1000);
-//     } else {
-//         setTimeout(() => {
-//             healthRenewFunction();
-//         }, 30 * 1000);
-//     }
-// }
 // healthRenewFunction();
-
-// // Spawn shield renew every minute
-// function shieldRenewFunction() {
-//     if(initialShieldRenewPushed) {
-//         setTimeout(() => {
-//             shieldRenew.push({
-//                 x: cWidth,
-//                 y: Math.floor(Math.random() * ( (maxHeight - shieldImage.height) - minHeight) + minHeight)
-//             })
-
-//             shieldRenewFunction();
-//         }, 60 * 1000);
-//     } else {
-//         setTimeout(() => {
-//             shieldRenewFunction();
-//         }, 60 * 1000);
-//     }
-// }
 // shieldRenewFunction();
-
-// // Spawn timer to add more time to play every 10-15 seconds
-// function timeRenewFunction(){
-//     if(initialTimeRenewPushed) {
-//         setTimeout(() => {
-//             timeRenew.push({
-//                 x: cWidth,
-//                 y: Math.floor(Math.random() * ( (maxHeight - timerImage.height) - minHeight) + minHeight)
-//             })
-
-//             timeRenewFunction();
-//             document.querySelector(".time").classList.remove("timeShake");
-//         }, 10 * 1000);
-//     } else {
-//         setTimeout(() => {
-//             timeRenewFunction();
-//         }, 20 * 1000);
-//     }
-// }
-// timeRenewFunction();
+powerups.timeRenewFunction();
