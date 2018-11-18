@@ -1,9 +1,9 @@
 import * as menus from "./lib/menus.js";
-import {Enemies} from "./lib/enemies.js";
-import {Player} from "./lib/player.js";
-import {Game} from "./lib/game.js";
+import {enemies} from "./lib/enemies.js";
+import {player} from "./lib/player.js";
+import {game} from "./lib/game.js";
 import {Graphics, Sfx} from "./lib/assets.js";
-// import {powerups} from "./lib/powerups.js";
+import {Powerups} from "./lib/powerups.js";
 
 /* TODO
 1. Have loadGame, startGame, restartGame, pauseGame, continueGame, exitGame here X
@@ -11,12 +11,17 @@ import {Graphics, Sfx} from "./lib/assets.js";
 3. Separate assets {Object}
 4. Separate menus 
 5. Import player, assets, menus to this main file
+
+BUGS: 
+
+
 */
 const graphics = new Graphics();
-const player = new Player();
-const game = new Game();
+// const player = new Player();
+// const game = new Game();
 const sfx = new Sfx();
-const enemies = new Enemies();
+// const enemies = new Enemies();
+const powerups = new Powerups();
 
 const fullPath = window.location.pathname;
 const splitPath = fullPath.split('/');
@@ -46,11 +51,6 @@ const cHeight = canvas.height;
 const minHeight = 0;
 const maxHeight = 500;
 let init;
-
-// Timer variables - MOVED TO GAME.JS
-// let startingTime, endTime, pausedTime, countdown;
-// const timerDisplay = document.querySelector("#timerDisplay");
-// const time = 30;
 
 // Load game
 function loadGame() {
@@ -240,12 +240,12 @@ function draw() {
 
     // HEALTH RESTORATION - HEALTH,SHIELD,TIME FROM MODULE "POWERUPS"
     for(let i = 0; i < powerups.healthRenew.length; i++){
-        ctx.drawImage(graphics.firstAid, powerups.healthRenew[i].x, powerups.healthRenew[i].y);
+        ctx.drawImage(graphics.healthImage, powerups.healthRenew[i].x, powerups.healthRenew[i].y);
 
         const pickedUpHealthRenew = player.x + graphics.ship.width >= powerups.healthRenew[i].x 
-                                && player.x <= powerups.healthRenew[i].x + graphics.firstAid.width 
+                                && player.x <= powerups.healthRenew[i].x + graphics.healthImage.width 
                                 && player.y + graphics.ship.height >= powerups.healthRenew[i].y 
-                                && player.y <= powerups.healthRenew[i].y + graphics.firstAid.height;
+                                && player.y <= powerups.healthRenew[i].y + graphics.healthImage.height;
 
         // If the ship touches the health, restore the ship's HP.
         if(pickedUpHealthRenew) {
@@ -257,7 +257,7 @@ function draw() {
 
             // Play Sound effect
             sfx.restorationEffect();
-        } else if(powerups.healthRenew[i].x + graphics.firstAid.width < 0 ) { 
+        } else if(powerups.healthRenew[i].x + graphics.healthImage.width < 0 ) { 
             // If HP restore goes past the canvas width, remove it.
             powerups.healthRenew.splice(i, 1);
         }
@@ -370,15 +370,15 @@ function draw() {
 
     // ALIEN (ENEMY) ROCKETS
     if(game.isStarted && enemies.spawned){
-        for(let i = 0; i < enemies.enemyAmmo.length;i++) {
-            ctx.drawImage(graphics.enemyMissile, enemies.enemyAmmo[i].x, enemies.enemyAmmo[i].y);
-            enemies.enemyAmmo[i].x -= 15;
+        for(let i = 0; i < enemies.ammo.length;i++) {
+            ctx.drawImage(graphics.enemyMissile, enemies.ammo[i].x, enemies.ammo[i].y);
+            enemies.ammo[i].x -= 15;
 
-            const hitEnemyAmmo = enemies.enemyAmmo[i].x >= player.x 
-                            && enemies.enemyAmmo[i].x <= player.x + graphics.ship.width 
-                            && enemies.enemyAmmo[i].y >= player.y 
-                            && enemies.enemyAmmo[i].y <= player.y + graphics.ship.height 
-                            && enemies.enemiesSpawned
+            const hitEnemyAmmo = enemies.ammo[i].x >= player.x 
+                            && enemies.ammo[i].x <= player.x + graphics.ship.width 
+                            && enemies.ammo[i].y >= player.y 
+                            && enemies.ammo[i].y <= player.y + graphics.ship.height 
+                            && enemies.spawned;
         
             if(hitEnemyAmmo) {
                 // Draw explosion at the spot
@@ -386,8 +386,8 @@ function draw() {
         
                 // Run function when player's ship is hit.
                 player.playerHit();
-            } else if(enemies.enemyAmmo[i].x < 0) { // If the alien rocket goes behind player's ship
-                enemies.enemyAmmo.splice(i, 1);
+            } else if(enemies.ammo[i].x < 0) { // If the alien rocket goes behind player's ship
+                enemies.ammo.splice(i, 1);
             }
         }
     }
@@ -395,7 +395,7 @@ function draw() {
     // If spaceship hits the boundry, remove the direction or teleport him top-bottom / bottom-top
     if(player.x <= 0) {
         player.x += player.speed;
-    } else if (player.x >= 1300 - ship.width) {
+    } else if (player.x >= 1300 - graphics.ship.width) {
         player.x -= player.speed;
     } else if (player.y <= -40) {
         player.y = 520 - player.speed;
@@ -440,9 +440,9 @@ function continueGame(){
 
     // Run the interval
     init = setInterval(draw, 1000 / 60);
-    enemies.enemiesShootingInterval = setInterval(enemies.enemiesShoot, 700); // Enemies module
-    player.graduallyRestoreInterval = setInterval(player.graduallyRestore, 300); // Player module
-    game.timer(game.secondsLeft); // Game module - BUG
+    enemies.enemiesShootingInterval = setInterval(enemies.shoot.bind(enemies), enemies.shootingSpeed); // Enemies module
+    player.graduallyRestoreInterval = setInterval(player.graduallyRestore.bind(player), 300); // Player module
+    game.timer(game.timer); // Game module - BUG
 
     // Enable enemies and ship movement
     game.isStarted = true;
@@ -540,7 +540,7 @@ function restartGame() {
 
     // Destroy all enemies, healths, timers, shields and reset them to 0.
     enemies.enemiesArray.splice(0, enemies.enemiesArray.length);
-    enemies.enemyAmmo.splice(0, enemies.enemyAmmo.length);
+    enemies.ammo.splice(0, enemies.ammo.length);
     
     healthRenew.splice(0, healthRenew.length);
     timeRenew.splice(0, timeRenew.length);
@@ -621,3 +621,4 @@ window.addEventListener("keydown", e => {
 window.addEventListener("click", e => {
     if(e.target.id !== "canvas" && e.target.id !== "continueGame" && game.isStarted) pauseGame();
 })
+
