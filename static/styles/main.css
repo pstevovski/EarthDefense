@@ -416,6 +416,12 @@ body .main-menu_buttons:hover {
           animation: overheatAnimation 0.6s ease forwards infinite;
 }
 
+.container .emptyWarning-highscore {
+  display: block;
+  -webkit-animation: highscoreAnimation 1.25s ease forwards infinite;
+          animation: highscoreAnimation 1.25s ease forwards infinite;
+}
+
 .container .notificationsContainer {
   display: -webkit-box;
   display: -ms-flexbox;

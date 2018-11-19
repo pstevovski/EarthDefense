@@ -391,6 +391,11 @@ body{
         animation: overheatAnimation 0.6s ease forwards infinite;
     }
 
+    .emptyWarning-highscore{
+        display: block;
+        animation: highscoreAnimation 1.25s ease forwards infinite;
+    }
+
     .notificationsContainer{
         display: flex;
         justify-content: center;
