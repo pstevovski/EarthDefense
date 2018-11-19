@@ -1,7 +1,7 @@
 import {game} from "./game.js";
 import {graphics} from "./assets.js";
 
-export class Powerups{
+class Powerups{
     constructor() {
         this.healthRenew = [];
         this.healthRenew[0] = {
@@ -29,16 +29,18 @@ export class Powerups{
     healthRenewFunction() {
         if(this.initialHealthPushed) {
             setTimeout(() => {
+                // console.log("pushed");
                 this.healthRenew.push({
                     x: game.cWidth,
-                    y: Math.floor(Math.random() * ( (game.maxHeight - graphics.healthImage) - game.minHeight) + game.minHeight)
+                    y: Math.floor(Math.random() * (game.maxHeight - graphics.healthImage.height) - game.minHeight) + game.minHeight
                 })
                 this.healthRenewFunction();
-            }, 30 * 1000);
+            }, 10 * 1000);
         } else {
             setTimeout(() => {
+                console.log("not yet pushed", this);
                 this.healthRenewFunction();
-            }, 30 * 1000);
+            }, 10 * 1000);
         }
     }
 
@@ -48,32 +50,33 @@ export class Powerups{
             setTimeout(() => {
                 this.shieldRenew.push({
                     x: game.cWidth,
-                    y: Math.floor(Math.random() * ( (game.maxHeight - graphics.shieldImage) - game.minHeight) + game.minHeight)
+                    y:Math.floor(Math.random() * (game.maxHeight - graphics.shieldImage.height) - game.minHeight) + game.minHeight
                 })
                 this.shieldRenewFunction();
-            }, 60 * 1000);
+            }, 15 * 1000);
         } else {
             setTimeout(() => {
                 this.shieldRenewFunction();
-            }, 60 * 1000);
+            }, 15 * 1000);
         }
     }
 
     // Spawn a timer to add more playing time every 10 to 15 seconds
     timeRenewFunction() {
-        console.log("test");
-        let min = 10;
-        let max = 15;
-        min = Math.ceil(min);
-        max = Math.floor(max);
-        let randomTime = Math.floor(Math.random() * (max - min + 1)) + min;
+        // console.log("test");
+        // let min = 10;
+        // let max = 15;
+        // min = Math.ceil(min);
+        // max = Math.floor(max);
+        // let randomTime = Math.floor(Math.random() * (max - min + 1)) + min;
         if(this.initialTimeRenewPushed) {
             setTimeout(() => {
                 this.timeRenew.push({
                     x: game.cWidth,
                     y: Math.floor(Math.random() * (game.maxHeight - graphics.timerImage.height) - game.minHeight) + game.minHeight
                 })
-            }, randomTime);
+                this.timeRenewFunction();
+            }, 10 * 1000);
         } else {
             setTimeout(() => {
                 this.timeRenewFunction();
@@ -82,10 +85,10 @@ export class Powerups{
     }
 
 }
-const powerups = new Powerups(); 
+export const powerups = new Powerups(); 
 
 
 // POWERUPS CLASS (OBJECT):
-// healthRenewFunction();
-// shieldRenewFunction();
+powerups.healthRenewFunction();
+powerups.shieldRenewFunction();
 powerups.timeRenewFunction();

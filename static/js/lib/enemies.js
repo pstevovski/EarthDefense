@@ -1,5 +1,6 @@
-import {Graphics, Sfx} from "./assets.js";
+// import {Graphics, Sfx} from "./assets.js";
 import {game} from "./game.js";
+import {graphics, sfx} from "../mainGlavno.js";
 
 export class Enemies {
     constructor() {
@@ -29,7 +30,7 @@ export class Enemies {
             let maxShip = this.enemiesArray.length - 1;
             let randomShip = Math.floor(Math.random() * (maxShip - minShip + 1)) + minShip;
             // Randomize
-            console.log(this.enemiesArray[randomShip]);
+            // console.log(this.enemiesArray[randomShip]);
             this.ammo.push({
                 x: this.enemiesArray[randomShip].x - graphics.enemy.width,
                 y: this.enemiesArray[randomShip].y + (graphics.enemy.height / 2)
@@ -43,8 +44,8 @@ export class Enemies {
 export const enemies = new Enemies();
 enemies.enemiesShootingInterval = setInterval(enemies.shoot.bind(enemies), enemies.shootingSpeed);
 
-const graphics = new Graphics();
-const sfx = new Sfx();
+// const graphics = new Graphics();
+// const sfx = new Sfx();
 // const game = new Game();
 
 

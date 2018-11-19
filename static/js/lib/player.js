@@ -1,6 +1,7 @@
 import {game} from "./game.js";
-import {Graphics, Sfx} from "./assets.js";
+// import {Graphics, Sfx} from "./assets.js";
 import {enemies} from "./enemies.js";
+import {graphics, sfx} from "../mainGlavno.js";
 
 const emptyWarningText = document.querySelector(".emptyWarning-text");
 
@@ -15,6 +16,7 @@ export class Player {
         this.overheat = 0;
         this.booster = 100;
         this.missileSpeed = 15;
+        this.increasedSpeed = 5; // Speed increased by level up
         this.ammo = [];
         this.heat = -1;
         this.speedBooster = false;
@@ -29,6 +31,7 @@ export class Player {
         this.blocks = document.querySelectorAll(".overheat-bar_block");
 
         this.graduallyRestoreInterval;
+        this.dynamicRestoration = 400;
 
         // Player's level
         this.level = 1;
@@ -50,8 +53,23 @@ export class Player {
         this.level++;
         this.currentLevel.textContent = this.level;
         this.shieldDestroyed = false;
-
+        
+        this.increasedSpeed++;
+        this.speed = this.increasedSpeed;
+        console.log(this.speed, this.increasedSpeed);
         this.missileSpeed += 1;
+
+        // Dynamic restoration (cooling) of weapons
+        if(this.dynamicRestoration >= 150) {
+            // First clear the current interval for player restoration
+            clearInterval(player.graduallyRestoreInterval);
+
+            // Change the interval's speed
+            this.dynamicRestoration -= 50;
+            
+            // After that re-add the interval with the new updated speed now
+            player.graduallyRestoreInterval = setInterval(player.graduallyRestore.bind(player), player.dynamicRestoration);
+        }
 
         // Restore health and shield to the ship
         if(this.hp <= 60) {
@@ -73,7 +91,9 @@ export class Player {
             this.map[e.keyCode] = e.type === "keydown";
             if(this.map[this.left] && this.map[this.up] || this.map[this.left] && this.map[this.up] && this.map[this.shooting]) {
                 this.d = "UP_LEFT";
-            }  else if (this.map[this.left] || this.map[this.left] && this.map[this.shooting]) {
+            } else if (this.map[this.left] && this.map[this.down] || this.map[this.left] && this.map[this.down] && this.map[shooting]) {
+                this.d = "DOWN_LEFT";
+            } else if (this.map[this.left] || this.map[this.left] && this.map[this.shooting]) {
                 this.d = "LEFT"; 
             } else if(this.map[this.right] && this.map[this.up] || this.map[this.right] && this.map[this.up] && this.map[this.shooting]) {
                 this.d = "UP_RIGHT";
@@ -116,6 +136,7 @@ export class Player {
     }
 
     clearShipCommands() {
+        this.speed = this.increasedSpeed;
         this.isSpaceDown = false;
         this.speedBooster = false;
         this.d = "";
@@ -157,7 +178,7 @@ export class Player {
 
         // If player.overheat meter reaches max(100), stop the ship from shooting, when it starts cooling off enable shooting.
         if(this.overheat === 100) {
-            console.log("test");
+            // console.log("test");
             this.isOverheated = true;
             emptyWarningText.textContent = "OVERHEATED !";
             emptyWarningText.classList.add("emptyWarning-textActive");
@@ -270,11 +291,11 @@ export class Player {
             // Restore ships HP and display a notification.
             this.hp = this.hp + 20;
             this.healthText.textContent = this.hp+"%";
-            notificationText.innerHTML = `<i class="material-icons health">local_hospital</i><p>Health renewed!</p>`;
+            game.notificationText.innerHTML = `<i class="material-icons health">local_hospital</i><p>Health renewed!</p>`;
             game.displayNotification();
         }
 
-        game.height;
+        // game.height;
     }
 
     // Decrease the ship's HP on hit
@@ -284,7 +305,7 @@ export class Player {
             this.healthText.textContent = this.hp+"%";
         } else if(this.hp === 0) {
             game.endgame();
-            clearInterval(game);
+            clearInterval(game.init);
             clearInterval(enemiesShootingInterval);
         }
     }
@@ -301,7 +322,7 @@ export class Player {
             // Restore shield points and display a notification
             this.shield = this.shield + 20;
             this.shieldText.textContent = this.shield+"%";
-            notificationText.innerHTML = `<i class="material-icons shield">security</i><p>Shield restored!</p>`;
+            game.notificationText.innerHTML = `<i class="material-icons shield">security</i><p>Shield restored!</p>`;
             game.displayNotification();
         }
     }
@@ -325,14 +346,14 @@ class Ammo {
             x: player.x,
             y: player.y + ammoY
         })
-        console.log(this, player.ammo);
+        // console.log(this, player.ammo);
     }
 }
 
 export const player = new Player();
-const sfx = new Sfx();
+// const sfx = new Sfx();
 
-player.graduallyRestoreInterval = setInterval(player.graduallyRestore.bind(player), 300);
+player.graduallyRestoreInterval = setInterval(player.graduallyRestore.bind(player), player.dynamicRestoration);
 
 onkeydown = onkeyup = player.playerMovement.bind(player);
 document.addEventListener("keydown", player.shoot.bind(player));

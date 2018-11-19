@@ -1,6 +1,7 @@
-import {Sfx} from "./assets.js";
+// import {sfx} from "./assets.js";
 import {player} from "./player.js";
 import {game} from "./game.js";
+import {sfx} from "../mainGlavno.js";
 
 const menu = document.querySelector(".menu");
 const pauseMenu = document.querySelector(".pause--menu");
@@ -52,7 +53,7 @@ function displayHighscores() {
         orderedList.appendChild(li);
 
         if(orderedList.childNodes.length > 0) {
-            cleatListBtn.style.display = "inline-block";
+            clearListBtn.style.display = "inline-block";
         }
     })
 }
@@ -81,10 +82,10 @@ function closeHighscoresMenu() {
 // Settings menu (in-game)
 const volumeControls = document.querySelectorAll(`.settings-menu input[type="range"]`);
 const displayChange = document.querySelectorAll(".displayChange");
-let controllingVolume = false;
+// sfx.controllingVolume = false;
 
 function controlVolume() {
-    if(controllingVolume) {
+    if(sfx.controllingVolume) {
         displayChange.forEach(change => {
             if(this.name === change.id) {
                 change.textContent = this.value + "%";
@@ -98,9 +99,11 @@ function controlVolume() {
                 sfx.enemyShooting.volume = sfx.sfxVolume;
                 sfx.restorationSound.volume = sfx.sfxVolume;
                 sfx.alarmSound.volume = sfx.sfxVolume;;
-            } else if(this.name =="bgMusic") {
+                console.log(sfx.sfxVolume, sfx.playerShooting.volume);
+            } else if(this.name === "bgMusic") {
                 sfx.musicVolume = this.value / 100;
                 sfx.music.volume = sfx.musicVolume;
+                console.log(sfx.musicVolume);
             }
         })
     }
@@ -109,7 +112,7 @@ function controlVolume() {
 // Change ship's controls
 function changeControls(e) {
     e = e || event;
-    const key = e.keyCode;
+    const key = e.key;
     const code = e.code;
 
     if(code === "Space") {
@@ -126,17 +129,17 @@ function changeControls(e) {
 
         // Change the player's commands
         if(this.name === "left") {
-            player.left = key;
+            player.left = e.keyCode;
         } else if(this.name === "up") {
-            player.up = key;
+            player.up = e.keyCode;
         } else if(this.name === "right") {
-            player.right = key;
+            player.right = e.keyCode;
         } else if(this.name === "down") {
-            player.down = key;
+            player.down = e.keyCode;
         } else if(this.name === "shooting") {
-            player.shooting = key;
+            player.shooting = e.keyCode;
         } else if(this.name === "useBooster") {
-            player.useBooster = key;
+            player.useBooster = e.keyCode;
         }
     })
 }
@@ -164,8 +167,12 @@ soundControl.forEach(control => control.addEventListener("click", ()=>{
 }));
 
 // Volume control event listeners
-volumeControls.forEach(control => control.addEventListener("mousedown",()=> controllingVolume = true));
-volumeControls.forEach(control => control.addEventListener("mouseup",()=> controllingVolume = false));
+volumeControls.forEach(control => control.addEventListener("mousedown",() => {
+    sfx.controllingVolume = true
+}));
+volumeControls.forEach(control => control.addEventListener("mouseup",() => {
+    sfx.controllingVolume = false
+}));
 volumeControls.forEach(control => control.addEventListener("change", controlVolume));
 volumeControls.forEach(control => control.addEventListener("mousemove", controlVolume));
 
@@ -175,12 +182,22 @@ closeHighscores.addEventListener("click", closeHighscoresMenu);
 highscoreList.addEventListener("click", displayHighscores);
 document.getElementById("about").addEventListener("click", displayAbout);
 document.getElementById("closeAbout").addEventListener("click", displayAbout);
+document.querySelector("#settings").addEventListener("click", ()=>{
+    document.querySelector(".settings-menu").style.display = "flex";
+})
+document.querySelector("#goBack").addEventListener("click", ()=>{
+    document.querySelector(".settings-menu").style.display = "none";
+})
 
 // Ship controls event listeners
 shipControls.forEach(control => control.addEventListener("keyup", changeControls));
-shipControls.forEach(control => control.addEventListener("click", ()=>this.value = ""));
+shipControls.forEach(control => control.addEventListener("click", function(){
+    this.value = ""
+}));
+
+// const sfx = new Sfx();
+
 
 // Initialize the imported classes
-const sfx = new Sfx();
 // const player = new Player();
 // const game = new Game();
