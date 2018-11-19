@@ -3,7 +3,7 @@ import {enemies} from "./lib/enemies.js";
 import {player} from "./lib/player.js";
 import {game} from "./lib/game.js";
 import {Graphics, Sfx} from "./lib/assets.js";
-import {Powerups} from "./lib/powerups.js";
+import {powerups} from "./lib/powerups.js";
 
 /* TODO
 1. Have loadGame, startGame, restartGame, pauseGame, continueGame, exitGame here X
@@ -13,15 +13,17 @@ import {Powerups} from "./lib/powerups.js";
 5. Import player, assets, menus to this main file
 
 BUGS: 
-
-
+- Restarting game
+- Correct timing for health / shield restoration
+- Minor bugs with multiple keys pressed movement
+- Add more missiles as player level grows (?);
 */
-const graphics = new Graphics();
-// const player = new Player();
-// const game = new Game();
-const sfx = new Sfx();
-// const enemies = new Enemies();
-const powerups = new Powerups();
+export const graphics = new Graphics();
+// const player = new Player(); // delete when finished
+// const game = new Game(); // delete when finished
+export const sfx = new Sfx();
+// const enemies = new Enemies();  // delete when finished
+// export const powerups = new Powerups();
 
 const fullPath = window.location.pathname;
 const splitPath = fullPath.split('/');
@@ -50,7 +52,7 @@ const cWidth = canvas.width;
 const cHeight = canvas.height;
 const minHeight = 0;
 const maxHeight = 500;
-let init;
+// let init;
 
 // Load game
 function loadGame() {
@@ -137,7 +139,7 @@ function startGame() {
         sfx.music.play();
 
         // Run the game
-        init = setInterval(draw, 1000 / 60);
+        game.init = setInterval(draw, 1000 / 60);
     }, 500);
 }
 
@@ -185,8 +187,8 @@ function draw() {
 
                 // If spaceship HP reaches 0, end game.
                 if(player.hp === 0) {
-                    clearInterval(init);
-                    endgame();
+                    clearInterval(game.init);
+                    game.endgame();
                 }
             } else if(enemies.enemiesArray[i].x + graphics.enemy.width < 0) { 
                 // Remove the alien space ship from the enemies array.
@@ -239,6 +241,14 @@ function draw() {
     }
 
     // HEALTH RESTORATION - HEALTH,SHIELD,TIME FROM MODULE "POWERUPS"
+    // Start moving the HP renew after a set timeout.
+    setTimeout(() => {
+        for(let i = 0; i < powerups.healthRenew.length; i++) {
+            powerups.healthRenew[i].x--;
+        }
+        powerups.initialHealthPushed = true;
+    }, 10 * 1000);
+
     for(let i = 0; i < powerups.healthRenew.length; i++){
         ctx.drawImage(graphics.healthImage, powerups.healthRenew[i].x, powerups.healthRenew[i].y);
 
@@ -262,15 +272,17 @@ function draw() {
             powerups.healthRenew.splice(i, 1);
         }
     }
-    // Start moving the HP renew after a set timeout.
-    setTimeout(() => {
-        for(let i = 0; i < powerups.healthRenew.length; i++) {
-            powerups.healthRenew[i].x--;
-        }
-        powerups.initialHealthPushed = true;
-    }, 30 * 1000);
+
 
     // SHIELD RESTORATION
+    // Start moving the shield after 1 minute passes
+    setTimeout(() => {
+        for(let i = 0; i < powerups.shieldRenew.length;i++) {
+            powerups.shieldRenew[i].x--;
+        }
+        powerups.initialShieldPushed = true;
+    }, 15 * 1000);
+
     for(let i = 0; i < powerups.shieldRenew.length; i++) {
         ctx.drawImage(graphics.shieldImage, powerups.shieldRenew[i].x, powerups.shieldRenew[i].y);
 
@@ -294,14 +306,6 @@ function draw() {
             powerups.shieldRenew.splice(i, 1);
         }
     }
-
-    // Start moving the shield after 1 minute passes
-    setTimeout(() => {
-        for(let i = 0; i < powerups.shieldRenew.length;i++) {
-            powerups.shieldRenew[i].x--;
-        }
-        powerups.initialShieldRenewPushed = true;
-    }, 60 * 1000);
 
     // ADD PLAY TIME 
     for(let i = 0; i < powerups.timeRenew.length; i++){
@@ -418,7 +422,7 @@ function pauseGame(){
     pauseMenu.style.display = "flex";
 
     // Clear the interval for the game
-    clearInterval(init);
+    clearInterval(game.init);
     clearInterval(enemies.enemiesShootingInterval); // Enemies module
     clearInterval(player.graduallyRestoreInterval); // Player module
     clearInterval(game.countdown); 
@@ -439,9 +443,9 @@ function continueGame(){
     pauseMenu.style.display = "none";
 
     // Run the interval
-    init = setInterval(draw, 1000 / 60);
+    game.init = setInterval(draw, 1000 / 60);
     enemies.enemiesShootingInterval = setInterval(enemies.shoot.bind(enemies), enemies.shootingSpeed); // Enemies module
-    player.graduallyRestoreInterval = setInterval(player.graduallyRestore.bind(player), 300); // Player module
+    player.graduallyRestoreInterval = setInterval(player.graduallyRestore.bind(player), player.dynamicRestoration); // Player module
     game.timer(game.timer); // Game module - BUG
 
     // Enable enemies and ship movement
@@ -454,68 +458,68 @@ function continueGame(){
     game.pausedTime *= 1000;
 }
 
-// End the game
-function endgame(secondsLeft){
-    // Disable the intervals
-    clearInterval(enemies.enemiesShootingInterval); // Enemies module
-    clearInterval(player.graduallyRestoreInterval); // Player module
-    clearInterval(game.countdown);
+// // End the game
+// function endgame(secondsLeft){
+//     // Disable the intervals
+//     clearInterval(enemies.enemiesShootingInterval); // Enemies module
+//     clearInterval(player.graduallyRestoreInterval); // Player module
+//     clearInterval(game.countdown);
 
-    // End measuring time
-    game.endTime = new Date();
+//     // End measuring time
+//     game.endTime = new Date();
 
-    // Divide the difference to get the starting time
-    let timeDifference = (game.endTime - game.startingTime) / 1000;
-    let timePlayed = Math.floor(timeDifference);
+//     // Divide the difference to get the starting time
+//     let timeDifference = (game.endTime - game.startingTime) / 1000;
+//     let timePlayed = Math.floor(timeDifference);
 
-    // Multiplie the ending score by the time played divided by 100, which will result in a multiplier in the form of, for example x0.5 - x3, based on time played
-    let multiplier = timePlayed / 100;
-    game.score = player.killCount * 100;
-    let finalScore = game.score + (game.score * multiplier);
+//     // Multiplie the ending score by the time played divided by 100, which will result in a multiplier in the form of, for example x0.5 - x3, based on time played
+//     let multiplier = timePlayed / 100;
+//     game.score = player.killCount * 100;
+//     let finalScore = game.score + (game.score * multiplier);
 
-    // Stop movements
-    game.isStarted = false;
+//     // Stop movements
+//     game.isStarted = false;
 
-    // Game Over / Game finished menu
-    gameOver.style.display = "block";
+//     // Game Over / Game finished menu
+//     gameOver.style.display = "block";
 
-    // If player was killed.
-    if(player.hp === 0){
-        displayImage.src = `${endPath}/assets/images/tombstone.png`;
-        message.textContent = "At least you tried..."; // elementot go nema
-    }
+//     // If player was killed.
+//     if(player.hp === 0){
+//         displayImage.src = `${endPath}/assets/images/tombstone.png`;
+//         message.textContent = "At least you tried..."; // elementot go nema
+//     }
     
-    // If the time is up
-    if(secondsLeft <= 0) {
-        message.textContent = "Time's up !" // elementot go nema
-    }
+//     // If the time is up
+//     if(secondsLeft <= 0) {
+//         message.textContent = "Time's up !" // elementot go nema
+//     }
 
-    sfx.music.src = `${endPath}/assets/audio/Fallen in Battle.mp3`;
-    sfx.music.volume = 0.2;
-    sfx.music.play();
-    sfx.music.loop = false;
+//     sfx.music.src = `${endPath}/assets/audio/Fallen in Battle.mp3`;
+//     sfx.music.volume = 0.2;
+//     sfx.music.play();
+//     sfx.music.loop = false;
 
-    // Score and Highscore
-    document.querySelector("#totalKills").textContent = player.killCount;
-    document.querySelector("#multiplier").textContent = "x" + multiplier;
-    document.querySelector("#finalScore").textContent = finalScore;
-    document.querySelector("#highscore").textContent = game.highscore;
+//     // Score and Highscore
+//     document.querySelector("#totalKills").textContent = player.killCount;
+//     document.querySelector("#multiplier").textContent = "x" + multiplier;
+//     document.querySelector("#finalScore").textContent = finalScore;
+//     document.querySelector("#highscore").textContent = game.highscore;
 
-    // Display the menu with an input to enter player's name
-    game.newScore(finalScore);
+//     // Display the menu with an input to enter player's name
+//     game.newScore(finalScore);
 
-    if(finalScore > this.highscore) {
-        localStorage.setItem("highscore", finalScore);
-        document.querySelector("#highscore").textContent = localStorage.getItem("highscore");
-        game.newHighscore();
-    }
-}
+//     if(finalScore > this.highscore) {
+//         localStorage.setItem("highscore", finalScore);
+//         document.querySelector("#highscore").textContent = localStorage.getItem("highscore");
+//         game.newHighscore();
+//     }
+// }
 
 // Restart game
 function restartGame() {
     // Clear the intervals
     clearInterval(game.countdown);
-    clearInterval(init);
+    clearInterval(game.init);
     clearInterval(player.graduallyRestoreInterval); // Player module
     clearInterval(enemies.enemiesShootingInterval); // Enemies module
 
@@ -542,9 +546,9 @@ function restartGame() {
     enemies.enemiesArray.splice(0, enemies.enemiesArray.length);
     enemies.ammo.splice(0, enemies.ammo.length);
     
-    healthRenew.splice(0, healthRenew.length);
-    timeRenew.splice(0, timeRenew.length);
-    shieldRenew.splice(0, shieldRenew.length);
+    powerups.healthRenew.splice(0, powerups.healthRenew.length);
+    powerups.timeRenew.splice(0, powerups.timeRenew.length);
+    powerups.shieldRenew.splice(0, powerups.shieldRenew.length);
 
     player.ammo.splice(0, player.ammo.length);
     player.map = {};
@@ -600,8 +604,8 @@ function restartGame() {
     inputField.value = "";
 
     // Set restoration and enemy shooting intervals again.
-    player.graduallyRestoreInterval = setInterval(player.graduallyRestore, 300); // Player module
-    enemies.enemiesShootingInterval = setInterval(enemies.shoot, 700); // Enemies module
+    player.graduallyRestoreInterval = setInterval(player.graduallyRestore, player.dynamicRestoration); // Player module
+    enemies.enemiesShootingInterval = setInterval(enemies.shoot, enemies.shootingSpeed); // Enemies module
 }
 
 // Exit game
