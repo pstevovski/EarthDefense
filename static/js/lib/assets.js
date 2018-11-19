@@ -1,3 +1,5 @@
+import {sfx} from "../mainGlavno.js";
+
 // Path to the files for easier use on github repo
 const fullPath = window.location.pathname;
 const splitPath = fullPath.split('/');
@@ -78,12 +80,8 @@ export class Sfx {
     toggleMusic() {
         this.soundOff = !this.soundOff;
         if(this.soundOff) {
-            this.music.volume = 0;
-            this.playerShooting.volume = 0;
-            this.explosionSound.volume = 0;
-            this.enemyShooting.volume = 0;
-            this.restorationSound.volume = 0;
-            this.alarmSound.volume = 0;
+            this.sfxVolume = 0;
+            this.musicVolume = 0;
             this.menuSelected.volume = 0;
             this.menuMove.volume = 0;
         } else {
@@ -106,7 +104,7 @@ export class Sfx {
 }
 
 export const graphics = new Graphics();
-
+// export const sfx = new Sfx();
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 // const displayImage = document.querySelector("#displayImage");
