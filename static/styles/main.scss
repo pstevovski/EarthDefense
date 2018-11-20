@@ -36,6 +36,10 @@ body{
     .main-menu_buttons:hover{
         animation: buttonsAnimation 0.5s ease forwards infinite;
     }
+    
+    button {
+        outline: none;
+    }
 }
 
 // Main menu
@@ -513,7 +517,10 @@ body{
         align-items: center;
 
         font-size: 14px;
-
+        
+        .levelTextActive {
+            animation: notifyLevelUp 0.5s ease forwards infinite;
+        }
         .level-bar {
             width: 200px;
             height: 25px;

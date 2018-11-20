@@ -80,3 +80,26 @@
         transform: translateY(100px);
     }
 }
+
+@keyframes notifyLevelUp{
+    0%{
+        color: #f5f5f5;
+        transform: scale(1)
+    }
+    25%{
+        color: #FFD600;
+        transform: scale(1.05)
+    }
+    50%{
+        color: #f5f5f5;
+        transform: scale(0.95);
+    }
+    75%{
+        color: #FFD600;
+        transform: scale(1.05);
+    }
+    100%{
+        color: #f5f5f5;
+        transform: scale(1);
+    }
+}
