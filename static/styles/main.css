@@ -594,7 +594,7 @@ body button {
       -ms-flex-align: center;
           align-items: center;
   border: 2px solid #f5f5f520;
-  border-radius: 20px;
+  border-radius: 3px;
   position: relative;
   overflow: hidden;
 }
@@ -612,8 +612,8 @@ body button {
   height: 100%;
   -webkit-transition: 0.3s ease;
   transition: 0.3s ease;
-  border-top-left-radius: 20px;
-  border-bottom-left-radius: 20px;
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px;
   background-color: #b30d07;
 }
 
