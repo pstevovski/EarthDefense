@@ -42,6 +42,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Fixed bug where player runs out of screen while using booster.
 ---------------------
 ## All Changes:
+### v1.2.0 - Nov 20 2018
+### Added
+* Minor animation that player has leveled up.
+
+### Changed
+* Separated the code into modules.
+* Updated the CSS by using SASS / SCSS.
+* Cleaned the code and refactored a bit.
+* Ammo is created as player levels up, up to 8th level with 4 missiles at once.
+
 ### v1.1.2 - Nov 9 2018 [MINOR UPDATE]
 ### Changed
 * Corrected player speed issues on leveling, colliding with using booster.
