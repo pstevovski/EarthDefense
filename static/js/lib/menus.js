@@ -1,4 +1,4 @@
-// import {sfx} from "./assets.js";
+// Import Modules
 import {player} from "./player.js";
 import {game} from "./game.js";
 import {sfx} from "../mainGlavno.js";
@@ -82,7 +82,6 @@ function closeHighscoresMenu() {
 // Settings menu (in-game)
 const volumeControls = document.querySelectorAll(`.settings-menu input[type="range"]`);
 const displayChange = document.querySelectorAll(".displayChange");
-// sfx.controllingVolume = false;
 
 function controlVolume() {
     if(sfx.controllingVolume) {
@@ -192,10 +191,3 @@ shipControls.forEach(control => control.addEventListener("keyup", changeControls
 shipControls.forEach(control => control.addEventListener("click", function(){
     this.value = ""
 }));
-
-// const sfx = new Sfx();
-
-
-// Initialize the imported classes
-// const player = new Player();
-// const game = new Game();

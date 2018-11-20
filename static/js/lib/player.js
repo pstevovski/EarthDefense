@@ -18,20 +18,23 @@ export class Player {
         this.booster = 100;
         this.missileSpeed = 15;
         this.increasedSpeed = 5; // Speed increased by level up
-        this.ammo = [];
         this.heat = -1;
+
+        this.ammo = [];
+
         this.speedBooster = false;
         this.isOverheated = false;
         this.isSpaceDown = false;
         this.shieldDestroyed = false;
+
+        
+        // Player related elements
+        this.blocks = document.querySelectorAll(".overheat-bar_block");
         this.currentLevel = document.querySelector("#currentLevel");
         this.shieldText = document.querySelector("#shieldText");
         this.healthText = document.querySelector("#healthText");
-        // this.currentExp = document.querySelector("#currentExp");
 
-        // Overheat blocks
-        this.blocks = document.querySelectorAll(".overheat-bar_block");
-
+        // Player ship interval
         this.graduallyRestoreInterval;
         this.dynamicRestoration = 400;
 
@@ -56,6 +59,7 @@ export class Player {
         this.currentLevel.textContent = this.level;
         this.shieldDestroyed = false;
         
+        // Increase the movement and missile speed on level up
         this.increasedSpeed++;
         this.speed = this.increasedSpeed;
         this.missileSpeed += 1;
@@ -80,20 +84,19 @@ export class Player {
         if(this.shield <= 80) {
             this.shield += 20;
         }
-
         this.healthText.textContent = this.hp + "%";
         this.shieldText.textContent = this.shield + "%";
 
+        // Small animation to notify the player he's leveled up
         document.querySelector("#levelText").classList.add("levelTextActive");
 
         setTimeout(() => {
             document.querySelector("#levelText").classList.remove("levelTextActive");
         }, 1500);
-    }
+    };
     
     // Player movement
     playerMovement (e) {
-        // testTest();
         e = e || event;
         if(game.isStarted) {
             this.map[e.keyCode] = e.type === "keydown";
@@ -137,22 +140,22 @@ export class Player {
                     sfx.alarmSound.currentTime = 0;
                     sfx.alarmSound.play();
 
-                    this.fillBooster();
+                    // Restore the booster to max
+                    this.restoreBooster();
                 }
             }
         }
-    }
+    };
 
+    // Clear the ship commands when player doesn't holds a key down
     clearShipCommands() {
         this.speed = this.increasedSpeed;
         this.isSpaceDown = false;
         this.speedBooster = false;
         this.d = "";
-        // graphics.ship.src = `${endPath}/assets/images/player.png`;
-        // this.speed = speedIncreased;
-        // engineFlames.src = `${endPath}/assets/images/engineFlameNormal.png`;
     }
 
+    // Shoot
     shoot(e) {
         e = e || event;
         if(game.isStarted && !this.isOverheated) {
@@ -248,7 +251,7 @@ export class Player {
         }
     };
 
-    // When guns overheat (reach 100), wait 3 seconds and restore to 0.
+    // When guns overheat (reach 100), wait 2 seconds and restore to 0.
     coolOut() {
         setTimeout(() => {
             this.overheat = 0;
@@ -261,7 +264,7 @@ export class Player {
             });
             this.heat = -1;
         }, 2000);
-    }
+    };
 
     // Restore the booster to max (100) after 5 seconds after it is emptied.
     restoreBooster() {
@@ -270,13 +273,13 @@ export class Player {
             this.speedBooster = true;
             emptyWarningText.classList.remove("emptyWarning-textActive");
         }, 5000);
-    }
+    };
 
     // If the player is hit by the enemies
     playerHit() {
         // Play explosion sound
-        sfx.explosionSound.currentTime = 0; // ASSETS 
-        sfx.explosionSound.play(); // ASSETS
+        sfx.explosionSound.currentTime = 0;
+        sfx.explosionSound.play();
 
         // Destroy the alien ammo upon hit
         for(let i = 0; i < enemies.ammo.length; i++) {
@@ -286,6 +289,7 @@ export class Player {
                 enemies.ammo.splice(enemyRocketsIndex, 1);
             } 
         }
+
         // Decrease shield
         this.decreaseShield();
 
@@ -294,12 +298,12 @@ export class Player {
 
         if(this.hp === 0) {
             game.endgame();
-            clearInterval(game);
         }
-    }
+    };
 
     // Restore the ship's HP
     restoreShipHP() {
+        // If ship's already on max health dont do anything
         if(this.hp === 100) {
             this.hp = this.hp;
         } else{
@@ -309,9 +313,7 @@ export class Player {
             game.notificationText.innerHTML = `<i class="material-icons health">local_hospital</i><p>Health renewed!</p>`;
             game.displayNotification();
         }
-
-        // game.height;
-    }
+    };
 
     // Decrease the ship's HP on hit
     decreaseShipHP() {
@@ -320,10 +322,8 @@ export class Player {
             this.healthText.textContent = this.hp+"%";
         } else if(this.hp === 0) {
             game.endgame();
-            // clearInterval(game.init);
-            // clearInterval(enemies.enemiesShootingInterval);
         }
-    }
+    };
 
     // Restoring the ship's shield
     restoreShield() {
@@ -340,7 +340,7 @@ export class Player {
             game.notificationText.innerHTML = `<i class="material-icons shield">security</i><p>Shield restored!</p>`;
             game.displayNotification();
         }
-    }
+    };
 
     // Decrease the ship's shield on hit
     decreaseShield() {
@@ -353,7 +353,7 @@ export class Player {
             this.shieldDestroyed = true;
         }
     }
-}
+};
 
 class Ammo {
     constructor(ammoX, ammoY) {
@@ -362,17 +362,14 @@ class Ammo {
             y: player.y + (graphics.ship.height / 2 ) + ammoY
         })
     }
-}
+};
 
 export const player = new Player();
-// const sfx = new Sfx();
 
+// Set the restoration interval on load
 player.graduallyRestoreInterval = setInterval(player.graduallyRestore.bind(player), player.dynamicRestoration);
 
+// Bind event listeners
 onkeydown = onkeyup = player.playerMovement.bind(player);
 document.addEventListener("keydown", player.shoot.bind(player));
 document.addEventListener("keyup", player.clearShipCommands.bind(player));
-
-// let graduallyRestoreInterval = setInterval(player.graduallyRestore, 300);
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////

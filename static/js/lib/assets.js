@@ -1,12 +1,6 @@
+// Import modules
 import {sfx} from "../mainGlavno.js";
 import {endPath} from "./path.js";
-// Path to the files for easier use on github repo
-// const fullPath = window.location.pathname;
-// const splitPath = fullPath.split('/');
-// if (splitPath[splitPath.length - 1] == 'index.html') {
-// 	splitPath.pop();
-// }
-// const endPath = splitPath.length > 2 ? splitPath.join('/') : '';
 
 // Graphical assets
 export class Graphics{ 
@@ -34,7 +28,6 @@ export class Graphics{
         this.engineFlames.src = `${endPath}/assets/images/engineFlameNormal.png`;
     }
 }
-
 
 // Sound assets
 export class Sfx {
@@ -104,6 +97,3 @@ export class Sfx {
 }
 
 export const graphics = new Graphics();
-// export const sfx = new Sfx();
-
-//////////////////////////////////////////////////////////////////////////////////////////////////

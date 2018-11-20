@@ -1,3 +1,4 @@
+// Import modules
 import {game} from "./game.js";
 import {graphics} from "./assets.js";
 
@@ -18,14 +19,9 @@ export class Powerups{
             x: game.cWidth,
             y: Math.floor(Math.random() * ( (game.maxHeight - graphics.timerImage) - game.minHeight) + game.minHeight)
         }
-
-        // If initial ones were pushed
-        // this.initialHealthPushed = false;
-        // this.initialShieldPushed = false;
-        // this.initialTimeRenewPushed = false;
     }
 
-    // Spawn health restoration every 30 seconds
+    // Spawn health restoration every 20 seconds
     healthRenewFunction() {
         if(game.initialHealthPushed) {
             setTimeout(() => {
@@ -61,11 +57,6 @@ export class Powerups{
 
     // Spawn a timer to add more playing time every 10 to 15 seconds
     timeRenewFunction() {
-        // let min = 10;
-        // let max = 15;
-        // min = Math.ceil(min);
-        // max = Math.floor(max);
-        // let randomTime = Math.floor(Math.random() * (max - min + 1)) + min;
         if(game.initialTimeRenewPushed) {
             setTimeout(() => {
                 this.timeRenew.push({
@@ -80,12 +71,4 @@ export class Powerups{
             }, 20 * 1000);
         }
     }
-
 }
-// export const powerups = new Powerups(); 
-
-
-// POWERUPS CLASS (OBJECT):
-// powerups.healthRenewFunction();
-// powerups.shieldRenewFunction();
-// powerups.timeRenewFunction();

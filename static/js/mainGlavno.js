@@ -1,3 +1,4 @@
+// Import modules
 import * as menus from "./lib/menus.js";
 import {enemies} from "./lib/enemies.js";
 import {player} from "./lib/player.js";
@@ -6,50 +7,18 @@ import {Graphics, Sfx} from "./lib/assets.js";
 import {Powerups} from "./lib/powerups.js";
 import {endPath} from "./lib/path.js";
 
-/* TODO
-1. Clean the unused code
-
-BUGS: 
-- Renewals show right after game is restarted
-- Minor bugs with multiple keys pressed movement (LEFT UP AND SHOOT);
-*/
+// Export single instances
 export const graphics = new Graphics();
 export const powerups = new Powerups();
-// const player = new Player(); // delete when finished
-// const game = new Game(); // delete when finished
 export const sfx = new Sfx();
-// const enemies = new Enemies();  // delete when finished
-// export const powerups = new Powerups();
-
-// const fullPath = window.location.pathname;
-// const splitPath = fullPath.split('/');
-// if (splitPath[splitPath.length - 1] == 'index.html') {
-// 	splitPath.pop();
-// }
-// const endPath = splitPath.length > 2 ? splitPath.join('/') : '';
-// console.log(endPath);
 
 
 // Elements
-const notificationText = document.querySelector(".notification");
 const menu = document.querySelector(".menu");
-const displayImage = document.querySelector("#displayImage");
-const message = document.querySelector("#message");
 const pauseMenu = document.querySelector(".pause--menu");
 const shieldContainer = document.querySelector(".shield-container");
 const healthContainer = document.querySelector(".health-container");
 const overheatContainer = document.querySelector(".overheat-container");
-
-
-
-// Canvas
-const canvas = document.querySelector("#canvas");
-const ctx = canvas.getContext("2d");
-const cWidth = canvas.width;
-const cHeight = canvas.height;
-const minHeight = 0;
-const maxHeight = 500;
-// let init;
 
 // Load game
 function loadGame() {
@@ -139,32 +108,35 @@ export function startGame() {
         game.init = setInterval(draw, 1000 / 60);
     }, 500);
 }
+
 // Game
 function draw() {
-    canvas.style.display = "block";
-    ctx.drawImage(graphics.bg, 0,0);
+    // Display the canvas and paint the background
+    game.canvas.style.display = "block";
+    game.ctx.drawImage(graphics.bg, 0,0);
     
     // Check if the game started
     if(game.isStarted) {
         for(let i = 0; i < enemies.enemiesArray.length; i++){
             // Draw a enemy
-            ctx.drawImage(graphics.enemy, enemies.enemiesArray[i].x, enemies.enemiesArray[i].y);
+            game.ctx.drawImage(graphics.enemy, enemies.enemiesArray[i].x, enemies.enemiesArray[i].y);
 
             enemies.enemiesArray[i].x -= enemies.speed;
 
             if(enemies.enemiesArray[i].x === enemies.spawnDistance) {
                 enemies.enemiesArray.push({
-                    x: cWidth,
-                    y: Math.floor(Math.random() * ( (maxHeight-graphics.enemy.height) - minHeight) + minHeight) 
+                    x: game.cWidth,
+                    y: Math.floor(Math.random() * ( (game.maxHeight-graphics.enemy.height) - game.minHeight) + game.minHeight) 
                 })
             }
+
             // If spaceship and enemy colide
             if(player.x + graphics.ship.width >= enemies.enemiesArray[i].x 
                 && player.x <= enemies.enemiesArray[i].x + graphics.enemy.width 
                 && player.y + graphics.ship.height >= enemies.enemiesArray[i].y 
                 && player.y <= enemies.enemiesArray[i].y + graphics.enemy.height) {
                 // Draw explosion at those coords.
-                ctx.drawImage(graphics.explosion, enemies.enemiesArray[i].x - graphics.enemy.width, enemies.enemiesArray[i].y - graphics.enemy.height);
+                game.ctx.drawImage(graphics.explosion, enemies.enemiesArray[i].x - graphics.enemy.width, enemies.enemiesArray[i].y - graphics.enemy.height);
                 
                 // Delete the enemy from screen.
                 enemies.enemiesArray.splice(i, 1);
@@ -191,22 +163,25 @@ function draw() {
                 enemies.enemiesArray.splice(i, 1);
             }            
         }
+
         // Create a new enemy if all enemies on screen are destroyed.
         if(enemies.enemiesArray.length === 0) {
             enemies.enemiesArray.push({
-                x: cWidth,
-                y: Math.floor(Math.random() * ( (maxHeight-graphics.enemy.height) - minHeight) + minHeight) 
+                x: game.cWidth,
+                y: Math.floor(Math.random() * ( (game.maxHeight-graphics.enemy.height) - game.minHeight) + game.minHeight) 
             })
         }
     }
 
+    /* ============================================================================= */
+
     // PLAYER ROCKETS
     if(game.isStarted){
         for(let j = 0; j < player.ammo.length; j++) {
-            // ctx.drawImage(graphics.missile, player.ammo[j].x, player.ammo[j].y);
+            // game.ctx.drawImage(graphics.missile, player.ammo[j].x, player.ammo[j].y);
 
-            ctx.fillRect(player.ammo[j].x, player.ammo[j].y, 10, 10)
-            ctx.fillStyle = "#FFD600"; 
+            game.ctx.fillRect(player.ammo[j].x, player.ammo[j].y, 10, 10)
+            game.ctx.fillStyle = "#FFD600"; 
 
             player.ammo[j].x += player.missileSpeed;
 
@@ -219,7 +194,7 @@ function draw() {
 
             // Ammo colides enemy
             if (hitEnemy) {
-                ctx.drawImage(graphics.explosion, hitEnemy.x - graphics.enemy.width, hitEnemy.y - graphics.enemy.height);
+                game.ctx.drawImage(graphics.explosion, hitEnemy.x - graphics.enemy.width, hitEnemy.y - graphics.enemy.height);
 
                 // Remove the missiles
                 player.ammo.splice(j, 1);
@@ -234,13 +209,15 @@ function draw() {
 
                 // Update the kill count, thus updating the score
                 game.updateKillcount();
-            } else if (player.ammo[j].x > cWidth) { // If player's ammo goes past canvas width
+            } else if (player.ammo[j].x > game.cWidth) { // If player's ammo goes past canvas width
                 player.ammo.splice(j, 1);                
             }
         }
     }
 
-    // HEALTH RESTORATION - HEALTH,SHIELD,TIME FROM MODULE "POWERUPS"
+    /* ============================================================================= */
+
+    // HEALTH RESTORATION
     // Start moving the HP renew after a set timeout.
     setTimeout(() => {
         for(let i = 0; i < powerups.healthRenew.length; i++) {
@@ -250,7 +227,7 @@ function draw() {
     }, 10 * 1000);
 
     for(let i = 0; i < powerups.healthRenew.length; i++){
-        ctx.drawImage(graphics.healthImage, powerups.healthRenew[i].x, powerups.healthRenew[i].y);
+        game.ctx.drawImage(graphics.healthImage, powerups.healthRenew[i].x, powerups.healthRenew[i].y);
 
         const pickedUpHealthRenew = player.x + graphics.ship.width >= powerups.healthRenew[i].x 
                                 && player.x <= powerups.healthRenew[i].x + graphics.healthImage.width 
@@ -273,6 +250,7 @@ function draw() {
         }
     }
 
+    /* ============================================================================= */
 
     // SHIELD RESTORATION
     // Start moving the shield after 1 minute passes
@@ -284,7 +262,7 @@ function draw() {
     }, 15 * 1000);
 
     for(let i = 0; i < powerups.shieldRenew.length; i++) {
-        ctx.drawImage(graphics.shieldImage, powerups.shieldRenew[i].x, powerups.shieldRenew[i].y);
+        game.ctx.drawImage(graphics.shieldImage, powerups.shieldRenew[i].x, powerups.shieldRenew[i].y);
 
         const pickedUpShieldRenew = player.x + graphics.ship.width >= powerups.shieldRenew[i].x 
                                 && player.x <= powerups.shieldRenew[i].x + graphics.shieldImage.width 
@@ -307,9 +285,11 @@ function draw() {
         }
     }
 
+    /* ============================================================================= */
+
     // ADD PLAY TIME 
     for(let i = 0; i < powerups.timeRenew.length; i++){
-        ctx.drawImage(graphics.timerImage, powerups.timeRenew[i].x, powerups.timeRenew[i].y)
+        game.ctx.drawImage(graphics.timerImage, powerups.timeRenew[i].x, powerups.timeRenew[i].y)
         // If the ship touches the sand timer, add more time
 
         const pickedUpTimeRenew = player.x + graphics.ship.width >= powerups.timeRenew[i].x 
@@ -339,6 +319,8 @@ function draw() {
         }
         game.initialTimeRenewPushed = true;
     }, 10 * 1000);
+
+    /* ============================================================================= */
 
     // Move the ship
     if(player.d === "LEFT") {
@@ -375,7 +357,7 @@ function draw() {
     // ALIEN (ENEMY) ROCKETS
     if(game.isStarted && enemies.spawned){
         for(let i = 0; i < enemies.ammo.length;i++) {
-            ctx.drawImage(graphics.enemyMissile, enemies.ammo[i].x, enemies.ammo[i].y);
+            game.ctx.drawImage(graphics.enemyMissile, enemies.ammo[i].x, enemies.ammo[i].y);
             enemies.ammo[i].x -= 15;
 
             const hitEnemyAmmo = enemies.ammo[i].x >= player.x 
@@ -386,7 +368,7 @@ function draw() {
         
             if(hitEnemyAmmo) {
                 // Draw explosion at the spot
-                ctx.drawImage(graphics.explosion, player.x, player.y);
+                game.ctx.drawImage(graphics.explosion, player.x, player.y);
         
                 // Run function when player's ship is hit.
                 player.playerHit();
@@ -408,23 +390,21 @@ function draw() {
     }
 
     // Draw the ship
-    ctx.drawImage(graphics.ship, player.x, player.y);
-    // engineFlameX = player.x - (ship.width - 42);
-    // engineFlameY = player.y + (ship.height / 2 - 6);
-    // ctx.drawImage(engineFlames, engineFlameX, engineFlameY);
+    game.ctx.drawImage(graphics.ship, player.x, player.y);
 
     // Check how much time has passed and increase difficulty accordingly.
     game.increaseDifficulty();
 }
+
 // Pause game
 function pauseGame(){
     // Display the menu
     pauseMenu.style.display = "flex";
 
-    // Clear the interval for the game
+    // Clear the intervals
     clearInterval(game.init);
-    clearInterval(enemies.enemiesShootingInterval); // Enemies module
-    clearInterval(player.graduallyRestoreInterval); // Player module
+    clearInterval(enemies.enemiesShootingInterval);
+    clearInterval(player.graduallyRestoreInterval);
     clearInterval(game.countdown); 
 
     // Stop enemies and ship from moving
@@ -437,6 +417,7 @@ function pauseGame(){
     game.pausedTime = (new Date() - game.startingTime) / 1000;
     Math.floor(game.pausedTime);
 }
+
 // Continue game
 function continueGame(){
     // Hide the menu
@@ -444,9 +425,9 @@ function continueGame(){
 
     // Run the interval
     game.init = setInterval(draw, 1000 / 60);
-    enemies.enemiesShootingInterval = setInterval(enemies.shoot.bind(enemies), enemies.shootingSpeed); // Enemies module
-    player.graduallyRestoreInterval = setInterval(player.graduallyRestore.bind(player), player.dynamicRestoration); // Player module
-    game.timer(game.currentTime); // Game module
+    enemies.enemiesShootingInterval = setInterval(enemies.shoot.bind(enemies), enemies.shootingSpeed);
+    player.graduallyRestoreInterval = setInterval(player.graduallyRestore.bind(player), player.dynamicRestoration);
+    game.timer(game.currentTime);
 
     // Enable enemies and ship movement
     game.isStarted = true;
@@ -457,98 +438,6 @@ function continueGame(){
     // Continue measuring time after game was paused
     game.pausedTime *= 1000;
 }
-// // Restart game
-// function restartGame() {
-//     // Clear the intervals
-//     clearInterval(game.countdown);
-//     clearInterval(game.init);
-//     clearInterval(player.graduallyRestoreInterval); // Player module
-//     clearInterval(enemies.enemiesShootingInterval); // Enemies module
-
-//     // Reset the flag variables
-//     game.isStarted = false;
-//     enemies.spawned = false;
-//     powerups.initialHealthPushed = false;
-//     powerups.initialShieldPushed = false;
-//     powerups.initialTimeRenewPushed = false;
-//     player.shieldDestroyed = false;
-
-//     // Reset timer
-//     game.timerDisplay.classList.remove("timeLow"); // In case user died while time was low.
-//     game.timerDisplay.textContent = "0:30";
-
-//     // Reset the colored blocks
-//     player.blocks.forEach(block => {
-//         block.classList.remove("greenPhase")
-//         block.classList.remove("yellowPhase")
-//         block.classList.remove("redPhase")
-//     });
-
-//     // Destroy all enemies, healths, timers, shields and reset them to 0.
-//     enemies.enemiesArray.splice(0, enemies.enemiesArray.length);
-//     enemies.ammo.splice(0, enemies.ammo.length);
-    
-//     powerups.healthRenew.splice(0, powerups.healthRenew.length);
-//     powerups.timeRenew.splice(0, powerups.timeRenew.length);
-//     powerups.shieldRenew.splice(0, powerups.shieldRenew.length);
-
-//     player.ammo.splice(0, player.ammo.length);
-//     player.map = {};
-    
-//     // Run startGame again
-//     startGame();
-
-//     // Reset the kill count text.
-//     player.killCount = 0;
-//     game.displayKills.textContent = player.killCount;
-
-//     // Reset pregame countdown and hide game over menu
-//     preGame = 3;
-//     game.gameOver.style.display = "none";
-
-//     // Reset ship's direction
-//     player.d = "";
-
-//     // Reset player's ship stats
-//     player.hp = 100;
-//     player.shield = 100;
-//     player.overheat = 0;
-//     player.boost = 100
-//     player.x = 50;
-//     player.y = 250;
-//     player.speed = 5;
-//     player.heat = -1;
-
-//     // Reset level and experience
-//     game.requiredExpText.textContent = game.requiredExp + "XP";
-//     game.requiredExp = 80;
-//     player.exp = 0;
-//     player.level = 1;
-//     player.currentLevel.textContent = player.level;
-//     player.currentExp.textContent = player.exp;
-//     let levelExp = (player.exp / game.requiredExp) * 100;
-//     levelBar.style.width = `${levelExp}%`;
-
-//     // Restart current time which affets difficulty
-//     game.startingTime = new Date();
-//     game.increaseDifficulty();
-
-//     // Reset enemies data
-//     enemies.speed = 1;
-//     enemies.shootingSpeed = 700;
-
-//     // Reset health and shield text display
-//     player.healthText.textContent = player.hp + "%";
-//     player.shieldText.textContent = player.shield + "%";
-
-//     // Clear input field at game over menu
-//     const inputField = document.querySelector("#playerName-input");
-//     inputField.value = "";
-
-//     // Set restoration and enemy shooting intervals again.
-//     player.graduallyRestoreInterval = setInterval(player.graduallyRestore, player.dynamicRestoration); // Player module
-//     enemies.enemiesShootingInterval = setInterval(enemies.shoot, enemies.shootingSpeed); // Enemies module
-// }
 
 // Exit game
 const exitGame = document.querySelectorAll(".exitGame");
@@ -567,6 +456,7 @@ window.addEventListener("keydown", e => {
 window.addEventListener("click", e => {
     if(e.target.id !== "canvas" && e.target.id !== "continueGame" && game.isStarted) pauseGame();
 })
+
 
 // Initialize renewal items
 powerups.healthRenewFunction();

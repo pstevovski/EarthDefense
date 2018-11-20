@@ -1,22 +1,13 @@
+// Import modules
 import {player} from "./player.js";
 import {enemies} from "./enemies.js";
-// import {Graphics, Sfx} from "./assets.js";
 import {graphics, sfx, powerups, startGame} from "../mainGlavno.js";
-// import {startGame} from "../mainGlavno.js";
 import {endPath} from "./path.js";
 
-// TESTING
-// Path to the files for easier use on github repo
-// const fullPath = window.location.pathname;
-// const splitPath = fullPath.split('/');
-// if (splitPath[splitPath.length - 1] == 'index.html') {
-// 	splitPath.pop();
-// }
-// const endPath = splitPath.length > 2 ? splitPath.join('/') : '';
-// // TESTING
 
 export class Game {
     constructor() {
+        // Game elements
         this.canvas = document.querySelector("#canvas");
         this.displayKills = document.querySelector("#killCount");
         this.currentExp = document.querySelector("#currentExp");
@@ -25,21 +16,22 @@ export class Game {
         this.notificationText = document.querySelector(".notification");
         this.timerDisplay = document.querySelector("#timerDisplay");
         this.gameOver = document.querySelector(".game--over");
-
         this.ctx = this.canvas.getContext("2d");
         this.cWidth = this.canvas.width;
         this.cHeight = this.canvas.height;
         this.minHeight = 0;
         this.maxHeight = 500;
+
+        // On start values
         this.requiredExp = 80;
+        this.score = 0;
         this.startingTime;
         this.endTime;
         this.pausedTime;
-        this.score = 0;
+        this.timePassed;
         this.init;
-        this.isStarted = false;
         this.preGame;
-
+        this.isStarted = false;
 
         // Time
         this.time = 30;
@@ -50,20 +42,13 @@ export class Game {
         // Scores
         this.highscore;
 
-        // Powerups pushed
+        // Initial powerups
         this.initialHealthPushed = false;
         this.initialShieldPushed = false;
         this.initialTimeRenewPushed = false;
+    };
 
-    }
-
-    // Start the game
-    // startGame() {
-    //     this.isStarted = true;
-    //     this.player = new Player(this);
-    // }
-
-    // Update kills and experience when user kills an enemy
+    // Update kills and increase experience when player kills an enemy
     updateKillcount() {
         player.killCount++;
         this.displayKills.textContent = player.killCount;
@@ -81,15 +66,15 @@ export class Game {
         }
         let levelExp = (player.exp / this.requiredExp) * 100;
         this.levelBar.style.width = `${levelExp}%`;
-    }
+    };
 
     // Increase game's difficulty as time goes by
     increaseDifficulty() {
+        // Get how much time has passed since the game has started
         this.endTime = new Date();
+        this.timePassed = Math.floor((this.endTime - this.startingTime) / 1000);
 
-        let timeCurrent = Math.floor((this.endTime - this.startingTime) / 1000);
-
-        if(timeCurrent === 30) {
+        if(this.timePassed === 30) {
             // Clear the interval for enemies shooting
             clearInterval(enemies.enemiesShootingInterval);
             
@@ -101,7 +86,7 @@ export class Game {
             enemies.enemiesShootingInterval = setInterval(enemies.shoot.bind(enemies), enemies.shootingSpeed);
 
             this.displayNotification();
-        } else if (timeCurrent === 60) {
+        } else if (this.timePassed === 60) {
             // Clear the interval for enemies shooting
             clearInterval(enemies.enemiesShootingInterval);
 
@@ -113,7 +98,7 @@ export class Game {
             enemies.enemiesShootingInterval = setInterval(enemies.shoot.bind(enemies), enemies.shootingSpeed);
 
             this.displayNotification();
-        } else if (timeCurrent === 90) {
+        } else if (this.timePassed === 90) {
             // Clear the interval for enemies shooting
             clearInterval(enemies.enemiesShootingInterval);
 
@@ -124,7 +109,7 @@ export class Game {
             // After speed update, enable interval again
             enemies.enemiesShootingInterval = setInterval(enemies.shoot.bind(enemies), enemies.shootingSpeed);
             this.displayNotification();
-        } else if (timeCurrent === 120) {
+        } else if (this.timePassed === 120) {
             // Clear the interval for enemies shooting
             clearInterval(enemies.enemiesShootingInterval);
 
@@ -137,20 +122,20 @@ export class Game {
 
             this.displayNotification();
         }
-    }
+    };
 
     // Display notifications
     displayNotification(secondsLeft) {
         this.notificationText.classList.add("activeNotification");
 
-        if(player.killCount === 30) {
-            this.notificationText.innerHTML = `<i class="material-icons">warning</i> <p>Another Disturbance!</p>`
-        } else if (player.killCount === 50) {
-            this.notificationText.innerHTML= `<i class="material-icons">warning</i> <p>Another Disturbance!</p>`
-        } else if (player.killCount === 80) {
-            this.notificationText.innerHTML= `<i class="material-icons">warning</i> <p>Another Disturbance!</p>`
-        } else if (player.killCount === 100) {
-            this.notificationText.innerHTML= `<i class="material-icons">warning</i> <p>Another Disturbance, you're doing great!</p>`
+        if(this.timePassed === 30) {
+            this.notificationText.innerHTML = `<i class="material-icons">warning</i> <p>They are speeding up!!</p>`
+        } else if (this.timePassed === 50) {
+            this.notificationText.innerHTML= `<i class="material-icons">warning</i> <p>They are speeding up!!</p>`
+        } else if (this.timePassed === 80) {
+            this.notificationText.innerHTML= `<i class="material-icons">warning</i> <p>They are speeding up!!</p>`
+        } else if (this.timePassed === 100) {
+            this.notificationText.innerHTML= `<i class="material-icons">warning</i> <p>They are speeding up!!</p>`
         }
 
         // If there are 10 seconds left, show a warning for low time
@@ -161,10 +146,10 @@ export class Game {
         // Remove the notification active class after 4 seconds
         setTimeout(() => {
             this.notificationText.classList.remove("activeNotification");
-        }, 4000);
+        }, 3000);
     }
 
-    // Timer
+    // Game's timer
     timer(secondsLeft){
         clearInterval(this.countdown);
 
@@ -174,6 +159,7 @@ export class Game {
 
         this.countdown = setInterval(() =>{
             this.secondsLeft = Math.round((then - Date.now()) / 1000);
+
             // Show a warning for few seconds left
             if(this.secondsLeft === 10) {
                 this.timerDisplay.classList.add("timeLow");
@@ -190,33 +176,36 @@ export class Game {
             
             this.displayTimeLeft(this.secondsLeft);
         }, 1000)
-    }
+    };
 
     // Display time left
     displayTimeLeft(seconds) {
         const minutes = Math.floor(seconds / 60);
         const remainder = seconds % 60;
         this.timerDisplay.textContent = `${minutes}:${remainder < 10 ? 0 : ""}${remainder}`;
-    }
+    };
 
     // Add playtime when user picks up timer
     addPlaytime() {
+        // First remove the class before re-adding it
         document.querySelector(".time").classList.remove("timeShake");
+
+        // Random time awarded for picking up the time renewal
         let minTime = 8;
         let maxTime = 12;
         minTime = Math.ceil(minTime);
         maxTime = Math.floor(maxTime);
         let spawnTime = Math.floor(Math.random() * (maxTime - minTime + 1)) + minTime;
 
-        // this.secondsLeft = this.secondsLeft + spawnTime;
         this.time = this.secondsLeft + spawnTime;
-        // let addedTime = this.secondsLeft + spawnTime;
         this.timer(this.time);
+
+        // Display message and add shaking to the time
         document.querySelector(".time").classList.add("timeShake");
         this.timerDisplay.classList.remove("timeLow");
         this.notificationText.innerHTML = `<i class="material-icons timer">timer</i><p>Added playtime!</p>`;
         this.displayNotification();
-    }
+    };
 
     // New score
     newScore(finalScore) {
@@ -247,12 +236,12 @@ export class Game {
             // Hide the menu
             inputMenu.style.display = "none";
         })
-    }
+    };
 
     // Get saved highscore in local storage
     savedHighscore() {
         this.highscore = localStorage.getItem("highscore");
-    }
+    };
 
     // New Highscore
     newHighscore() {
@@ -266,7 +255,7 @@ export class Game {
         setTimeout(() => {
             emptyWarningText.classList.remove("emptyWarning-Highscore");
         }, 2000);
-    }
+    };
 
     // End the game
     endgame(secondsLeft){
@@ -289,11 +278,18 @@ export class Game {
 
         // Stop movements
         this.isStarted = false;
+
+        // Disable enemies
+        enemies.spawned = false;
         
         // Destroy all powerups
         powerups.healthRenew.splice(0);
         powerups.timeRenew.splice(0);
         powerups.shieldRenew.splice(0);
+
+        this.initialHealthPushed = false;
+        this.initialShieldPushed = false;
+        this.initialTimeRenewPushed = false;
 
         // Game Over / Game finished menu
         this.gameOver.style.display = "block";
@@ -324,28 +320,27 @@ export class Game {
         // Display the menu with an input to enter player's name
         this.newScore(finalScore);
 
+        // If the new final score is bigger than the current highscore, save it and display notification
         if(finalScore > this.highscore) {
             localStorage.setItem("highscore", finalScore);
             document.querySelector("#highscore").textContent = localStorage.getItem("highscore");
             this.newHighscore();
         }
-    }
+    };
 
     // Restart game
     restartGame() {
         // Clear the intervals
-        clearInterval(game.countdown);
+        clearInterval(this.countdown);
         clearInterval(this.init);
         clearInterval(player.graduallyRestoreInterval); // Player module
         clearInterval(enemies.enemiesShootingInterval); // Enemies module
 
-        // Reset the flag variables
+        // Reset game parameters
         this.isStarted = false;
-        enemies.spawned = false;
         this.initialHealthPushed = false;
         this.initialShieldPushed = false;
         this.initialTimeRenewPushed = false;
-        player.shieldDestroyed = false;
 
         // Reset timer
         this.timerDisplay.classList.remove("timeLow"); // In case user died while time was low.
@@ -368,9 +363,6 @@ export class Game {
 
         player.ammo.splice(0, player.ammo.length);
         player.map = {};
-        
-        // Run startGame again
-        startGame();
 
         // Reset the kill count text.
         player.killCount = 0;
@@ -381,10 +373,8 @@ export class Game {
         this.gameOver.style.display = "none";
         this.time = 30;
 
-        // Reset ship's direction
+        // Reset player's (ship's) parameters
         player.d = "";
-
-        // Reset player's ship stats
         player.hp = 100;
         player.shield = 100;
         player.overheat = 0;
@@ -392,16 +382,19 @@ export class Game {
         player.x = 50;
         player.y = 250;
         player.speed = 5;
+        player.increasedSpeed = 5;
         player.heat = -1;
         player.dynamicRestoration = 400;
+        player.shieldDestroyed = false;
+        player.exp = 0;
+        player.level = 1;
+        player.currentLevel.textContent = player.level;
 
         // Reset level and experience
         this.requiredExp = 80;
         this.requiredExpText.textContent = this.requiredExp + " XP";
-        player.exp = 0;
-        player.level = 1;
-        player.currentLevel.textContent = player.level;
         this.currentExp.textContent = player.exp;
+
         let levelExp = (player.exp / this.requiredExp) * 100;
         this.levelBar.style.width = `${levelExp}%`;
 
@@ -410,6 +403,7 @@ export class Game {
         this.increaseDifficulty();
 
         // Reset enemies data
+        enemies.spawned = false;
         enemies.speed = 1;
         enemies.shootingSpeed = 700;
 
@@ -422,13 +416,12 @@ export class Game {
         inputField.value = "";
 
         // Set restoration and enemy shooting intervals again.
-        player.graduallyRestoreInterval = setInterval(player.graduallyRestore.bind(player), player.dynamicRestoration); // Player module
-        enemies.enemiesShootingInterval = setInterval(enemies.shoot.bind(enemies), enemies.shootingSpeed); // Enemies module
+        player.graduallyRestoreInterval = setInterval(player.graduallyRestore.bind(player), player.dynamicRestoration);
+        enemies.enemiesShootingInterval = setInterval(enemies.shoot.bind(enemies), enemies.shootingSpeed);
+
+        // Run the game again
+        startGame();
     }
 }
 export const game = new Game();
-// const powerups = new Powerups();
 game.savedHighscore();
-// const sfx = new Sfx();
-// Event listeners
-// document.querySelector("#startGame").addEventListener("click", game.loadGame);
