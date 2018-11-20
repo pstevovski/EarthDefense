@@ -4,6 +4,7 @@ import {player} from "./lib/player.js";
 import {game} from "./lib/game.js";
 import {Graphics, Sfx} from "./lib/assets.js";
 import {Powerups} from "./lib/powerups.js";
+import {endPath} from "./lib/path.js";
 
 /* TODO
 1. Clean the unused code
@@ -20,12 +21,13 @@ export const sfx = new Sfx();
 // const enemies = new Enemies();  // delete when finished
 // export const powerups = new Powerups();
 
-const fullPath = window.location.pathname;
-const splitPath = fullPath.split('/');
-if (splitPath[splitPath.length - 1] == 'index.html') {
-	splitPath.pop();
-}
-const endPath = splitPath.length > 2 ? splitPath.join('/') : '';
+// const fullPath = window.location.pathname;
+// const splitPath = fullPath.split('/');
+// if (splitPath[splitPath.length - 1] == 'index.html') {
+// 	splitPath.pop();
+// }
+// const endPath = splitPath.length > 2 ? splitPath.join('/') : '';
+// console.log(endPath);
 
 
 // Elements

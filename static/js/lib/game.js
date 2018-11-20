@@ -3,16 +3,17 @@ import {enemies} from "./enemies.js";
 // import {Graphics, Sfx} from "./assets.js";
 import {graphics, sfx, powerups, startGame} from "../mainGlavno.js";
 // import {startGame} from "../mainGlavno.js";
+import {endPath} from "./path.js";
 
 // TESTING
 // Path to the files for easier use on github repo
-const fullPath = window.location.pathname;
-const splitPath = fullPath.split('/');
-if (splitPath[splitPath.length - 1] == 'index.html') {
-	splitPath.pop();
-}
-const endPath = splitPath.length > 2 ? splitPath.join('/') : '';
-// TESTING
+// const fullPath = window.location.pathname;
+// const splitPath = fullPath.split('/');
+// if (splitPath[splitPath.length - 1] == 'index.html') {
+// 	splitPath.pop();
+// }
+// const endPath = splitPath.length > 2 ? splitPath.join('/') : '';
+// // TESTING
 
 export class Game {
     constructor() {
@@ -75,7 +76,7 @@ export class Game {
             player.exp = 0;
             this.requiredExp = this.requiredExp * 2;
             this.currentExp.textContent = player.exp;
-            this.requiredExpText.textContent = this.requiredExp + "XP";
+            this.requiredExpText.textContent = this.requiredExp + " XP";
             player.levelUp();
         }
         let levelExp = (player.exp / this.requiredExp) * 100;
@@ -396,7 +397,7 @@ export class Game {
 
         // Reset level and experience
         this.requiredExp = 80;
-        this.requiredExpText.textContent = this.requiredExp + "XP";
+        this.requiredExpText.textContent = this.requiredExp + " XP";
         player.exp = 0;
         player.level = 1;
         player.currentLevel.textContent = player.level;
