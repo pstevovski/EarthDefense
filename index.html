@@ -1,11 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<!-- 
-		EarthDefense Game by pecko95 (https://github.com/pecko95/EarthDefense)
-		v1.0.0 - Oct 29 2018
-		Please comment and enjoy!
-    -->
+	<!-- EarthDefense Game by pecko95 (https://github.com/pecko95/EarthDefense)
+		v1.2.0 - Oct 29 2018
+		Please comment and enjoy! -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -75,7 +73,7 @@
             <p id="pauseGame" class="main-menu_buttons">MENU</p>
             <div class="time"><p id="timerDisplay">0:30</p></div>
             <div class="level-container">
-                <p>Level: <span id="currentLevel">1</span></p>
+                <p id="levelText">Level: <span id="currentLevel">1</span></p>
                 <div class="level-bar">
                     <p><span id="currentExp">0</span>/<span id="requiredExp">80 XP</span></p>
                     <div class="level-bar_fill"></div>
@@ -143,7 +141,7 @@
                 <p>Total kills: <span id="totalKills"></span></p>
                 <p>Time played multiplier: <span id="multiplier"></span></p>
                 <p>Final score: <span id="finalScore"></span></p>
-                <p>Highscore: <span id="highscore"></span></p>
+                <p>Current Highscore: <span id="highscore"></span></p>
             </div>
             <button class="main-menu_buttons gameOverBtn" id="restartGame">RESTART</button>
             <button class="exitGame gameOverBtn main-menu_buttons">EXIT</button>
@@ -221,10 +219,6 @@
     </div>
 
     <!-- Script link -->
-    <script type="module" src="./static/js/enemies.js"></script>
-    <!-- <script src="./static/js/main.js"></script> -->
-    <!-- <script src="./static/js/player.js"></script> -->
-    <!-- <script src="./static/js/graphics.js"></script>  -->
-    <!-- <script type="module" src="./static/js/game.js"></script> -->
+    <script type="module" src="./static/js/mainGlavno.js"></script>
 </body>
 </html>
