@@ -1,7 +1,8 @@
 import {player} from "./player.js";
 import {enemies} from "./enemies.js";
 // import {Graphics, Sfx} from "./assets.js";
-import {graphics, sfx} from "../mainGlavno.js";
+import {graphics, sfx, powerups, startGame} from "../mainGlavno.js";
+// import {startGame} from "../mainGlavno.js";
 
 // TESTING
 // Path to the files for easier use on github repo
@@ -36,15 +37,22 @@ export class Game {
         this.score = 0;
         this.init;
         this.isStarted = false;
+        this.preGame;
 
 
         // Time
         this.time = 30;
         this.secondsLeft;
         this.countdown;
+        this.currentTime; // Used for pausing / continuing game
 
         // Scores
         this.highscore;
+
+        // Powerups pushed
+        this.initialHealthPushed = false;
+        this.initialShieldPushed = false;
+        this.initialTimeRenewPushed = false;
 
     }
 
@@ -110,7 +118,7 @@ export class Game {
 
             // Increase enemies shooting speed
             enemies.speed = 8;
-            enemies.shootingSpeed = 200;
+            enemies.shootingSpeed = 300;
             
             // After speed update, enable interval again
             enemies.enemiesShootingInterval = setInterval(enemies.shoot.bind(enemies), enemies.shootingSpeed);
@@ -121,7 +129,7 @@ export class Game {
 
             // Increase enemies shooting speed
             enemies.speed = 10;
-            enemies.shootingSpeed = 100;
+            enemies.shootingSpeed = 200;
 
             // After speed update, enable interval again
             enemies.enemiesShootingInterval = setInterval(enemies.shoot.bind(enemies), enemies.shootingSpeed);
@@ -176,6 +184,9 @@ export class Game {
                 this.endgame(this.secondsLeft);
                 return;
             }
+            this.currentTime = this.secondsLeft; 
+            this.time = this.currentTime;
+            
             this.displayTimeLeft(this.secondsLeft);
         }, 1000)
     }
@@ -185,11 +196,11 @@ export class Game {
         const minutes = Math.floor(seconds / 60);
         const remainder = seconds % 60;
         this.timerDisplay.textContent = `${minutes}:${remainder < 10 ? 0 : ""}${remainder}`;
-        // console.log(seconds);
     }
 
     // Add playtime when user picks up timer
     addPlaytime() {
+        document.querySelector(".time").classList.remove("timeShake");
         let minTime = 8;
         let maxTime = 12;
         minTime = Math.ceil(minTime);
@@ -201,10 +212,7 @@ export class Game {
         // let addedTime = this.secondsLeft + spawnTime;
         this.timer(this.time);
         document.querySelector(".time").classList.add("timeShake");
-        // When time is added and timer is higher than 10 seconds, remove classt (remove red color).
-        if (this.secondsLeft > 10) {
-            this.timerDisplay.classList.remove("timeLow");
-        }
+        this.timerDisplay.classList.remove("timeLow");
         this.notificationText.innerHTML = `<i class="material-icons timer">timer</i><p>Added playtime!</p>`;
         this.displayNotification();
     }
@@ -243,7 +251,6 @@ export class Game {
     // Get saved highscore in local storage
     savedHighscore() {
         this.highscore = localStorage.getItem("highscore");
-        // console.log(this.highscore);
     }
 
     // New Highscore
@@ -281,6 +288,11 @@ export class Game {
 
         // Stop movements
         this.isStarted = false;
+        
+        // Destroy all powerups
+        powerups.healthRenew.splice(0);
+        powerups.timeRenew.splice(0);
+        powerups.shieldRenew.splice(0);
 
         // Game Over / Game finished menu
         this.gameOver.style.display = "block";
@@ -312,14 +324,109 @@ export class Game {
         this.newScore(finalScore);
 
         if(finalScore > this.highscore) {
-            // console.log("testing stuff", this.highscore)
             localStorage.setItem("highscore", finalScore);
             document.querySelector("#highscore").textContent = localStorage.getItem("highscore");
             this.newHighscore();
         }
     }
+
+    // Restart game
+    restartGame() {
+        // Clear the intervals
+        clearInterval(game.countdown);
+        clearInterval(this.init);
+        clearInterval(player.graduallyRestoreInterval); // Player module
+        clearInterval(enemies.enemiesShootingInterval); // Enemies module
+
+        // Reset the flag variables
+        this.isStarted = false;
+        enemies.spawned = false;
+        this.initialHealthPushed = false;
+        this.initialShieldPushed = false;
+        this.initialTimeRenewPushed = false;
+        player.shieldDestroyed = false;
+
+        // Reset timer
+        this.timerDisplay.classList.remove("timeLow"); // In case user died while time was low.
+        this.timerDisplay.textContent = "0:30";
+
+        // Reset the colored blocks
+        player.blocks.forEach(block => {
+            block.classList.remove("greenPhase")
+            block.classList.remove("yellowPhase")
+            block.classList.remove("redPhase")
+        });
+
+        // Destroy all enemies, healths, timers, shields and reset them to 0.
+        enemies.enemiesArray.splice(0, enemies.enemiesArray.length);
+        enemies.ammo.splice(0, enemies.ammo.length);
+        
+        powerups.healthRenew.splice(0);
+        powerups.timeRenew.splice(0);
+        powerups.shieldRenew.splice(0);
+
+        player.ammo.splice(0, player.ammo.length);
+        player.map = {};
+        
+        // Run startGame again
+        startGame();
+
+        // Reset the kill count text.
+        player.killCount = 0;
+        this.displayKills.textContent = player.killCount;
+
+        // Reset pregame countdown and hide game over menu
+        this.preGame = 3;
+        this.gameOver.style.display = "none";
+        this.time = 30;
+
+        // Reset ship's direction
+        player.d = "";
+
+        // Reset player's ship stats
+        player.hp = 100;
+        player.shield = 100;
+        player.overheat = 0;
+        player.boost = 100
+        player.x = 50;
+        player.y = 250;
+        player.speed = 5;
+        player.heat = -1;
+        player.dynamicRestoration = 400;
+
+        // Reset level and experience
+        this.requiredExp = 80;
+        this.requiredExpText.textContent = this.requiredExp + "XP";
+        player.exp = 0;
+        player.level = 1;
+        player.currentLevel.textContent = player.level;
+        this.currentExp.textContent = player.exp;
+        let levelExp = (player.exp / this.requiredExp) * 100;
+        this.levelBar.style.width = `${levelExp}%`;
+
+        // Restart current time which affets difficulty
+        this.startingTime = new Date();
+        this.increaseDifficulty();
+
+        // Reset enemies data
+        enemies.speed = 1;
+        enemies.shootingSpeed = 700;
+
+        // Reset health and shield text display
+        player.healthText.textContent = player.hp + "%";
+        player.shieldText.textContent = player.shield + "%";
+
+        // Clear input field at game over menu
+        const inputField = document.querySelector("#playerName-input");
+        inputField.value = "";
+
+        // Set restoration and enemy shooting intervals again.
+        player.graduallyRestoreInterval = setInterval(player.graduallyRestore.bind(player), player.dynamicRestoration); // Player module
+        enemies.enemiesShootingInterval = setInterval(enemies.shoot.bind(enemies), enemies.shootingSpeed); // Enemies module
+    }
 }
 export const game = new Game();
+// const powerups = new Powerups();
 game.savedHighscore();
 // const sfx = new Sfx();
 // Event listeners

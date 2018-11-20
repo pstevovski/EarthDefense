@@ -3,22 +3,17 @@ import {enemies} from "./lib/enemies.js";
 import {player} from "./lib/player.js";
 import {game} from "./lib/game.js";
 import {Graphics, Sfx} from "./lib/assets.js";
-import {powerups} from "./lib/powerups.js";
+import {Powerups} from "./lib/powerups.js";
 
 /* TODO
-1. Have loadGame, startGame, restartGame, pauseGame, continueGame, exitGame here X
-2. Separate player {Object}
-3. Separate assets {Object}
-4. Separate menus 
-5. Import player, assets, menus to this main file
+1. Clean the unused code
 
 BUGS: 
-- Restarting game
-- Correct timing for health / shield restoration
-- Minor bugs with multiple keys pressed movement
-- Add more missiles as player level grows (?);
+- Renewals show right after game is restarted
+- Minor bugs with multiple keys pressed movement (LEFT UP AND SHOOT);
 */
 export const graphics = new Graphics();
+export const powerups = new Powerups();
 // const player = new Player(); // delete when finished
 // const game = new Game(); // delete when finished
 export const sfx = new Sfx();
@@ -89,14 +84,14 @@ function loadGame() {
 }
 
 // Start the game
-function startGame() {
+export function startGame() {
     setTimeout(() => {
         // Display the MENU/SCORE panel
         menu.style.display = "flex";
 
         // Pre-game countdown
         const preGameCountdown = document.querySelector(".countdown");
-        let preGame = 3;
+        game.preGame = 3;
         preGameCountdown.textContent = "3";
 
         // Display elements
@@ -110,9 +105,9 @@ function startGame() {
 
         // Pre-game countdown - 3 seconds then GO !
         const preGameCountdownInterval = setInterval(()=>{
-            preGame--;
-            preGameCountdown.textContent = preGame;
-            if(preGame === 0) {
+            game.preGame--;
+            preGameCountdown.textContent = game.preGame;
+            if(game.preGame === 0) {
                 sfx.goVoice.play();
                 preGameCountdown.textContent = "GO !";
                 setTimeout(()=> preGameCountdown.style.display = "none", 250)
@@ -142,7 +137,6 @@ function startGame() {
         game.init = setInterval(draw, 1000 / 60);
     }, 500);
 }
-
 // Game
 function draw() {
     canvas.style.display = "block";
@@ -207,7 +201,11 @@ function draw() {
     // PLAYER ROCKETS
     if(game.isStarted){
         for(let j = 0; j < player.ammo.length; j++) {
-            ctx.drawImage(graphics.missile, player.ammo[j].x, player.ammo[j].y);
+            // ctx.drawImage(graphics.missile, player.ammo[j].x, player.ammo[j].y);
+
+            ctx.fillRect(player.ammo[j].x, player.ammo[j].y, 10, 10)
+            ctx.fillStyle = "#FFD600"; 
+
             player.ammo[j].x += player.missileSpeed;
 
             const hitEnemy = enemies.enemiesArray.find(e => {
@@ -246,7 +244,7 @@ function draw() {
         for(let i = 0; i < powerups.healthRenew.length; i++) {
             powerups.healthRenew[i].x--;
         }
-        powerups.initialHealthPushed = true;
+        game.initialHealthPushed = true;
     }, 10 * 1000);
 
     for(let i = 0; i < powerups.healthRenew.length; i++){
@@ -280,7 +278,7 @@ function draw() {
         for(let i = 0; i < powerups.shieldRenew.length;i++) {
             powerups.shieldRenew[i].x--;
         }
-        powerups.initialShieldPushed = true;
+        game.initialShieldPushed = true;
     }, 15 * 1000);
 
     for(let i = 0; i < powerups.shieldRenew.length; i++) {
@@ -337,7 +335,7 @@ function draw() {
         for(let i = 0; i < powerups.timeRenew.length; i++) {
             powerups.timeRenew[i].x -= 2;
         }
-        powerups.initialTimeRenewPushed = true;
+        game.initialTimeRenewPushed = true;
     }, 10 * 1000);
 
     // Move the ship
@@ -446,7 +444,7 @@ function continueGame(){
     game.init = setInterval(draw, 1000 / 60);
     enemies.enemiesShootingInterval = setInterval(enemies.shoot.bind(enemies), enemies.shootingSpeed); // Enemies module
     player.graduallyRestoreInterval = setInterval(player.graduallyRestore.bind(player), player.dynamicRestoration); // Player module
-    game.timer(game.timer); // Game module - BUG
+    game.timer(game.currentTime); // Game module
 
     // Enable enemies and ship movement
     game.isStarted = true;
@@ -457,156 +455,98 @@ function continueGame(){
     // Continue measuring time after game was paused
     game.pausedTime *= 1000;
 }
-
-// // End the game
-// function endgame(secondsLeft){
-//     // Disable the intervals
-//     clearInterval(enemies.enemiesShootingInterval); // Enemies module
-//     clearInterval(player.graduallyRestoreInterval); // Player module
+// // Restart game
+// function restartGame() {
+//     // Clear the intervals
 //     clearInterval(game.countdown);
+//     clearInterval(game.init);
+//     clearInterval(player.graduallyRestoreInterval); // Player module
+//     clearInterval(enemies.enemiesShootingInterval); // Enemies module
 
-//     // End measuring time
-//     game.endTime = new Date();
-
-//     // Divide the difference to get the starting time
-//     let timeDifference = (game.endTime - game.startingTime) / 1000;
-//     let timePlayed = Math.floor(timeDifference);
-
-//     // Multiplie the ending score by the time played divided by 100, which will result in a multiplier in the form of, for example x0.5 - x3, based on time played
-//     let multiplier = timePlayed / 100;
-//     game.score = player.killCount * 100;
-//     let finalScore = game.score + (game.score * multiplier);
-
-//     // Stop movements
+//     // Reset the flag variables
 //     game.isStarted = false;
+//     enemies.spawned = false;
+//     powerups.initialHealthPushed = false;
+//     powerups.initialShieldPushed = false;
+//     powerups.initialTimeRenewPushed = false;
+//     player.shieldDestroyed = false;
 
-//     // Game Over / Game finished menu
-//     gameOver.style.display = "block";
+//     // Reset timer
+//     game.timerDisplay.classList.remove("timeLow"); // In case user died while time was low.
+//     game.timerDisplay.textContent = "0:30";
 
-//     // If player was killed.
-//     if(player.hp === 0){
-//         displayImage.src = `${endPath}/assets/images/tombstone.png`;
-//         message.textContent = "At least you tried..."; // elementot go nema
-//     }
+//     // Reset the colored blocks
+//     player.blocks.forEach(block => {
+//         block.classList.remove("greenPhase")
+//         block.classList.remove("yellowPhase")
+//         block.classList.remove("redPhase")
+//     });
+
+//     // Destroy all enemies, healths, timers, shields and reset them to 0.
+//     enemies.enemiesArray.splice(0, enemies.enemiesArray.length);
+//     enemies.ammo.splice(0, enemies.ammo.length);
     
-//     // If the time is up
-//     if(secondsLeft <= 0) {
-//         message.textContent = "Time's up !" // elementot go nema
-//     }
+//     powerups.healthRenew.splice(0, powerups.healthRenew.length);
+//     powerups.timeRenew.splice(0, powerups.timeRenew.length);
+//     powerups.shieldRenew.splice(0, powerups.shieldRenew.length);
 
-//     sfx.music.src = `${endPath}/assets/audio/Fallen in Battle.mp3`;
-//     sfx.music.volume = 0.2;
-//     sfx.music.play();
-//     sfx.music.loop = false;
+//     player.ammo.splice(0, player.ammo.length);
+//     player.map = {};
+    
+//     // Run startGame again
+//     startGame();
 
-//     // Score and Highscore
-//     document.querySelector("#totalKills").textContent = player.killCount;
-//     document.querySelector("#multiplier").textContent = "x" + multiplier;
-//     document.querySelector("#finalScore").textContent = finalScore;
-//     document.querySelector("#highscore").textContent = game.highscore;
+//     // Reset the kill count text.
+//     player.killCount = 0;
+//     game.displayKills.textContent = player.killCount;
 
-//     // Display the menu with an input to enter player's name
-//     game.newScore(finalScore);
+//     // Reset pregame countdown and hide game over menu
+//     preGame = 3;
+//     game.gameOver.style.display = "none";
 
-//     if(finalScore > this.highscore) {
-//         localStorage.setItem("highscore", finalScore);
-//         document.querySelector("#highscore").textContent = localStorage.getItem("highscore");
-//         game.newHighscore();
-//     }
+//     // Reset ship's direction
+//     player.d = "";
+
+//     // Reset player's ship stats
+//     player.hp = 100;
+//     player.shield = 100;
+//     player.overheat = 0;
+//     player.boost = 100
+//     player.x = 50;
+//     player.y = 250;
+//     player.speed = 5;
+//     player.heat = -1;
+
+//     // Reset level and experience
+//     game.requiredExpText.textContent = game.requiredExp + "XP";
+//     game.requiredExp = 80;
+//     player.exp = 0;
+//     player.level = 1;
+//     player.currentLevel.textContent = player.level;
+//     player.currentExp.textContent = player.exp;
+//     let levelExp = (player.exp / game.requiredExp) * 100;
+//     levelBar.style.width = `${levelExp}%`;
+
+//     // Restart current time which affets difficulty
+//     game.startingTime = new Date();
+//     game.increaseDifficulty();
+
+//     // Reset enemies data
+//     enemies.speed = 1;
+//     enemies.shootingSpeed = 700;
+
+//     // Reset health and shield text display
+//     player.healthText.textContent = player.hp + "%";
+//     player.shieldText.textContent = player.shield + "%";
+
+//     // Clear input field at game over menu
+//     const inputField = document.querySelector("#playerName-input");
+//     inputField.value = "";
+
+//     // Set restoration and enemy shooting intervals again.
+//     player.graduallyRestoreInterval = setInterval(player.graduallyRestore, player.dynamicRestoration); // Player module
+//     enemies.enemiesShootingInterval = setInterval(enemies.shoot, enemies.shootingSpeed); // Enemies module
 // }
-
-// Restart game
-function restartGame() {
-    // Clear the intervals
-    clearInterval(game.countdown);
-    clearInterval(game.init);
-    clearInterval(player.graduallyRestoreInterval); // Player module
-    clearInterval(enemies.enemiesShootingInterval); // Enemies module
-
-    // Reset the flag variables
-    game.isStarted = false;
-    enemies.spawned = false;
-    initialHealthPushed = false;
-    initialShieldRenewPushed = false;
-    initialTimeRenewPushed = false;
-    player.shieldDestroyed = false;
-
-    // Reset timer
-    timerDisplay.classList.remove("timeLow"); // In case user died while time was low.
-    timerDisplay.textContent = "0:30";
-
-    // Reset the colored blocks
-    player.blocks.forEach(block => {
-        block.classList.remove("greenPhase")
-        block.classList.remove("yellowPhase")
-        block.classList.remove("redPhase")
-    });
-
-    // Destroy all enemies, healths, timers, shields and reset them to 0.
-    enemies.enemiesArray.splice(0, enemies.enemiesArray.length);
-    enemies.ammo.splice(0, enemies.ammo.length);
-    
-    powerups.healthRenew.splice(0, powerups.healthRenew.length);
-    powerups.timeRenew.splice(0, powerups.timeRenew.length);
-    powerups.shieldRenew.splice(0, powerups.shieldRenew.length);
-
-    player.ammo.splice(0, player.ammo.length);
-    player.map = {};
-    
-    // Run startGame again
-    startGame();
-
-    // Reset the kill count text.
-    player.killCount = 0;
-    game.displayKills.textContent = player.killCount;
-
-    // Reset pregame countdown and hide game over menu
-    preGame = 3;
-    gameOver.style.display = "none";
-
-    // Reset ship's direction
-    player.d = "";
-
-    // Reset player's ship stats
-    player.hp = 100;
-    player.shield = 100;
-    player.overheat = 0;
-    player.boost = 100
-    player.x = 50;
-    player.y = 250;
-    player.speed = 5;
-    player.heat = -1;
-
-    // Reset level and experience
-    game.requiredExpText.textContent = game.requiredExp + "XP";
-    game.requiredExp = 80;
-    player.exp = 0;
-    player.level = 1;
-    player.currentLevel.textContent = player.level;
-    player.currentExp.textContent = player.exp;
-    let levelExp = (exp / requiredExp) * 100;
-    levelBar.style.width = `${levelExp}%`;
-
-    // Restart current time which affets difficulty
-    game.startingTime = new Date();
-    game.increaseDifficulty();
-
-    // Reset enemies data
-    enemies.speed = 1;
-    enemies.shootingSpeed = 700;
-
-    // Reset health and shield text display
-    player.healthText.textContent = player.hp + "%";
-    player.shieldText.textContent = player.shield + "%";
-
-    // Clear input field at game over menu
-    const inputField = document.querySelector("#playerName-input");
-    inputField.value = "";
-
-    // Set restoration and enemy shooting intervals again.
-    player.graduallyRestoreInterval = setInterval(player.graduallyRestore, player.dynamicRestoration); // Player module
-    enemies.enemiesShootingInterval = setInterval(enemies.shoot, enemies.shootingSpeed); // Enemies module
-}
 
 // Exit game
 const exitGame = document.querySelectorAll(".exitGame");
@@ -616,7 +556,7 @@ exitGame.forEach(exit => exit.addEventListener("click", ()=> location.reload()))
 document.querySelector("#startGame").addEventListener("click", loadGame);
 document.querySelector("#pauseGame").addEventListener("click", pauseGame);
 document.querySelector("#continueGame").addEventListener("click", continueGame);
-document.querySelector("#restartGame").addEventListener("click", restartGame);
+document.querySelector("#restartGame").addEventListener("click", game.restartGame.bind(game));
 
 // Pause game on ESCAPE and if clicked outside of canvas
 window.addEventListener("keydown", e => {
@@ -626,3 +566,7 @@ window.addEventListener("click", e => {
     if(e.target.id !== "canvas" && e.target.id !== "continueGame" && game.isStarted) pauseGame();
 })
 
+// Initialize renewal items
+powerups.healthRenewFunction();
+powerups.shieldRenewFunction();
+powerups.timeRenewFunction();

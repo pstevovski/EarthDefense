@@ -50,33 +50,3 @@ enemies.enemiesShootingInterval = setInterval(enemies.shoot.bind(enemies), enemi
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-
-// let enemySpawnDistance = 1200;
-// // let enemySpeed = 1;
-// let enemiesSpawned = false;
-// Enemies
-// let enemies = [];
-// enemies[0] = {
-//     x: cWidth,
-//     y: Math.floor(Math.random() * ( (maxHeight-enemy.height) - minHeight) + minHeight)
-// }
-// Aliens (enemies)
-// let enemyAmmo = [];
-// Enemies
-// let enemiesShootingSpeed = 700;
-// function enemiesShoot(){
-//     // If the enemies are spawned
-//     if(enemiesSpawned) {
-//         let minShip = 0;
-//         let maxShip = enemies.length - 1;
-//         let randomShip = Math.floor(Math.random() * (maxShip - minShip + 1)) + minShip;
-//         // Randomize
-//         enemyAmmo.push({
-//             x: enemies[randomShip].x - enemy.width,
-//             y: enemies[randomShip].y + (enemy.height / 2)
-//         })
-//         enemyShootingSound.currentTime = 0;
-//         enemyShootingSound.play();
-//         }
-// }
-// // let enemiesShootingInterval = setInterval(enemiesShoot, enemiesShootingSpeed);

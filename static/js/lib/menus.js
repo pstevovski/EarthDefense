@@ -99,11 +99,9 @@ function controlVolume() {
                 sfx.enemyShooting.volume = sfx.sfxVolume;
                 sfx.restorationSound.volume = sfx.sfxVolume;
                 sfx.alarmSound.volume = sfx.sfxVolume;;
-                console.log(sfx.sfxVolume, sfx.playerShooting.volume);
             } else if(this.name === "bgMusic") {
                 sfx.musicVolume = this.value / 100;
                 sfx.music.volume = sfx.musicVolume;
-                console.log(sfx.musicVolume);
             }
         })
     }
