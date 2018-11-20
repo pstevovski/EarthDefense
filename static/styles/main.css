@@ -484,8 +484,8 @@ body button {
 }
 
 .container .notificationsContainer .activeNotification {
-  -webkit-animation: notification 4s ease forwards;
-          animation: notification 4s ease forwards;
+  -webkit-animation: notification 3s ease forwards;
+          animation: notification 3s ease forwards;
 }
 
 .menu {
