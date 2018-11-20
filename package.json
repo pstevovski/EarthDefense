@@ -1,0 +1,29 @@
+{
+  "name": "earth-defense",
+  "version": "1.2.0",
+  "description": "Remake of old popular space-shooter type of games.",
+  "main": "mainGlavno.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pecko95/EarthDefence.git"
+  },
+  "keywords": [
+    "remake",
+    "game",
+    "vanilla",
+    "js",
+    "space",
+    "shooter",
+    "8bit",
+    "classic"
+  ],
+  "author": "Petar Stevovski",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pecko95/EarthDefence/issues"
+  },
+  "homepage": "https://github.com/pecko95/EarthDefence#readme"
+}
