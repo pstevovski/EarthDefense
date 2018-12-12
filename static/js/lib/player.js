@@ -1,13 +1,11 @@
 import {game} from "./game.js";
-// import {Graphics, Sfx} from "./assets.js";
 import {enemies} from "./enemies.js";
 import {graphics, sfx} from "../mainGlavno.js";
-// import {testTest} from "../mainGlavno.js"; // works
 
 const emptyWarningText = document.querySelector(".emptyWarning-text");
 
 export class Player {
-    constructor(game) {
+    constructor() {
         this.d = null; // Direction
         this.x = 50;
         this.y = 250;
@@ -310,8 +308,7 @@ export class Player {
             // Restore ships HP and display a notification.
             this.hp = this.hp + 20;
             this.healthText.textContent = this.hp+"%";
-            game.notificationText.innerHTML = `<i class="material-icons health">local_hospital</i><p>Health renewed!</p>`;
-            game.displayNotification();
+            game.displayNotification("Restored health!");
         }
     };
 
@@ -337,8 +334,7 @@ export class Player {
             // Restore shield points and display a notification
             this.shield = this.shield + 20;
             this.shieldText.textContent = this.shield+"%";
-            game.notificationText.innerHTML = `<i class="material-icons shield">security</i><p>Shield restored!</p>`;
-            game.displayNotification();
+            game.displayNotification("Restored shield!");
         }
     };
 

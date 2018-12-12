@@ -85,7 +85,7 @@ export class Game {
             // After speed update, enable interval again
             enemies.enemiesShootingInterval = setInterval(enemies.shoot.bind(enemies), enemies.shootingSpeed);
 
-            this.displayNotification();
+            this.displayNotification("They are speeding up!");
         } else if (this.timePassed === 60) {
             // Clear the interval for enemies shooting
             clearInterval(enemies.enemiesShootingInterval);
@@ -97,7 +97,7 @@ export class Game {
             // After speed update, enable interval again
             enemies.enemiesShootingInterval = setInterval(enemies.shoot.bind(enemies), enemies.shootingSpeed);
 
-            this.displayNotification();
+            this.displayNotification("They are speeding up again!!");
         } else if (this.timePassed === 90) {
             // Clear the interval for enemies shooting
             clearInterval(enemies.enemiesShootingInterval);
@@ -108,7 +108,7 @@ export class Game {
             
             // After speed update, enable interval again
             enemies.enemiesShootingInterval = setInterval(enemies.shoot.bind(enemies), enemies.shootingSpeed);
-            this.displayNotification();
+            this.displayNotification("Oh my god, will we make it?!");
         } else if (this.timePassed === 120) {
             // Clear the interval for enemies shooting
             clearInterval(enemies.enemiesShootingInterval);
@@ -120,28 +120,15 @@ export class Game {
             // After speed update, enable interval again
             enemies.enemiesShootingInterval = setInterval(enemies.shoot.bind(enemies), enemies.shootingSpeed);
 
-            this.displayNotification();
+            this.displayNotification("They are way too fast!!!");
         }
     };
 
     // Display notifications
-    displayNotification(secondsLeft) {
+    displayNotification(message) {
         this.notificationText.classList.add("activeNotification");
 
-        if(this.timePassed === 30) {
-            this.notificationText.innerHTML = `<i class="material-icons">warning</i> <p>They are speeding up!!</p>`
-        } else if (this.timePassed === 50) {
-            this.notificationText.innerHTML= `<i class="material-icons">warning</i> <p>They are speeding up!!</p>`
-        } else if (this.timePassed === 80) {
-            this.notificationText.innerHTML= `<i class="material-icons">warning</i> <p>They are speeding up!!</p>`
-        } else if (this.timePassed === 100) {
-            this.notificationText.innerHTML= `<i class="material-icons">warning</i> <p>They are speeding up!!</p>`
-        }
-
-        // If there are 10 seconds left, show a warning for low time
-        if(secondsLeft === 10) {
-            this.notificationText.innerHTML = `<i class="material-icons">warning</i><p>Few seconds left!</p>`
-        }
+        this.notificationText.innerHTML = `<i class="material-icons">warning</i> <p>${message}</p>`;
 
         // Remove the notification active class after 4 seconds
         setTimeout(() => {
@@ -163,7 +150,7 @@ export class Game {
             // Show a warning for few seconds left
             if(this.secondsLeft === 10) {
                 this.timerDisplay.classList.add("timeLow");
-                this.displayNotification(this.secondsLeft);
+                this.displayNotification("You don't have much time left!");
             } else if (this.secondsLeft < 0) {
                 // If the timer ran out, end the game
                 clearInterval(this.countdown);
@@ -203,8 +190,7 @@ export class Game {
         // Display message and add shaking to the time
         document.querySelector(".time").classList.add("timeShake");
         this.timerDisplay.classList.remove("timeLow");
-        this.notificationText.innerHTML = `<i class="material-icons timer">timer</i><p>Added playtime!</p>`;
-        this.displayNotification();
+        this.displayNotification("Added play time!");
     };
 
     // New score
