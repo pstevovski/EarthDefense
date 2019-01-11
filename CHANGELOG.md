@@ -20,6 +20,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Pewpewpew!
 
 ## Minor Releases:
+### [v1.0.9.1] - Jan 11 2019
+#### Fixed
+* Fixed a bug where renewal items were not being destroyed on game end / restart.
+* Fixed issue where restarting game would cause the renewal items to spawn right away.
+#### Changed
+* Re-factored some of the code, cut down unnecessary repetitive pieces.
+* Deleted old main file and renamed the new main file.
+
 ### [v1.0.9] - Nov 5 2018
 #### Added
 * Added option to restart game right away when the game has ended.

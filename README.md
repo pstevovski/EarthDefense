@@ -4,20 +4,9 @@ Earth Defense is a remake of the classic Space shooter type of games, with 8-bit
 
 <img src="./assets/images/screenshot.png">
 
-------------------------------------------------
-###### To do:
-* [ ] Clearer indication ship was hit
-* [ ] Max highscores showed is 10.
-
-###### Maybe-to-add features:
-* [ ] Add meteors flying by.
-* [ ] Boss fight.
-* [ ] Option to buy minor upgrades.
-
 -------------------
 ###### Bugs:
-* Renewals show right after game is restarted
-* Minor bugs with multiple keys pressed movement (LEFT UP AND SHOOT);
+* Minor bug with multiple keys pressed movement (LEFT UP AND SHOOT);
 ----------
 #### Releases:
 ##### v1.0.0 - Oct 29 2018
