@@ -41,11 +41,6 @@ export class Game {
 
         // Scores
         this.highscore;
-
-        // Initial powerups
-        this.initialHealthPushed = false;
-        this.initialShieldPushed = false;
-        this.initialTimeRenewPushed = false;
     };
 
     // Update kills and increase experience when player kills an enemy
@@ -243,13 +238,29 @@ export class Game {
         }, 2000);
     };
 
-    // End the game
-    endgame(secondsLeft){
-        // Disable the intervals
+    // Clear intervals
+    clearGameIntervals () {
         clearInterval(enemies.enemiesShootingInterval); // Enemies module
         clearInterval(player.graduallyRestoreInterval); // Player module
         clearInterval(this.countdown);
+        clearInterval(powerups.timerInterval);
+        clearInterval(powerups.healthInterval);
+        clearInterval(powerups.shieldInterval);
 
+        clearInterval(this.countdown);
+        clearInterval(player.graduallyRestoreInterval); // Player module
+        clearInterval(enemies.enemiesShootingInterval); // Enemies module
+        clearInterval(powerups.timerInterval);
+        clearInterval(powerups.healthInterval);
+        clearInterval(powerups.shieldInterval);
+        
+    }
+    
+    // End the game
+    endgame(secondsLeft){
+        // Disable the intervals
+        this.clearGameIntervals();
+        
         // End measuring time
         this.endTime = new Date();
 
@@ -269,13 +280,9 @@ export class Game {
         enemies.spawned = false;
         
         // Destroy all powerups
-        powerups.healthRenew.splice(0);
-        powerups.timeRenew.splice(0);
-        powerups.shieldRenew.splice(0);
-
-        this.initialHealthPushed = false;
-        this.initialShieldPushed = false;
-        this.initialTimeRenewPushed = false;
+        powerups.healthRenew.length = 0;
+        powerups.shieldRenew.length = 0;
+        powerups.timeRenew.length = 0;
 
         // Game Over / Game finished menu
         this.gameOver.style.display = "block";
@@ -317,16 +324,11 @@ export class Game {
     // Restart game
     restartGame() {
         // Clear the intervals
-        clearInterval(this.countdown);
+        this.clearGameIntervals();
         clearInterval(this.init);
-        clearInterval(player.graduallyRestoreInterval); // Player module
-        clearInterval(enemies.enemiesShootingInterval); // Enemies module
-
+        
         // Reset game parameters
         this.isStarted = false;
-        this.initialHealthPushed = false;
-        this.initialShieldPushed = false;
-        this.initialTimeRenewPushed = false;
 
         // Reset timer
         this.timerDisplay.classList.remove("timeLow"); // In case user died while time was low.
@@ -343,9 +345,10 @@ export class Game {
         enemies.enemiesArray.splice(0, enemies.enemiesArray.length);
         enemies.ammo.splice(0, enemies.ammo.length);
         
-        powerups.healthRenew.splice(0);
-        powerups.timeRenew.splice(0);
-        powerups.shieldRenew.splice(0);
+        // Delete all existing items in the arrays
+        powerups.healthRenew.length = 0;
+        powerups.shieldRenew.length = 0;
+        powerups.timeRenew.length = 0;
 
         player.ammo.splice(0, player.ammo.length);
         player.map = {};
