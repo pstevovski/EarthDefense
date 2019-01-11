@@ -79,6 +79,17 @@ export function startGame() {
             game.preGame--;
             preGameCountdown.textContent = game.preGame;
             if(game.preGame === 0) {
+                // Clear any existing items in the health, shield, time renew arrays
+                powerups.healthRenew.length = 0;
+                powerups.shieldRenew.length = 0;
+                powerups.timeRenew.length = 0;
+
+                // Initiate functions for health, shield and time renew as the game starts
+                powerups.healthRenewFunction();
+                powerups.shieldRenewFunction();
+                powerups.timeRenewFunction();
+                console.log("Pushed items")
+
                 sfx.goVoice.play();
                 preGameCountdown.textContent = "GO !";
                 setTimeout(()=> preGameCountdown.style.display = "none", 250)
@@ -218,13 +229,13 @@ function draw() {
     /* ============================================================================= */
 
     // HEALTH RESTORATION
-    // Start moving the HP renew after a set timeout.
-    setTimeout(() => {
-        for(let i = 0; i < powerups.healthRenew.length; i++) {
-            powerups.healthRenew[i].x--;
+    for(let i = 0; i < powerups.healthRenew.length; i++) {
+        powerups.healthRenew[i].x -= 2;
+
+        if(powerups.healthRenew[i].x <= 0 - graphics.healthImage.width) {
+            powerups.healthRenew.splice(0, 1);
         }
-        game.initialHealthPushed = true;
-    }, 10 * 1000);
+    }
 
     for(let i = 0; i < powerups.healthRenew.length; i++){
         game.ctx.drawImage(graphics.healthImage, powerups.healthRenew[i].x, powerups.healthRenew[i].y);
@@ -253,13 +264,13 @@ function draw() {
     /* ============================================================================= */
 
     // SHIELD RESTORATION
-    // Start moving the shield after 1 minute passes
-    setTimeout(() => {
-        for(let i = 0; i < powerups.shieldRenew.length;i++) {
-            powerups.shieldRenew[i].x--;
+    for(let i = 0; i < powerups.shieldRenew.length; i++) {
+        powerups.shieldRenew[i].x -= 2;
+
+        if(powerups.shieldRenew[i].x <= 0 - graphics.shieldImage.width) {
+            powerups.shieldRenew.splice(0, 1);
         }
-        game.initialShieldPushed = true;
-    }, 15 * 1000);
+    }
 
     for(let i = 0; i < powerups.shieldRenew.length; i++) {
         game.ctx.drawImage(graphics.shieldImage, powerups.shieldRenew[i].x, powerups.shieldRenew[i].y);
@@ -312,14 +323,15 @@ function draw() {
         }
     }
 
-    // Start moving the timer image
-    setTimeout(() => {
-        for(let i = 0; i < powerups.timeRenew.length; i++) {
-            powerups.timeRenew[i].x -= 2;
-        }
-        game.initialTimeRenewPushed = true;
-    }, 10 * 1000);
+    // Start moving the timer image when theres is one
+    for(let i = 0; i < powerups.timeRenew.length; i++) {
+        powerups.timeRenew[i].x -= 2;
 
+        // If the timer goes behind canvas screen, remove it from the array
+        if(powerups.timeRenew[i].x <= 0 - graphics.timerImage.width) {
+            powerups.timeRenew.splice(0, 1);
+        }
+    }
     /* ============================================================================= */
 
     // Move the ship
@@ -456,9 +468,3 @@ window.addEventListener("keydown", e => {
 window.addEventListener("click", e => {
     if(e.target.id !== "canvas" && e.target.id !== "continueGame" && game.isStarted) pauseGame();
 })
-
-
-// Initialize renewal items
-powerups.healthRenewFunction();
-powerups.shieldRenewFunction();
-powerups.timeRenewFunction();
