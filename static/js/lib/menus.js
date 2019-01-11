@@ -1,7 +1,7 @@
 // Import Modules
 import {player} from "./player.js";
 import {game} from "./game.js";
-import {sfx} from "../mainGlavno.js";
+import {sfx} from "../main.js";
 
 const menu = document.querySelector(".menu");
 const pauseMenu = document.querySelector(".pause--menu");

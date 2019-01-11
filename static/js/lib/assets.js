@@ -1,5 +1,5 @@
 // Import modules
-import {sfx} from "../mainGlavno.js";
+import {sfx} from "../main.js";
 import {endPath} from "./path.js";
 
 // Graphical assets

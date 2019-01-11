@@ -1,6 +1,6 @@
 import {game} from "./game.js";
 import {enemies} from "./enemies.js";
-import {graphics, sfx} from "../mainGlavno.js";
+import {graphics, sfx} from "../main.js";
 
 const emptyWarningText = document.querySelector(".emptyWarning-text");
 

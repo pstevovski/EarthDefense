@@ -1,6 +1,6 @@
 // Import modules
 import {game} from "./game.js";
-import {graphics, sfx} from "../mainGlavno.js";
+import {graphics, sfx} from "../main.js";
 
 export class Enemies {
     constructor() {

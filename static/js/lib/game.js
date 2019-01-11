@@ -1,7 +1,7 @@
 // Import modules
 import {player} from "./player.js";
 import {enemies} from "./enemies.js";
-import {graphics, sfx, powerups, startGame} from "../mainGlavno.js";
+import {sfx, powerups, startGame} from "../main.js";
 import {endPath} from "./path.js";
 
 
