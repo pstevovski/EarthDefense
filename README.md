@@ -15,9 +15,9 @@ Earth Defense is a remake of the classic Space shooter type of games, with 8-bit
 * Pewpewpew!
 ----------
 #### Contributors:
-* [pecko95](https://github.com/pecko95) (Creator)
+* [pstevovski](https://github.com/pstevovski) (Creator)
 * [nartc](https://github.com/nartc)
 * [karnthis](https://github.com/karnthis)
 
 ##### Contributing:
-* Contact pecko95 for info
+* Contact pstevovski for info
